@@ -1,0 +1,77 @@
+# Task List
+
+> 프로젝트의 공식 진행 상태 문서입니다.  
+> 상태는 체크박스로, 점유는 `## Active Locks`로, 턴 인계는 `## Handoff Log`로 관리합니다.
+
+## Changelog
+- [YYYY-MM-DD] Planner: initial draft
+
+## Usage Rules
+- 상태는 `[ ]`, `[-]`, `[x]`, `[!]`만 사용합니다.
+- 각 태스크는 가능한 한 안정적인 `Task ID`를 가집니다.
+- 각 태스크는 가능한 한 `— Scope: [경로/모듈/문서 범위]`를 함께 적습니다. 특히 개발/테스트/리뷰 태스크는 Scope가 필수입니다.
+- 작업 시작 시 상태를 `[-]`로 바꾸고 `## Active Locks`에 점유 정보를 추가합니다.
+- 작업 종료 시 상태를 갱신하고 lock을 제거합니다.
+- `## Handoff Log`에는 최근 실제 항목 8개만 유지합니다.
+- 작업 시작 전에는 항상 `## Active Locks`와 본인 관련 Task row를 직접 읽습니다. `CURRENT_STATE.md`만 보고 건너뛰면 안 됩니다.
+- `## Handoff Log`가 8개를 넘기거나 파일이 220줄을 넘으면 오래된 항목을 `HANDOFF_ARCHIVE.md`로 이동하고, 요약을 `CURRENT_STATE.md > Recent History Summary`에 반영합니다.
+- archive 전에 아직 열린 사용자 질문, 기술 블로커, 다음 Agent가 꼭 알아야 할 제약은 `## Blockers`와 `CURRENT_STATE.md > Open Decisions / Blockers`로 승격합니다.
+- `CURRENT_STATE.md`와 `TASK_LIST.md`의 현재 stage, active scope, next owner 정보는 서로 어긋나면 안 됩니다.
+- `## Active Locks`는 협업용 문서 lock이며 원자적 잠금이 아닙니다. 여러 AI를 동시에 쓸 때는 서로 다른 Task ID와 Scope를 먼저 배정하는 것을 기본 전제로 합니다.
+
+## Current Release Target
+- Version / Milestone:
+- Current Stage:
+- Current Focus:
+- Current Release Goal:
+
+## Next Version Backlog
+- [ ] BACKLOG-01 [다음 버전 후보 작업] — Scope: [제품/문서/기술 부채]
+
+## Active Locks
+
+| Task ID | Owner | Role | Started At | Scope | Note |
+|---|---|---|---|---|---|
+
+## Workflow Stage: Planning and Architecture
+- [ ] PLN-01 요구사항 초안 정리 — Scope: `REQUIREMENTS.md`
+- [ ] PLN-02 요구사항 승인 반영 — Scope: `REQUIREMENTS.md`
+- [ ] PLN-03 아키텍처 초안 정리 — Scope: `ARCHITECTURE_GUIDE.md`
+- [ ] PLN-04 구현 계획 및 작업 목록 작성 — Scope: `IMPLEMENTATION_PLAN.md`, `TASK_LIST.md`, `CURRENT_STATE.md`
+
+## Workflow Stage: Design Gate
+- [ ] DSG-01 UI/UX 필요 여부 결정 — Scope: `UI_DESIGN.md` 필요성 판정
+- [ ] DSG-02 UI scope일 경우 화면 구조 및 사용자 동선 정의 — Scope: `UI_DESIGN.md`
+- [ ] DSG-03 UI scope일 경우 디자인 토큰 및 interaction 규칙 정리 — Scope: `UI_DESIGN.md`
+- [ ] DSG-04 비UI scope일 경우 `UI_DESIGN.md not required for this scope` 기록 및 design gate 종료 — Scope: `UI_DESIGN.md`, `CURRENT_STATE.md`
+
+## Workflow Stage: Development and Test Loop
+
+### Iteration 1
+- [ ] DEV-01 [개발 작업] — Scope: [폴더/모듈/문서]
+- [ ] DEV-02 [개발 작업] — Scope: [폴더/모듈/문서]
+- [ ] TST-01 [검증 작업] — Scope: [대상 Task ID / 경로 / 요구사항]
+
+### Iteration 2
+- [ ] DEV-03 [개발 작업] — Scope: [폴더/모듈/문서]
+- [ ] DEV-04 [개발 작업] — Scope: [폴더/모듈/문서]
+- [ ] TST-02 [검증 작업] — Scope: [대상 Task ID / 경로 / 요구사항]
+
+## Workflow Stage: Review Gate
+- [ ] REV-01 구조 / 보안 / 품질 리뷰 — Scope: [릴리즈 범위 / 대상 Task ID]
+- [ ] REV-02 리뷰 반영 확인 — Scope: [릴리즈 범위 / 대상 Task ID]
+
+## Workflow Stage: Deployment
+- [ ] REL-01 배포 전 사전 점검 — Scope: [환경 / 버전 / 커밋 범위]
+- [ ] REL-02 배포 실행 — Scope: [환경 / 명령 / 배포 대상]
+- [ ] REL-03 배포 결과 기록 — Scope: `DEPLOYMENT_PLAN.md`, `CURRENT_STATE.md`
+
+## Workflow Stage: Documentation and Closeout
+- [ ] DOC-01 day_wrap_up 또는 같은 버전 내 문서 정리 준비 — Scope: `CURRENT_STATE.md`, `TASK_LIST.md`, 관련 아티팩트
+- [ ] DOC-02 version_closeout / Documenter 정리 — Scope: archive, `CURRENT_STATE.md`, `HANDOFF_ARCHIVE.md`
+
+## Blockers
+- [없으면 비워둠]
+- [승격된 blocker / 사용자 결정 대기 / stale lock 판단 보류]
+
+## Handoff Log
