@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature Artifact Sync"
+  short_description: "Sync feature-related project artifacts"
+  default_prompt: "Use $feature-artifact-sync to update the relevant artifacts after this feature change."
