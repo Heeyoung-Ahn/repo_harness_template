@@ -1,6 +1,6 @@
 # Repo Harness Backup Guide
 
-이 폴더는 사용 중이던 `repo-level harness` 백업본입니다.
+이 폴더는 `repo-level harness`를 독립 템플릿처럼 바로 복제해서 쓰기 위한 최소 운영 세트입니다
 
 ## 어떻게 열어야 하나
 - `repo_harness` 폴더 자체를 workspace root로 엽니다.
