@@ -5,6 +5,7 @@
 
 ## Quick Read
 - 현재 승인된 아키텍처 스타일:
+- 현재 반영된 Requirement Baseline / 변경 영향:
 - 핵심 도메인 경계:
 - 이번 범위에서 건드리는 폴더/모듈:
 - 상태와 데이터의 주인:
@@ -14,6 +15,9 @@
 ## Status
 - Document Status: Draft / Ready for Approval / Approved
 - Owner: Planner
+- Requirement Baseline:
+- Change Sync Check: Synced / No Architecture Change / Update Needed
+- Last Requirement Sync At: [YYYY-MM-DD HH:MM]
 - Last Updated At: [YYYY-MM-DD HH:MM]
 - Last Approved By: [User]
 - Last Approved At: [YYYY-MM-DD HH:MM]
@@ -30,6 +34,12 @@
 
 ## Changelog
 - [YYYY-MM-DD] Planner: initial draft
+
+## Requirement Change Sync
+
+| Change ID | Architecture Impact | Updated Sections | Sync Status | Notes |
+|---|---|---|---|---|
+| CR-01 | None / Boundary Update / Layer Rule Update | [Approved Boundaries / Forbidden Changes / Domain Map] | Synced / No Architecture Change / Update Needed | [메모] |
 
 ## Architecture Summary
 - 아키텍처 스타일:
@@ -90,3 +100,4 @@ src/
 ## Change Control
 - 구조 변경이 필요하면 Planner가 이유와 영향 범위를 기록한다.
 - 사용자 승인 후에만 이 문서를 수정한다.
+- 승인 후 요구사항이 바뀌면 `REQUIREMENTS.md`와 같은 기준선으로 이 문서를 다시 확인하고, 변경이 없더라도 `Requirement Baseline`과 `Change Sync Check`를 갱신한다.

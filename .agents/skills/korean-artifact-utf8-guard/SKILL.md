@@ -1,11 +1,11 @@
 ---
 name: korean-artifact-utf8-guard
-description: Guardrail for Windows artifact and document updates that include Korean text. Use this skill whenever you edit or generate `.agents/artifacts/*.md`, `.agents/rules/*.md`, `AGENTS.md`, `README.md`, `docs/*.md`, or Korean-heavy user-facing copy through PowerShell, scripts, bulk sync, day wrap up, handoff, feature-artifact-sync, version closeout, or cross-file summarization. Also use it when you reuse existing Korean lines from repo files. Skip it for small ASCII-only `apply_patch` edits with no Korean text.
+description: Guardrail for Windows artifact and document updates where Korean text may appear. Use this skill whenever you edit or generate `.agents/artifacts/*.md`, `.agents/rules/*.md`, `AGENTS.md`, `README.md`, `docs/*.md`, or Korean-heavy user-facing copy through PowerShell, scripts, bulk sync, day wrap up, handoff, feature-artifact-sync, version closeout, or cross-file summarization. Keep those documents in UTF-8 without BOM with explicit UTF-8 shell handling. Also use it when you reuse existing Korean lines from repo files. Skip it for small ASCII-only `apply_patch` edits with no Korean text.
 ---
 
 # Korean Artifact UTF-8 Guard
 
-Use this skill only at the risky points named in the description. The goal is to prevent mojibake such as `?뚯뒪??硫붾え`, which happens when UTF-8 Korean text is read through a non-UTF-8 path and then written back.
+Use this skill only at the risky points named in the description. The goal is to prevent mojibake such as `?뚯뒪??硫붾え`, which happens when UTF-8 Korean text is read through a non-UTF-8 path and then written back. Treat artifact and rule documents as UTF-8 without BOM by default, even when the current edit looks ASCII-only.
 
 ## Trigger points
 
@@ -20,10 +20,11 @@ Do not activate it for tiny ASCII-only edits made directly with `apply_patch` wh
 
 ## Default policy
 
-1. Prefer `apply_patch` for tracked file edits.
-2. If shell-based read or write is unavoidable, use explicit UTF-8 APIs.
-3. Never trust Windows PowerShell's implicit text encoding for Korean artifact work.
-4. Before commit or handoff, scan the changed files for mojibake.
+1. Keep artifact and rule documents encoded as UTF-8 without BOM by default.
+2. Prefer `apply_patch` for tracked file edits.
+3. If shell-based read or write is unavoidable, use explicit UTF-8 APIs and write back with UTF-8 without BOM.
+4. Never trust Windows PowerShell's implicit text encoding for Korean artifact work.
+5. Before commit or handoff, scan the changed files for mojibake and confirm no scripted rewrite reintroduced a BOM.
 
 ## Safe read and write patterns
 
@@ -48,13 +49,14 @@ Avoid these for Korean artifact rewrites unless encoding is explicitly controlle
 ### 1. Preflight
 
 - Identify the exact files that will receive Korean text.
+- Decide whether each target file must be created or normalized as UTF-8 without BOM before editing.
 - Check whether the content is being copied or summarized from another repo file.
 - If the change is script-driven, convert the script to explicit UTF-8 reads and writes before running it.
 
 ### 2. Edit
 
 - Use `apply_patch` whenever possible.
-- If you must script the change, read source files with explicit UTF-8 and write the final output with explicit UTF-8.
+- If you must script the change, read source files with explicit UTF-8 and write the final output with UTF-8 without BOM.
 - Keep Korean text in one controlled path. Do not bounce it through multiple shells or temporary tools with unknown encodings.
 
 ### 3. Verify
@@ -66,6 +68,7 @@ powershell -ExecutionPolicy Bypass -File ".agents/skills/korean-artifact-utf8-gu
 ```
 
 Also spot-check changed Korean lines with explicit UTF-8 reads before you finish.
+- If a scripted or full-file rewrite happened, verify the file still has no UTF-8 BOM.
 
 ## Stop conditions
 
@@ -84,3 +87,4 @@ When this skill is used, report:
 - which files were protected
 - whether the scanner found suspect lines
 - whether any shell path was replaced with explicit UTF-8 handling
+- whether UTF-8 without BOM was preserved or restored on the final files

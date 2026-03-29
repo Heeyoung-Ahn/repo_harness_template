@@ -10,11 +10,17 @@
 - 상태는 `[ ]`, `[-]`, `[x]`, `[!]`만 사용합니다.
 - 각 태스크는 가능한 한 안정적인 `Task ID`를 가집니다.
 - 각 태스크는 가능한 한 `— Scope: [경로/모듈/문서 범위]`를 함께 적습니다. 특히 개발/테스트/리뷰 태스크는 Scope가 필수입니다.
+- 요구사항 승인 후에는 개발/테스트/리뷰 태스크가 어떤 `FR-*`, `NFR-*`를 다루는지 `IMPLEMENTATION_PLAN.md > Requirement Trace`로 역추적 가능해야 합니다.
+- 승인 후 요구사항이나 완료 기준이 바뀌면 Planner task를 다시 열고, `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`를 먼저 같은 기준선으로 갱신한 뒤 관련 Task Scope와 `Requirement Trace`를 재동기화합니다.
+- 중간 요구사항 변경이 문서에 아직 반영되지 않았다면 리뷰/배포 태스크를 완료 처리하지 않고 blocker 또는 planner follow-up으로 남깁니다.
 - 작업 시작 시 상태를 `[-]`로 바꾸고 `## Active Locks`에 점유 정보를 추가합니다.
 - 작업 종료 시 상태를 갱신하고 lock을 제거합니다.
-- `## Handoff Log`에는 최근 실제 항목 8개만 유지합니다.
+- blocker triage, 실기기 검증, hotfix 같은 빠른 운영 루프에서는 `## Rolling Status Updates`에 최신 요약 블록 3개 이내로 유지합니다.
+- Rolling Status Update에는 `Owner`, `Status`, `Scope completed`, `Verification`, `Next`만 짧게 적고, 상세 원문은 `## Handoff Log`로 보냅니다.
+- `## Handoff Log`에는 기본적으로 최근 실제 항목 8개만 유지합니다.
 - 작업 시작 전에는 항상 `## Active Locks`와 본인 관련 Task row를 직접 읽습니다. `CURRENT_STATE.md`만 보고 건너뛰면 안 됩니다.
-- `## Handoff Log`가 8개를 넘기거나 파일이 220줄을 넘으면 오래된 항목을 `HANDOFF_ARCHIVE.md`로 이동하고, 요약을 `CURRENT_STATE.md > Recent History Summary`에 반영합니다.
+- 다만 활성 manual test / review / blocker triage 루프와 직접 연결된 relevant entry는 loop가 닫힐 때까지 임시 유지할 수 있습니다.
+- `## Handoff Log`가 기본 유지 범위를 넘기거나 파일이 220줄을 넘으면 오래된 항목을 `HANDOFF_ARCHIVE.md`로 이동하고, 요약을 `CURRENT_STATE.md > Recent History Summary`에 반영합니다.
 - archive 전에 아직 열린 사용자 질문, 기술 블로커, 다음 Agent가 꼭 알아야 할 제약은 `## Blockers`와 `CURRENT_STATE.md > Open Decisions / Blockers`로 승격합니다.
 - `CURRENT_STATE.md`와 `TASK_LIST.md`의 현재 stage, active scope, next owner 정보는 서로 어긋나면 안 됩니다.
 - `## Active Locks`는 협업용 문서 lock이며 원자적 잠금이 아닙니다. 여러 AI를 동시에 쓸 때는 서로 다른 Task ID와 Scope를 먼저 배정하는 것을 기본 전제로 합니다.
@@ -24,6 +30,14 @@
 - Current Stage:
 - Current Focus:
 - Current Release Goal:
+
+## Rolling Status Updates
+### [YYYY-MM-DD HH:MM] [Role / Agent] Update
+- Owner:
+- Status:
+- Scope completed:
+- Verification:
+- Next:
 
 ## Next Version Backlog
 - [ ] BACKLOG-01 [다음 버전 후보 작업] — Scope: [제품/문서/기술 부채]
@@ -35,7 +49,7 @@
 
 ## Workflow Stage: Planning and Architecture
 - [ ] PLN-01 요구사항 초안 정리 — Scope: `REQUIREMENTS.md`
-- [ ] PLN-02 요구사항 승인 반영 — Scope: `REQUIREMENTS.md`
+- [ ] PLN-02 요구사항 승인 / 변경 반영 — Scope: `REQUIREMENTS.md`, `IMPLEMENTATION_PLAN.md`, `CURRENT_STATE.md`
 - [ ] PLN-03 아키텍처 초안 정리 — Scope: `ARCHITECTURE_GUIDE.md`
 - [ ] PLN-04 구현 계획 및 작업 목록 작성 — Scope: `IMPLEMENTATION_PLAN.md`, `TASK_LIST.md`, `CURRENT_STATE.md`
 

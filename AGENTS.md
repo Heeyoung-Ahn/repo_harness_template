@@ -5,6 +5,7 @@
 - 시작할 때 가장 먼저 [`.agents/rules/workspace.md`](.agents/rules/workspace.md)를 읽습니다.
 - 그다음 바로 [`.agents/artifacts/CURRENT_STATE.md`](.agents/artifacts/CURRENT_STATE.md)를 읽습니다.
 - 추가 문서는 `CURRENT_STATE.md > Must Read Next`에 적힌 것만 읽습니다.
+- 요약 문서와 상세 문서가 충돌하면 상세 문서가 우선이며, 즉시 `CURRENT_STATE.md`를 정정해야 합니다.
 
 백업된 repo-level harness를 다시 쓰는 기준은 [README.md](README.md)에 정리되어 있습니다.
 

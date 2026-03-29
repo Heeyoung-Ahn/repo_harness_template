@@ -34,8 +34,28 @@ trigger: always_on
 - `CURRENT_STATE.md` 기본 유지 기준:
   - 120줄 이하
   - 800단어 이하
-- `TASK_LIST.md > ## Handoff Log`에는 최신 실제 항목 8개만 유지합니다.
-- 8개 초과 또는 `TASK_LIST.md` 220줄 초과 시 오래된 항목을 `HANDOFF_ARCHIVE.md`로 옮기고, 3~5줄 요약을 `CURRENT_STATE.md > Recent History Summary`에 반영합니다.
+- `CURRENT_STATE.md`는 **replace-in-place snapshot**입니다. dated `Update` 블록을 누적하지 말고 항상 최신 상태 1개만 유지합니다.
+- `TASK_LIST.md > ## Handoff Log`에는 기본적으로 최신 실제 항목 8개만 유지합니다.
+- 다만 활성 manual test / review / blocker triage 루프가 진행 중이면, 현재 작업과 직접 연결된 relevant entry는 임시로 더 남길 수 있습니다.
+- 이 경우에도 오래된 항목은 가능한 한 `HANDOFF_ARCHIVE.md`로 옮기고, 3~5줄 요약을 `CURRENT_STATE.md > Recent History Summary`에 반영합니다.
+- relevant entry 기본 예시는 최신 실패 handoff, 최신 reviewer 반려, 최신 user confirmation request, 현재 manual gate를 연 원문입니다.
+
+### CURRENT_STATE 운영 규칙
+- `CURRENT_STATE.md`에는 `## Snapshot`, `## Next Recommended Agent`, `## Must Read Next`, `## Required Skills`, `## Active Scope`, `## Task Pointers`, `## Open Decisions / Blockers`, `## Latest Handoff Summary`, `## Recent History Summary`의 live snapshot 1세트만 둡니다.
+- 진행 경과를 시간순으로 남기고 싶으면 `TASK_LIST.md > ## Handoff Log`, 상단 status update 블록, 또는 `HANDOFF_ARCHIVE.md`로 보냅니다.
+- `CURRENT_STATE.md > Last Synced From Task / Handoff`는 최신 relevant handoff와 맞아야 합니다.
+- `CURRENT_STATE.md > Last Updated By / At`는 실제 마지막 갱신 주체와 시각을 즉시 덮어씁니다.
+- `CURRENT_STATE.md > Must Read Next`에는 다음 Agent가 지금 바로 읽어야 할 항목만 남깁니다.
+
+### Artifact Health Check
+- `AGENTS.md`, `.agents/rules/*.md`, `.agents/workflows/*.md`, `.agents/artifacts/*.md`를 수정했다면 handoff 전에 아래 validator를 실행합니다.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1"
+```
+
+- validator가 실패하면 handoff, lock 변경, closeout을 진행하지 않고 먼저 문서를 고칩니다.
+- validator warning은 즉시 release blocker는 아니지만, 이번 턴에 손댄 파일에서 나온 warning은 같은 턴에 함께 정리하는 것을 기본값으로 봅니다.
 
 ### 역할별 기본 읽기 상한
 - **Planner:** `CURRENT_STATE.md`, `REQUIREMENTS.md`, `TASK_LIST.md`, 필요 시 `IMPLEMENTATION_PLAN.md`, `ARCHITECTURE_GUIDE.md`
@@ -74,15 +94,30 @@ Planner는 아래 상태 체계를 지킵니다.
   - `Draft`
   - `Ready for Execution`
 
+### Requirement Change Control
+- 승인 후에도 요구사항, 완료 기준, acceptance criteria, out-of-scope 정의가 바뀔 수 있습니다. 이 경우 먼저 Planner를 다시 열고 `REQUIREMENTS.md`를 갱신합니다.
+- `REQUIREMENTS.md > Current Requirement Baseline`, `Requirements Sync Status`, `Approved Change Log`가 중간 변경의 단일 정본입니다.
+- 중간 변경이 승인되면 `CR-*` ID를 부여하고, 같은 턴에 최소한 `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`를 다시 맞춥니다.
+- 구조 영향이 없더라도 `ARCHITECTURE_GUIDE.md > Requirement Baseline`, `Change Sync Check`를 갱신해 최신 기준선을 확인한 흔적을 남깁니다.
+- 위 3개 문서가 맞춰진 뒤에만 `TASK_LIST.md`, `CURRENT_STATE.md`, `WALKTHROUGH.md`, `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`를 downstream sync 대상으로 진행합니다.
+- 릴리즈 범위 변경이면 `WALKTHROUGH.md`, `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`에도 같은 기준선을 반영합니다.
+- `Requirements Sync Status`가 `In Sync`가 아니면 Reviewer는 `Requirements Sync Check`를 `Planner Update Needed` 또는 `Fail`로 기록하고, Review Gate와 Deployment Gate를 닫지 않습니다.
+- Reviewer는 stale requirement 문서 때문에 생긴 불일치를 코드 결함과 같은 finding으로만 처리하지 말고, 문서 기준선 sync 누락을 별도 blocker로 승격합니다.
+
 Developer로 handoff 가능한 최소 조건:
 - `REQUIREMENTS.md > Status`가 `Approved`다.
+- `REQUIREMENTS.md > Requirements Sync Status`가 `In Sync`다.
 - `ARCHITECTURE_GUIDE.md > Status`가 `Approved`다.
+- `ARCHITECTURE_GUIDE.md > Requirement Baseline`이 최신 승인 기준선과 맞고 `Change Sync Check`가 `Synced` 또는 `No Architecture Change`다.
 - `IMPLEMENTATION_PLAN.md > Status`가 `Ready for Execution`이다.
+- `IMPLEMENTATION_PLAN.md > Requirement Baseline`이 최신 승인 기준선과 맞다.
 - `REQUIREMENTS.md`의 `In Scope`, `Out of Scope`가 비어 있지 않다.
 - 기능 요구사항별 acceptance criteria가 비어 있지 않다.
 - `Open Questions`가 비어 있거나 사용자 승인된 보류로 정리되어 있다.
+- 사용자 질문, 확인 요청, 정책 선택지가 답변 완료 또는 승인 대기 상태로 드러나 있다.
 - `ARCHITECTURE_GUIDE.md`의 도메인 경계와 승인된 예외가 채워져 있다.
 - `IMPLEMENTATION_PLAN.md`의 현재 iteration, 주요 Task ID, 검증 명령이 채워져 있다.
+- 승인된 `FR-*`, `NFR-*` ID가 `IMPLEMENTATION_PLAN.md > Requirement Trace` 또는 실행 Task에 연결되어 있다.
 - `TASK_LIST.md`의 활성 개발/테스트/리뷰 태스크마다 `Scope`가 적혀 있다.
 - 템플릿 placeholder나 기본 안내 문구가 남아 있지 않다.
 
@@ -132,6 +167,7 @@ repo-tracked 파일을 수정하기 직전 아래를 다시 읽습니다.
 - lock의 마지막 업데이트 후 12시간 초과
 - 최신 relevant handoff가 없음
 - 관련 파일에 최근 변경이 없음
+- `manual gate pending`, `user decision pending`, `Needs Clarification`, `user real-device confirmation pending`이 notes / blockers에 남아 있지 않음
 
 stale lock 회수 절차:
 1. `CURRENT_STATE.md`와 `TASK_LIST.md`를 다시 읽어 실제 중단 여부를 확인한다.
@@ -145,7 +181,14 @@ stale lock 회수 절차:
 ## 7. Security and Language Rules
 - API Key, Secret, Token, 개인정보를 코드와 문서에 하드코딩하지 않습니다.
 - 민감한 값과 사용자 데이터는 로그, 디버그 출력, 문서에 평문으로 남기지 않습니다.
+- `.agents/artifacts/*.md`, `.agents/rules/*.md`, `AGENTS.md`, `README.md`, `docs/*.md`는 기본적으로 UTF-8 (BOM 없음) 인코딩으로 유지합니다.
+- PowerShell, 스크립트, bulk sync로 위 문서를 다시 쓸 때는 명시적 UTF-8 읽기/쓰기를 사용하고 BOM이 생기지 않게 합니다.
 - 모든 아티팩트 문서는 한국어로 작성합니다.
+- 아티팩트 본문 설명, 요약, blocker, handoff 내용은 한국어를 기본으로 씁니다.
+- 아래 항목만 영어 유지 예외로 허용합니다.
+  - 코드 식별자, 파일명, 명령어, 경로, 모델명
+  - 표준 라벨 `Completed`, `Next`, `Notes`
+  - 요구사항/문서가 이미 고정한 section 이름과 상태값
 - 비개발자도 이해할 수 있는 평이한 일상 언어를 우선합니다.
 - 코드 식별자, 파일명, 명령어, 기술 용어는 영어를 유지할 수 있습니다.
 
@@ -188,10 +231,12 @@ handoff에는 bare phase number보다 `stage name + Task ID`를 우선해서 적
 ## 11. Handoff Protocol
 1. 수정 직전에 `Pre-Write Refresh`를 수행합니다.
 2. `TASK_LIST.md` 상태와 본인 lock row를 갱신합니다.
-3. `CURRENT_STATE.md`의 `Snapshot`, `Next Recommended Agent`, `Must Read Next`, `Active Scope`, `Task Pointers`, `Open Decisions / Blockers`, `Latest Handoff Summary`를 갱신합니다.
+3. `CURRENT_STATE.md`의 `Snapshot`, `Next Recommended Agent`, `Must Read Next`, `Required Skills`, `Active Scope`, `Task Pointers`, `Open Decisions / Blockers`, `Latest Handoff Summary`, `Recent History Summary`를 replace-in-place로 갱신합니다.
+   - 요구사항 변경이 있었다면 `Requirement Baseline`, `Requirements Sync Check`도 함께 갱신합니다.
 4. 오래된 handoff를 archive로 옮기기 전에, 열린 사용자 질문 / 기술 블로커 / 다음 Agent가 꼭 알아야 할 제약을 `CURRENT_STATE.md > Open Decisions / Blockers`와 `TASK_LIST.md > ## Blockers`로 승격합니다.
-5. 필요하면 오래된 handoff 항목을 `HANDOFF_ARCHIVE.md`로 옮기고 `Recent History Summary`를 갱신합니다.
-6. `TASK_LIST.md > ## Handoff Log`에 아래 형식으로 항목을 추가합니다.
+5. 필요하면 오래된 handoff 항목을 `HANDOFF_ARCHIVE.md`로 옮기고 `Recent History Summary`를 갱신합니다. 다만 활성 manual / review 루프와 직접 연결된 항목은 임시로 유지할 수 있습니다.
+6. `TASK_LIST.md > ## Handoff Log`에 아래 형식으로 항목을 추가한 뒤, `CURRENT_STATE.md > Last Synced From Task / Handoff`가 최신 relevant entry와 맞는지 다시 확인합니다.
+7. rules / workflows / artifacts를 수정했다면 `.agents/scripts/check_harness_docs.ps1`를 실행해 문서 구조 위반이 없는지 확인합니다.
 
 ```markdown
 ### [YYYY-MM-DD HH:MM] [현재 플랫폼/Agent] -> [다음 Agent]

@@ -8,20 +8,28 @@
 - 현재 stage:
 - 현재 iteration:
 - 이번 iteration의 주요 Task ID:
+- 이번 iteration의 Requirement IDs:
+- 현재 구현 기준 Requirement Baseline:
 - 지금 바로 필요한 검증:
+- 남아 있는 release gate (manual / dependency / compliance):
 - 다음 역할이 꼭 알아야 할 위험:
 
 ## Status
 - Document Status: Draft / Ready for Execution
 - Owner: Planner
 - Based On: `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`
+- Requirement Baseline:
+- Change Sync Check: Synced / Update Needed
 - Last Updated At: [YYYY-MM-DD HH:MM]
 
 ## Current Iteration
 - Iteration name:
 - Scope:
 - Main Task IDs:
+- Change requests in scope:
 - Exit criteria:
+- Manual / environment validation still open:
+- Dependency / compliance gate still open:
 
 ## Validation Commands
 ```bash
@@ -41,6 +49,19 @@
 - 단계적 릴리즈 여부:
 - 리스크가 큰 영역의 선행 검증 필요 여부:
 
+## Requirement Trace
+
+| Requirement ID | Covered By Task IDs | Notes |
+|---|---|---|
+| FR-01 | [예: DEV-01, TST-01] | [메모] |
+| NFR-01 | [예: DEV-02, REV-01] | [메모] |
+
+## Requirement Change Impact
+
+| Change ID | Updated Task IDs | Validation Updates | Sync Status | Notes |
+|---|---|---|---|---|
+| CR-01 | [예: DEV-03, TST-02, REV-01] | [테스트 / 리뷰 / 배포에 반영할 변경] | Synced / Update Needed | [메모] |
+
 ## Stage Plan
 
 | Stage | Goal | Primary Owner | Entry Criteria | Exit Criteria |
@@ -57,11 +78,13 @@
 ### Iteration 1
 - Scope:
 - Main Task IDs:
+- Requirement IDs:
 - Validation focus:
 
 ### Iteration 2
 - Scope:
 - Main Task IDs:
+- Requirement IDs:
 - Validation focus:
 
 ## Environment Matrix
@@ -71,6 +94,13 @@
 | Local | Development | [설명] |
 | Staging / Preview | Pre-release verification | [설명] |
 | Production | Final release | [설명] |
+
+## Validation Gates
+- 정적 검증 gate:
+- 수동 / 실환경 gate:
+- 보안 / dependency / compliance gate:
+- 요구사항 변경 동기화 gate:
+- release-ready 판단 기준:
 
 ## Risks and Mitigations
 
@@ -82,3 +112,4 @@
 - Designer required: Yes / No
 - Reviewer focus:
 - DevOps preflight notes:
+- Build artifact reuse / rebuild note:
