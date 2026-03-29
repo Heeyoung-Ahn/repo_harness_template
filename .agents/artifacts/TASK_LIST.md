@@ -15,29 +15,22 @@
 - 중간 요구사항 변경이 문서에 아직 반영되지 않았다면 리뷰/배포 태스크를 완료 처리하지 않고 blocker 또는 planner follow-up으로 남깁니다.
 - 작업 시작 시 상태를 `[-]`로 바꾸고 `## Active Locks`에 점유 정보를 추가합니다.
 - 작업 종료 시 상태를 갱신하고 lock을 제거합니다.
-- blocker triage, 실기기 검증, hotfix 같은 빠른 운영 루프에서는 `## Rolling Status Updates`에 최신 요약 블록 3개 이내로 유지합니다.
-- Rolling Status Update에는 `Owner`, `Status`, `Scope completed`, `Verification`, `Next`만 짧게 적고, 상세 원문은 `## Handoff Log`로 보냅니다.
-- `## Handoff Log`에는 기본적으로 최근 실제 항목 8개만 유지합니다.
+- turn-by-turn 진행 메모는 `CURRENT_STATE.md`에 남기고, `## Handoff Log`는 역할 전환, 세션 종료, lock handoff 때만 추가합니다.
+- `## Handoff Log`에는 기본적으로 최근 실제 항목 5개만 유지합니다.
 - 작업 시작 전에는 항상 `## Active Locks`와 본인 관련 Task row를 직접 읽습니다. `CURRENT_STATE.md`만 보고 건너뛰면 안 됩니다.
 - 다만 활성 manual test / review / blocker triage 루프와 직접 연결된 relevant entry는 loop가 닫힐 때까지 임시 유지할 수 있습니다.
 - `## Handoff Log`가 기본 유지 범위를 넘기거나 파일이 220줄을 넘으면 오래된 항목을 `HANDOFF_ARCHIVE.md`로 이동하고, 요약을 `CURRENT_STATE.md > Recent History Summary`에 반영합니다.
 - archive 전에 아직 열린 사용자 질문, 기술 블로커, 다음 Agent가 꼭 알아야 할 제약은 `## Blockers`와 `CURRENT_STATE.md > Open Decisions / Blockers`로 승격합니다.
 - `CURRENT_STATE.md`와 `TASK_LIST.md`의 현재 stage, active scope, next owner 정보는 서로 어긋나면 안 됩니다.
 - `## Active Locks`는 협업용 문서 lock이며 원자적 잠금이 아닙니다. 여러 AI를 동시에 쓸 때는 서로 다른 Task ID와 Scope를 먼저 배정하는 것을 기본 전제로 합니다.
+- review / deploy 판단은 `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`에서 최종 확정하고, 이 문서에는 같은 gate를 매 턴 복사하지 않습니다.
+- artifact harness debt는 release blocker와 분리해 별도 maintenance task 또는 blocker note로 관리합니다.
 
 ## Current Release Target
 - Version / Milestone:
 - Current Stage:
 - Current Focus:
 - Current Release Goal:
-
-## Rolling Status Updates
-### [YYYY-MM-DD HH:MM] [Role / Agent] Update
-- Owner:
-- Status:
-- Scope completed:
-- Verification:
-- Next:
 
 ## Next Version Backlog
 - [ ] BACKLOG-01 [다음 버전 후보 작업] — Scope: [제품/문서/기술 부채]

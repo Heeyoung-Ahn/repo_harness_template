@@ -145,13 +145,13 @@ $expoDeviceSkillText = [System.IO.File]::ReadAllText($pathMap.ExpoDeviceSkill, $
 
 $wordCount = ([regex]::Matches($currentStateText, '\S+')).Count
 if ($currentStateLines.Count -gt 120) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('CURRENT_STATE exceeds line limit: {0} lines.' -f $currentStateLines.Count)
+    Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('CURRENT_STATE exceeds line limit: {0} lines.' -f $currentStateLines.Count)
 }
 if ($wordCount -gt 800) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('CURRENT_STATE exceeds word limit: {0} words.' -f $wordCount)
+    Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('CURRENT_STATE exceeds word limit: {0} words.' -f $wordCount)
 }
 if ([regex]::IsMatch($currentStateText, '(?m)^## \d{4}-\d{2}-\d{2}\b')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/CURRENT_STATE.md' -Message 'CURRENT_STATE still contains dated update blocks.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message 'CURRENT_STATE still contains dated update blocks.'
 }
 
 foreach ($section in @(
@@ -166,7 +166,7 @@ foreach ($section in @(
     '## Recent History Summary'
 )) {
     if (-not $currentStateText.Contains($section)) {
-        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('Missing required CURRENT_STATE section: {0}' -f $section)
+        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('Missing CURRENT_STATE section: {0}' -f $section)
     }
 }
 
@@ -177,7 +177,7 @@ foreach ($requiredField in @(
     $labelUserConfirmPending
 )) {
     if (-not $currentStateText.Contains($requiredField)) {
-        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('Missing required CURRENT_STATE field: {0}' -f $requiredField)
+        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('Missing CURRENT_STATE field: {0}' -f $requiredField)
     }
 }
 
@@ -189,7 +189,7 @@ foreach ($requiredField in @(
     '## Approved Change Log'
 )) {
     if (-not $requirementsText.Contains($requiredField)) {
-        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/REQUIREMENTS.md' -Message ('REQUIREMENTS is missing required field or section: {0}' -f $requiredField)
+        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/REQUIREMENTS.md' -Message ('REQUIREMENTS is missing field or section: {0}' -f $requiredField)
     }
 }
 
@@ -200,7 +200,7 @@ foreach ($requiredField in @(
     '## Requirement Change Sync'
 )) {
     if (-not $architectureText.Contains($requiredField)) {
-        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/ARCHITECTURE_GUIDE.md' -Message ('ARCHITECTURE_GUIDE is missing required field or section: {0}' -f $requiredField)
+        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/ARCHITECTURE_GUIDE.md' -Message ('ARCHITECTURE_GUIDE is missing field or section: {0}' -f $requiredField)
     }
 }
 
@@ -210,7 +210,7 @@ foreach ($requiredField in @(
     '## Requirement Change Impact'
 )) {
     if (-not $implementationPlanText.Contains($requiredField)) {
-        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/IMPLEMENTATION_PLAN.md' -Message ('IMPLEMENTATION_PLAN is missing required field or section: {0}' -f $requiredField)
+        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/IMPLEMENTATION_PLAN.md' -Message ('IMPLEMENTATION_PLAN is missing field or section: {0}' -f $requiredField)
     }
 }
 
@@ -219,7 +219,7 @@ foreach ($requiredField in @(
     'Requirements Sync Check'
 )) {
     if (-not $walkthroughText.Contains($requiredField)) {
-        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/WALKTHROUGH.md' -Message ('WALKTHROUGH is missing required field: {0}' -f $requiredField)
+        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/WALKTHROUGH.md' -Message ('WALKTHROUGH is missing field: {0}' -f $requiredField)
     }
 }
 
@@ -228,7 +228,7 @@ foreach ($requiredField in @(
     'Requirements Sync Check'
 )) {
     if (-not $reviewReportText.Contains($requiredField)) {
-        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/REVIEW_REPORT.md' -Message ('REVIEW_REPORT is missing required field: {0}' -f $requiredField)
+        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/REVIEW_REPORT.md' -Message ('REVIEW_REPORT is missing field: {0}' -f $requiredField)
     }
 }
 
@@ -237,12 +237,15 @@ foreach ($requiredField in @(
     'Requirements Sync Gate'
 )) {
     if (-not $deploymentPlanText.Contains($requiredField)) {
-        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/DEPLOYMENT_PLAN.md' -Message ('DEPLOYMENT_PLAN is missing required field: {0}' -f $requiredField)
+        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/DEPLOYMENT_PLAN.md' -Message ('DEPLOYMENT_PLAN is missing field: {0}' -f $requiredField)
     }
 }
 
 $handoffPattern = '(?m)^### \[(?<timestamp>[^\]]+)\] \[(?<from>[^\]]+)\] -> \[(?<to>[^\]]+)\]$'
 $handoffMatches = [regex]::Matches($taskListText, $handoffPattern)
+if ($handoffMatches.Count -gt 5) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/TASK_LIST.md' -Message ('Handoff Log has {0} live entries. Keep it within 5 unless an active loop requires more.' -f $handoffMatches.Count)
+}
 if ($handoffMatches.Count -gt 0) {
     $latestHandoff = $null
     $latestTimestamp = [datetime]::MinValue
@@ -409,7 +412,7 @@ $reviewRequirementsSync = Get-LineFieldValue -Text $reviewReportText -Label 'Req
 $currentReviewGate = Get-LineFieldValue -Text $currentStateText -Label 'Review Gate'
 
 if (-not $deploymentPlanText.Contains('Reviewer Gate:')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/DEPLOYMENT_PLAN.md' -Message 'DEPLOYMENT_PLAN is missing the Reviewer Gate field.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/DEPLOYMENT_PLAN.md' -Message 'DEPLOYMENT_PLAN is missing the Reviewer Gate field.'
 }
 
 if ((Is-ConcreteValue $reviewReadiness) -and $reviewReadiness -eq 'Ready') {
@@ -476,66 +479,66 @@ if ((Is-ConcreteValue $readyToDeploy) -and $readyToDeploy -eq 'Yes') {
 }
 
 if (-not $workspaceText.Contains('replace-in-place snapshot')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the replace-in-place snapshot rule.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the replace-in-place snapshot rule.'
 }
 if (-not $workspaceText.Contains('check_harness_docs.ps1')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the validator execution rule.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the validator execution rule.'
 }
 if (-not $workspaceText.Contains('Requirement Trace')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the Requirement Trace rule.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the Requirement Trace rule.'
 }
 if (-not $workspaceText.Contains('REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the mandatory 3-document requirement-change sync rule.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the mandatory 3-document requirement-change sync rule.'
 }
 if (-not $workspaceText.Contains('manual gate pending') -or -not $workspaceText.Contains('user decision pending')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing stale-lock stop tokens.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing stale-lock stop tokens.'
 }
 
 if (-not $planWorkflowText.Contains($planQuestionPhrase)) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the user-question-first rule.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the user-question-first rule.'
 }
 if (-not $planWorkflowText.Contains('Requirement Trace')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the Requirement Trace rule.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the Requirement Trace rule.'
 }
 if (-not $planWorkflowText.Contains('No Architecture Change')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the architecture-sync acknowledgement rule.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the architecture-sync acknowledgement rule.'
 }
 if (-not $reviewWorkflowText.Contains('code_review_checklist')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/review.md' -Message 'review.md is missing the code_review_checklist skill reference.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/review.md' -Message 'review.md is missing the code_review_checklist skill reference.'
 }
 if (-not $reviewWorkflowText.Contains('dependency_audit')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/review.md' -Message 'review.md is missing the dependency_audit skill reference.'
 }
 if (-not $reviewWorkflowText.Contains('ARCHITECTURE_GUIDE.md') -or -not $reviewWorkflowText.Contains('Requirement Baseline Reviewed')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/review.md' -Message 'review.md is missing the requirement-baseline cross-check rule.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/review.md' -Message 'review.md is missing the requirement-baseline cross-check rule.'
 }
 if (-not $testWorkflowText.Contains('expo_real_device_test')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/test.md' -Message 'test.md is missing the expo_real_device_test skill reference.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/test.md' -Message 'test.md is missing the expo_real_device_test skill reference.'
 }
 if (-not $testWorkflowText.Contains('User Report Alignment Check')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/test.md' -Message 'test.md is missing the user report alignment step.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/test.md' -Message 'test.md is missing the user report alignment step.'
 }
 if (
     (-not $testWorkflowText.Contains('Observed Results')) -or
     (-not $testWorkflowText.Contains('Requested Follow-up')) -or
     (-not $testWorkflowText.Contains('Needs Clarification'))
 ) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/test.md' -Message 'test.md is missing the user report alignment buckets.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/test.md' -Message 'test.md is missing the user report alignment buckets.'
 }
 if (-not $testWorkflowText.Contains('Please confirm whether my understanding is correct.')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/test.md' -Message 'test.md is missing the user confirmation prompt.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/test.md' -Message 'test.md is missing the user confirmation prompt.'
 }
 if (-not $testWorkflowText.Contains('Needs Clarification')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/test.md' -Message 'test.md is missing the no-response clarification rule.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/test.md' -Message 'test.md is missing the no-response clarification rule.'
 }
 if (-not $testWorkflowText.Contains('Requirement Baseline Tested') -or -not $testWorkflowText.Contains('Requirements Sync Check')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/test.md' -Message 'test.md is missing the requirement-baseline test sync rule.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/test.md' -Message 'test.md is missing the requirement-baseline test sync rule.'
 }
 if (-not $handoffWorkflowText.Contains('check_harness_docs.ps1')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/handoff.md' -Message 'handoff.md is missing the validator step.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/handoff.md' -Message 'handoff.md is missing the validator step.'
 }
 if (-not $handoffWorkflowText.Contains('Requirement Baseline')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/handoff.md' -Message 'handoff.md is missing the requirement-baseline stale check.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/handoff.md' -Message 'handoff.md is missing the requirement-baseline stale check.'
 }
 if (
     (-not $deployWorkflowText.Contains('Release Pass')) -or
@@ -543,22 +546,22 @@ if (
     (-not $deployWorkflowText.Contains('ARCHITECTURE_GUIDE.md')) -or
     (-not $deployWorkflowText.Contains('Requirement Baseline for Release'))
 ) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/workflows/deploy.md' -Message 'deploy.md is missing cross-gate release checks.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/deploy.md' -Message 'deploy.md is missing cross-gate release checks.'
 }
 if (-not $expoDeviceSkillText.Contains('User Report Alignment Check')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/skills/expo_real_device_test/SKILL.md' -Message 'Expo Real Device Test skill is missing the user report alignment step.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/skills/expo_real_device_test/SKILL.md' -Message 'Expo Real Device Test skill is missing the user report alignment step.'
 }
 if (-not $expoDeviceSkillText.Contains('Please confirm whether my understanding is correct.')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/skills/expo_real_device_test/SKILL.md' -Message 'Expo Real Device Test skill is missing the user confirmation prompt.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/skills/expo_real_device_test/SKILL.md' -Message 'Expo Real Device Test skill is missing the user confirmation prompt.'
 }
 if (-not $expoDeviceSkillText.Contains('Needs Clarification')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/skills/expo_real_device_test/SKILL.md' -Message 'Expo Real Device Test skill is missing the no-response clarification rule.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/skills/expo_real_device_test/SKILL.md' -Message 'Expo Real Device Test skill is missing the no-response clarification rule.'
 }
 if (-not $implementationPlanText.Contains('## Requirement Trace')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/IMPLEMENTATION_PLAN.md' -Message 'IMPLEMENTATION_PLAN is missing the Requirement Trace section.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/IMPLEMENTATION_PLAN.md' -Message 'IMPLEMENTATION_PLAN is missing the Requirement Trace section.'
 }
 if (-not $architectureText.Contains('## Requirement Change Sync')) {
-    Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/ARCHITECTURE_GUIDE.md' -Message 'ARCHITECTURE_GUIDE is missing the Requirement Change Sync section.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/ARCHITECTURE_GUIDE.md' -Message 'ARCHITECTURE_GUIDE is missing the Requirement Change Sync section.'
 }
 
 $errors = @($findings | Where-Object { $_.Severity -eq 'ERROR' })

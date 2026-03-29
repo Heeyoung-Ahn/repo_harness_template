@@ -9,12 +9,15 @@
 
 ## 다시 사용할 때 기준
 1. 이 폴더를 그대로 열거나, 통째로 복제한 뒤 복제본을 엽니다.
-2. 시작 순서는 `AGENTS.md -> .agents/rules/workspace.md -> .agents/artifacts/CURRENT_STATE.md`입니다.
-3. 필요한 문서만 `CURRENT_STATE.md > Must Read Next`에 따라 추가로 읽습니다.
+2. 시작 순서는 `AGENTS.md -> .agents/rules/workspace.md -> .agents/artifacts/CURRENT_STATE.md -> .agents/artifacts/TASK_LIST.md > ## Active Locks`입니다.
+3. 그다음 필요한 문서만 `CURRENT_STATE.md > Must Read Next`에 따라 추가로 읽습니다.
 
 ## 주의할 점
 - 이 폴더는 `full_harness`처럼 validator 스크립트와 CI 구성이 포함된 full harness 패키지가 아닙니다.
 - 백업본 안의 `.git`은 당시 상태를 보존하기 위한 것이므로, 새 프로젝트에 그대로 가져갈지 여부는 별도로 판단해야 합니다.
+- 작업 중 turn-by-turn 상태 갱신은 `CURRENT_STATE.md` 위주로 처리하고, `TASK_LIST.md` handoff는 역할 전환이나 세션 종료 때만 추가하는 편이 가볍습니다.
+- 리뷰 결과는 `REVIEW_REPORT.md`에서 1회 정리하고, 배포 판단은 `DEPLOYMENT_PLAN.md`에서 직전에 1회 정리합니다.
+- artifact harness 정비는 가능하면 별도 maintenance 작업으로 분리하고, release blocker 여부만 명확히 남깁니다.
 - 운영 설명이 필요할 때만 `PROJECT_WORKFLOW_MANUAL.md`를 읽습니다.
 
 ## 운영 중 발견한 개선점 되돌리기

@@ -1,7 +1,13 @@
 # Deployment Plan
 
 > DevOps가 실제 배포를 준비하고 결과를 기록하는 문서입니다.  
-> 실제 비밀값은 이 문서에 쓰지 않고, 설정 위치와 절차만 기록합니다.
+> 실제 비밀값은 이 문서에 쓰지 않고, 설정 위치와 절차만 기록합니다.  
+> 이 문서는 배포 직전/직후 1회 갱신하는 release 실행 문서이며, turn-by-turn handoff 기록 용도로 쓰지 않습니다.
+
+## Update Policy
+- 작업 중간 상태나 handoff 메모는 `CURRENT_STATE.md`와 `TASK_LIST.md`에서 관리합니다.
+- 이 문서는 배포 직전 gate 판단과 배포 직후 결과 기록만 담당합니다.
+- harness 정비나 artifact schema debt는 현재 배포를 막는 경우에만 release blocker로 올리고, 아니면 별도 follow-up으로 분리합니다.
 
 ## Quick Read
 - 이번 배포 대상:
@@ -83,6 +89,11 @@
 - 수동 / 실환경 재검증 계획:
 - 운영 직후 확인할 항목:
 - release-ready 차단 요소:
+
+## Document / Harness Follow-up
+- Current release blocker 여부:
+- 분리한 정비 작업 / 후속 action:
+- 이번 배포에서 참고만 한 debt:
 
 ## Dependency / Compliance Summary
 - 감사 결과 요약:

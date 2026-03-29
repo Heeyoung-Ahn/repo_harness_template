@@ -1,6 +1,13 @@
 # Review Report
 
-> Reviewer가 구조, 보안, 품질, 릴리즈 리스크를 판단하는 문서입니다.
+> Reviewer가 구조, 보안, 품질, 릴리즈 리스크를 판단하는 문서입니다.  
+> 이 문서는 리뷰가 끝났을 때 1회 갱신하는 release 판단 문서이며, turn-by-turn handoff 기록 용도로 쓰지 않습니다.
+
+## Update Policy
+- 작업 중간 상태나 handoff 메모는 `CURRENT_STATE.md`와 `TASK_LIST.md`에서 관리합니다.
+- 이 문서는 리뷰 종료 시점의 판단만 기록합니다.
+- release blocker와 document / harness debt는 같은 표로 섞지 않습니다.
+- harness 정비가 필요하지만 현재 release를 막지 않으면 별도 follow-up으로 분리합니다.
 
 ## Quick Read
 - 정적 코드 리뷰 상태 / 릴리즈 준비 상태:
@@ -45,6 +52,11 @@
 - Dependency / compliance gate:
 - Requirement / artifact sync gate:
 - Deferred product decisions:
+
+## Document / Harness Debt
+- Current release blocker 여부:
+- 분리한 정비 작업 / 후속 action:
+- 이번 리뷰에서 참고만 한 debt:
 
 ## Architecture Checklist
 - [ ] `ARCHITECTURE_GUIDE.md`의 도메인 경계를 준수한다.
