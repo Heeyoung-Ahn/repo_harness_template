@@ -187,6 +187,8 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 - stale lock 규칙
 - Planner gate
 - handoff 규칙
+- 어떤 문서를 언제 갱신하는지
+- release blocker와 문서 정비 이슈를 어떻게 분리하는지
 
 ### Step 3. [`CURRENT_STATE.md`](.agents/artifacts/CURRENT_STATE.md) 읽기
 이 파일은 지금 시작하기 위한 요약판입니다.
@@ -264,6 +266,7 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 이 문서의 역할:
 - 다음 AI가 긴 문서를 다시 다 읽지 않게 해 줍니다.
 - 현재의 요약 상태를 한눈에 보여 줍니다.
+- 작업 중간 메모와 turn-by-turn 상태를 가장 가볍게 남기는 기본 위치입니다.
 
 하지만 주의:
 - 이 문서는 요약입니다.
@@ -282,6 +285,8 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 초보자가 꼭 기억할 것:
 - `CURRENT_STATE.md`는 요약
 - `TASK_LIST.md`는 실제 상태
+- `## Handoff Log`는 매 턴 쓰는 메모장이 아니라 역할 전환, 세션 종료, lock handoff 때 남기는 기록입니다.
+- 리뷰/배포 gate의 최종 판단은 여기서 매번 복사하지 않고 각각 `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`에서 확정합니다.
 
 ### 6.3 [`REQUIREMENTS.md`](.agents/artifacts/REQUIREMENTS.md)
 이 문서는 **무엇을 만들어야 하는지**를 정합니다.
@@ -333,6 +338,11 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 - 구조 문제
 - 보안 문제
 - 배포 차단 요소
+- 현재 release를 막는 문제와 나중에 정비할 document / harness debt의 구분
+
+초보자가 기억할 것:
+- 이 문서는 리뷰가 끝났을 때 1회 정리하는 release 판단 문서입니다.
+- 작업 중간 메모를 계속 쌓는 곳이 아닙니다.
 
 ### 6.8 [`DEPLOYMENT_PLAN.md`](.agents/artifacts/DEPLOYMENT_PLAN.md)
 이 문서는 **배포 준비와 결과 기록**입니다.
@@ -341,6 +351,11 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 - 배포 대상
 - 롤백 계획
 - 배포 결과
+- 현재 배포를 막는 gate와 나중에 분리해서 정비할 follow-up
+
+초보자가 기억할 것:
+- 이 문서는 배포 직전/직후 1회 갱신하는 release 실행 문서입니다.
+- 작업 중간 handoff를 계속 적는 문서가 아닙니다.
 
 ### 6.9 [`HANDOFF_ARCHIVE.md`](.agents/artifacts/HANDOFF_ARCHIVE.md)
 이 문서는 **오래된 handoff 원문 보관소**입니다.
@@ -401,15 +416,16 @@ Developer가 스스로 점검할 것:
 
 Developer가 갱신할 문서:
 - 코드 파일
-- 필요 시 `CURRENT_STATE.md`
-- `TASK_LIST.md`
-- handoff 기록
+- 작업 중에는 필요 시 `CURRENT_STATE.md`
+- lock을 잡거나 풀 때 `TASK_LIST.md`
+- 역할 전환, 세션 종료, lock handoff가 있을 때만 handoff 기록
 
 ### 7.3 Tester 단계
 Tester가 해야 할 일:
 - 현재 구현이 요구사항과 맞는지 확인합니다.
 - 성공했다고 추측하지 않습니다.
 - 실행 결과를 `WALKTHROUGH.md`에 남깁니다.
+- 진행 중 주의점이나 다음 확인 포인트는 먼저 `CURRENT_STATE.md`에 남깁니다.
 
 Tester가 확인할 것:
 - 실제 저장이 되는가
@@ -421,12 +437,16 @@ Reviewer가 해야 할 일:
 - 구조를 어기지 않았는지 봅니다.
 - 민감 정보 노출이 없는지 봅니다.
 - 배포 가능한 상태인지 판단합니다.
+- 리뷰가 끝났을 때 `REVIEW_REPORT.md`를 1회 갱신합니다.
+- 현재 release를 막는 문제와 문서 체계 정비 문제를 섞지 않습니다.
 
 ### 7.5 DevOps 또는 Documenter 단계
 상황에 따라 두 갈래로 갑니다.
 
 **배포가 필요한 경우**
 - DevOps가 `DEPLOYMENT_PLAN.md`를 기준으로 배포합니다.
+- 배포 직전 gate 판단과 배포 직후 결과를 1회씩 정리합니다.
+- 문서 체계 정비가 필요하더라도 현재 배포를 막지 않으면 별도 follow-up으로 분리합니다.
 
 **하루만 마감하는 경우**
 - Documenter 또는 `day_wrap_up` 흐름으로 문서 정리를 합니다.
@@ -505,6 +525,13 @@ Task ID가 다르더라도 안전하지 않을 수 있습니다.
 - `TASK_LIST.md` 관련 범위
 를 다시 읽습니다.
 
+특히 문서 작업에서는:
+- 작업 중 메모는 `CURRENT_STATE.md`
+- 역할 전환 기록은 `TASK_LIST.md > ## Handoff Log`
+- 리뷰 판단은 `REVIEW_REPORT.md`
+- 배포 판단은 `DEPLOYMENT_PLAN.md`
+처럼 문서 역할을 섞지 않는 것이 중요합니다.
+
 ### 9.4 언제 `CURRENT_STATE.md`를 그대로 믿지 말아야 하는가
 아래 중 하나면 stale(오래되어 신뢰하기 어려운 상태)로 봅니다.
 - `Sync Checked At`이 최신 handoff보다 과거
@@ -559,7 +586,8 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 - 다음 AI가 무엇을 이어받아야 하는지 모릅니다.
 
 방지:
-- 작업이 끝나면 상태 갱신과 handoff 기록을 항상 세트로 처리합니다.
+- 역할 전환, 세션 종료, lock handoff가 있을 때는 handoff 기록을 남깁니다.
+- 단순 중간 진행 메모는 `CURRENT_STATE.md`에 남기고, 모든 턴마다 `TASK_LIST.md` handoff를 쓰지는 않습니다.
 
 ### 실수 4. blocker를 archive로 보내 버림
 문제:
@@ -582,6 +610,25 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 
 방지:
 - 개발, 테스트, 리뷰 Task에는 Scope를 반드시 적습니다.
+
+### 실수 7. 리뷰/배포 문서를 중간 상태 메모장처럼 씀
+문제:
+- `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`를 자주 다시 맞추느라 토큰과 시간이 많이 듭니다.
+
+방지:
+- 작업 중 상태는 `CURRENT_STATE.md`
+- 역할 전환 기록은 `TASK_LIST.md`
+- 리뷰 종료 판단은 `REVIEW_REPORT.md` 1회
+- 배포 직전/직후 판단은 `DEPLOYMENT_PLAN.md` 1회
+처럼 문서 역할을 분리합니다.
+
+### 실수 8. release blocker와 문서 정비 이슈를 섞음
+문제:
+- 지금 배포를 막는 문제인지, 나중에 정리할 harness debt인지 판단이 흐려집니다.
+
+방지:
+- 현재 release를 막는 문제는 review / deploy gate에 올립니다.
+- schema mismatch, artifact 정리 같은 문서 체계 문제는 별도 maintenance follow-up으로 분리합니다.
 
 ---
 
@@ -627,12 +674,12 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 
 | 내가 맡은 역할 | 가장 먼저 볼 것 | 그 다음 볼 것 | 끝날 때 꼭 할 것 |
 |---|---|---|---|
-| Planner | `CURRENT_STATE.md`, `REQUIREMENTS.md`, `TASK_LIST.md` | 필요 시 `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md` | 문서 승인 상태 점검, `CURRENT_STATE`와 handoff 갱신 |
+| Planner | `CURRENT_STATE.md`, `REQUIREMENTS.md`, `TASK_LIST.md` | 필요 시 `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md` | 문서 승인 상태 점검, `CURRENT_STATE` 갱신, 필요 시 역할 전환 handoff |
 | Designer | `CURRENT_STATE.md`, `REQUIREMENTS.md > Quick Read`, `TASK_LIST.md` | `UI_DESIGN.md`, 필요 시 `ARCHITECTURE_GUIDE.md > Quick Read` | UI 규칙 기록, 다음 역할과 scope 반영 |
-| Developer | `CURRENT_STATE.md`, `TASK_LIST.md > ## Active Locks`, `REQUIREMENTS.md > Quick Read` | `ARCHITECTURE_GUIDE.md > Quick Read`, UI면 `UI_DESIGN.md` | lock 정리, `CURRENT_STATE`와 handoff 갱신 |
-| Tester | `CURRENT_STATE.md`, `TASK_LIST.md`, `REQUIREMENTS.md > Quick Read` | 필요 시 `IMPLEMENTATION_PLAN.md > Current Iteration`, `WALKTHROUGH.md` | 검증 결과 기록, blocker 승격, handoff 작성 |
-| Reviewer | `CURRENT_STATE.md`, `ARCHITECTURE_GUIDE.md > Quick Read`, `WALKTHROUGH.md` | `REQUIREMENTS.md > Quick Read`, `TASK_LIST.md` | 승인/반려 기록, 다음 역할 지정 |
-| DevOps | `CURRENT_STATE.md`, `DEPLOYMENT_PLAN.md > Quick Read`, `REVIEW_REPORT.md` | `TASK_LIST.md`, 필요 시 `README.md` | 배포 결과 기록, Documenter로 넘기기 |
+| Developer | `CURRENT_STATE.md`, `TASK_LIST.md > ## Active Locks`, `REQUIREMENTS.md > Quick Read` | `ARCHITECTURE_GUIDE.md > Quick Read`, UI면 `UI_DESIGN.md` | lock 정리, `CURRENT_STATE` 갱신, 역할 전환 시 handoff |
+| Tester | `CURRENT_STATE.md`, `TASK_LIST.md`, `REQUIREMENTS.md > Quick Read` | 필요 시 `IMPLEMENTATION_PLAN.md > Current Iteration`, `WALKTHROUGH.md` | 검증 결과 기록, blocker 승격, 역할 전환 시 handoff |
+| Reviewer | `CURRENT_STATE.md`, `ARCHITECTURE_GUIDE.md > Quick Read`, `WALKTHROUGH.md` | `REQUIREMENTS.md > Quick Read`, `TASK_LIST.md` | `REVIEW_REPORT.md` 1회 정리, release blocker와 harness debt 구분 |
+| DevOps | `CURRENT_STATE.md`, `DEPLOYMENT_PLAN.md > Quick Read`, `REVIEW_REPORT.md` | `TASK_LIST.md`, 필요 시 `README.md` | `DEPLOYMENT_PLAN.md` 직전/직후 기록, 배포 blocker와 follow-up 구분 |
 | Documenter | `CURRENT_STATE.md`, `TASK_LIST.md` | `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`, 필요 시 `HANDOFF_ARCHIVE.md` | 하루 정리 또는 버전 종료 정리 |
 
 ---
