@@ -13,16 +13,19 @@ trigger: always_on
 4. `CURRENT_STATE.md > Must Read Next`에 적힌 문서와 섹션만 추가로 읽기
 
 추가 규칙:
-- `PROJECT_WORKFLOW_MANUAL.md`와 `HANDOFF_ARCHIVE.md`는 기본 진입 문서가 아닙니다.
+- 이 저장소는 원본 `repo-level governance harness` 템플릿입니다.
+- `README.md`와 `PROJECT_WORKFLOW_MANUAL.md`는 사람용 설명 문서이며 운영 프로세스 입력 문서가 아닙니다.
+- `README.md`, `PROJECT_WORKFLOW_MANUAL.md`, `HANDOFF_ARCHIVE.md`는 기본 진입 문서가 아닙니다.
 - `CURRENT_STATE.md`는 replace-in-place snapshot이며, 실제 상태와 점유는 `TASK_LIST.md`가 우선합니다.
 - 요약층과 상세 문서가 충돌하면 상세 문서가 우선이며, 즉시 `CURRENT_STATE.md`를 정정합니다.
 - tracked 파일 수정, lock 변경, handoff 기록 전에는 `CURRENT_STATE.md`, `TASK_LIST.md`, 수정 대상 파일을 다시 확인합니다.
 
 ## 2. Runtime Priorities
 - 운영 규칙의 최상위 정본은 이 `workspace.md`입니다.
+- 이 템플릿은 repo 안의 요구사항, 구조, 계획, 상태, review/deploy gate를 문서와 validator로 관리하는 `repo-level governance harness`입니다.
 - 실제 프로젝트 상태의 단일 진실 공급원은 `.agents/artifacts/` 아래 문서입니다.
 - 역할 문서는 기본적으로 `Quick Read`, `Current Iteration`, `Latest Result`, `Approval Status`, `Must Read Next`에 적힌 범위만 읽습니다.
-- 설명용 문서는 `PROJECT_WORKFLOW_MANUAL.md`에 두고, 운영 규칙과 live state 문서에 중복해서 싣지 않습니다.
+- `README.md`와 `PROJECT_WORKFLOW_MANUAL.md`는 설명용 문서이며, 운영 규칙과 live state 문서의 정본이 아닙니다.
 
 ## 3. Context Budget
 - 기본 전략은 `CURRENT_STATE -> TASK_LIST relevant scope -> Must Read Next`입니다.

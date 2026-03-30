@@ -46,7 +46,7 @@
 - 2. [필수 문서 경로 + 읽어야 할 섹션]
 - 3. [필수 문서 경로 + 읽어야 할 섹션]
 - Optional follow-up:
-- Do not read by default: `PROJECT_WORKFLOW_MANUAL.md`, `HANDOFF_ARCHIVE.md`
+- Do not read by default: `README.md`, `PROJECT_WORKFLOW_MANUAL.md`, `HANDOFF_ARCHIVE.md`
 
 ## Required Skills
 - Tester Agent: [필요할 때만 작성]

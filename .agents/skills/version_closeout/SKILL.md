@@ -50,4 +50,5 @@ description: 리뷰와 배포가 완료된 버전을 아카이빙하고, 현재 
 새 `CURRENT_STATE.md`에는 다음 시작 역할과 `Must Read Next`를 적습니다.
 
 ### 5단계: 릴리즈 요약 반영
-- `CHANGELOG.md` 또는 `README.md`에 핵심 변경 사항을 기록합니다.
+- `CHANGELOG.md`에 핵심 변경 사항을 기록합니다.
+- `README.md`는 저장소 소개 문서이므로, 사용자가 명시적으로 요청한 경우에만 함께 갱신합니다.

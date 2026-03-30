@@ -1,7 +1,7 @@
 # Universal Agents Template Project Workflow Manual
 
-> 이 매뉴얼의 상대 경로는 `repo_harness` 폴더 자체를 작업 루트로 열었을 때를 기준으로 작성되어 있습니다.  
-> 이 폴더는 repo-level harness 백업본이므로, 다시 사용할 때도 이 구조를 그대로 유지한 채 루트로 열어야 합니다.
+> 이 매뉴얼의 상대 경로는 `repo_harness_template` 폴더 자체를 작업 루트로 열었을 때를 기준으로 작성되어 있습니다.  
+> 이 폴더는 원본 `repo-level governance harness` 템플릿이므로, 이 구조를 그대로 유지한 채 루트로 열어야 합니다.
 
 ## 이 문서는 무엇이고, 무엇이 아닌가
 이 문서는 **처음 개발을 해 보는 문과생도 이 저장소를 따라가며 작업할 수 있게 도와주는 튜토리얼 매뉴얼**입니다.
@@ -16,6 +16,8 @@
 - 새 운영 규칙을 만들지 않습니다.
 - `workspace.md`보다 더 강한 지시를 내리지 않습니다.
 - 기본 진입 문서 역할을 하지 않습니다.
+- 운영 프로세스의 입력 문서로 사용되지 않습니다.
+- `README.md`를 운영 정본처럼 해석하게 만들지 않습니다.
 
 가장 중요한 원칙:
 - **운영 규칙의 정본은 [`workspace.md`](.agents/rules/workspace.md)입니다.**
@@ -245,6 +247,7 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 6. 내 역할 workflow
 
 그리고 여기서 아주 중요한 사실:
+- **`README.md`와 `PROJECT_WORKFLOW_MANUAL.md`는 운영 프로세스 입력 문서가 아닙니다.**
 - **`PROJECT_WORKFLOW_MANUAL.md`는 기본적으로 읽지 않아도 됩니다.**
 - 이 문서는 이해를 돕는 설명서이지, 시작 절차의 필수 문서는 아닙니다.
 
@@ -679,7 +682,7 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 | Developer | `CURRENT_STATE.md`, `TASK_LIST.md > ## Active Locks`, `REQUIREMENTS.md > Quick Read` | `ARCHITECTURE_GUIDE.md > Quick Read`, UI면 `UI_DESIGN.md` | lock 정리, `CURRENT_STATE` 갱신, 역할 전환 시 handoff |
 | Tester | `CURRENT_STATE.md`, `TASK_LIST.md`, `REQUIREMENTS.md > Quick Read` | 필요 시 `IMPLEMENTATION_PLAN.md > Current Iteration`, `WALKTHROUGH.md` | 검증 결과 기록, blocker 승격, 역할 전환 시 handoff |
 | Reviewer | `CURRENT_STATE.md`, `ARCHITECTURE_GUIDE.md > Quick Read`, `WALKTHROUGH.md` | `REQUIREMENTS.md > Quick Read`, `TASK_LIST.md` | `REVIEW_REPORT.md` 1회 정리, release blocker와 harness debt 구분 |
-| DevOps | `CURRENT_STATE.md`, `DEPLOYMENT_PLAN.md > Quick Read`, `REVIEW_REPORT.md` | `TASK_LIST.md`, 필요 시 `README.md` | `DEPLOYMENT_PLAN.md` 직전/직후 기록, 배포 blocker와 follow-up 구분 |
+| DevOps | `CURRENT_STATE.md`, `DEPLOYMENT_PLAN.md > Quick Read`, `REVIEW_REPORT.md` | `TASK_LIST.md`, 필요 시 별도 배포 가이드 | `DEPLOYMENT_PLAN.md` 직전/직후 기록, 배포 blocker와 follow-up 구분 |
 | Documenter | `CURRENT_STATE.md`, `TASK_LIST.md` | `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`, 필요 시 `HANDOFF_ARCHIVE.md` | 하루 정리 또는 버전 종료 정리 |
 
 ---

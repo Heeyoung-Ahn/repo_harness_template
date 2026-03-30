@@ -6,15 +6,15 @@
 
 | 변경 유형 | 우선 갱신 문서 | 함께 볼 문서 | 메모 |
 |---|---|---|---|
-| 제품 동작, 범위, 정책이 바뀜 | `REQUIREMENTS.md` | `TASK_LIST.md`, `README.md`, `docs/*` | 구현 사실보다 제품 계약이 먼저다. |
+| 제품 동작, 범위, 정책이 바뀜 | `REQUIREMENTS.md` | `TASK_LIST.md`, `docs/*`, 명시적으로 요청된 외부 문서 | 구현 사실보다 제품 계약이 먼저다. |
 | 도메인 경계, 저장 구조, 서비스 책임이 바뀜 | `ARCHITECTURE_GUIDE.md` | `IMPLEMENTATION_PLAN.md`, `REVIEW_REPORT.md` | 승인 없는 구조 변경이면 Planner 재개입을 검토한다. |
-| IA, 탭 구조, 화면 동선, 설정 플로우가 바뀜 | `UI_DESIGN.md` | `REQUIREMENTS.md`, `WALKTHROUGH.md`, `README.md` | UI가 사용자 문서에 노출되면 `docs/*`도 같이 본다. |
+| IA, 탭 구조, 화면 동선, 설정 플로우가 바뀜 | `UI_DESIGN.md` | `REQUIREMENTS.md`, `WALKTHROUGH.md`, `docs/*` | UI가 외부 문서에 노출되면 명시적으로 요청된 문서만 같이 본다. |
 | 구현 범위, 다음 단계, blocker 상태가 바뀜 | `IMPLEMENTATION_PLAN.md`, `TASK_LIST.md` | `WALKTHROUGH.md` | 진행률과 남은 게이트를 실제 상태에 맞춘다. |
 | 자동 테스트, smoke, 수동 검증 결과가 생김 | `WALKTHROUGH.md` | `TASK_LIST.md` | 실제 수행 명령, 결과, 미완료 검증을 구분해서 적는다. |
 | 리뷰 승인/반려, 구조 리스크가 생김 | `REVIEW_REPORT.md` | `ARCHITECTURE_GUIDE.md`, `TASK_LIST.md` | 리뷰 의견과 구현 수정 요구를 분리한다. |
-| 배포 절차, 배포 상태, 릴리즈 체크가 바뀜 | `DEPLOYMENT_PLAN.md` | `README.md`, `CHANGELOG.md` | 배포 전 준비와 실제 배포 완료를 섞지 않는다. |
-| AI 모델, 프롬프트, 기능 설명이 바뀜 | `ai_features_summary.md` | `REQUIREMENTS.md`, `README.md`, `docs/*` | 내부 모델 변경이 사용자 경험에 영향이 있으면 요구사항/문서도 같이 본다. |
-| 설정/정책/신뢰 안내 문구가 바뀜 | `REQUIREMENTS.md`, `README.md`, `docs/*` | `WALKTHROUGH.md`, `REVIEW_REPORT.md` | 실제 데이터 흐름과 문구가 어긋나지 않아야 한다. |
+| 배포 절차, 배포 상태, 릴리즈 체크가 바뀜 | `DEPLOYMENT_PLAN.md` | `CHANGELOG.md`, 별도 배포 가이드 | 배포 전 준비와 실제 배포 완료를 섞지 않는다. |
+| AI 모델, 프롬프트, 기능 설명이 바뀜 | `ai_features_summary.md` | `REQUIREMENTS.md`, `docs/*`, 명시적으로 요청된 외부 문서 | 내부 모델 변경이 사용자 경험에 영향이 있으면 요구사항/문서도 같이 본다. |
+| 설정/정책/신뢰 안내 문구가 바뀜 | `REQUIREMENTS.md`, `docs/*`, 명시적으로 요청된 외부 문서 | `WALKTHROUGH.md`, `REVIEW_REPORT.md` | 실제 데이터 흐름과 문구가 어긋나지 않아야 한다. |
 
 ## 2. 문서별 체크포인트
 
@@ -58,9 +58,10 @@
 
 ### `README.md`, `docs/*`
 
-- 사용자나 다음 작업자가 바로 보는 설명만 유지한다.
+- `README.md`와 `PROJECT_WORKFLOW_MANUAL.md`는 비운영 문서다.
+- 운영 프로세스의 입력 문서로 사용하지 않는다.
+- 사용자 노출 또는 저장소 소개를 위해 명시적으로 요청된 경우에만 갱신한다.
 - 내부 handoff 메모를 섞지 않는다.
-- 현재 버전, 기능 설명, 실행 방법, 정책 링크가 실제 상태와 맞는지 본다.
 
 ### `ai_features_summary.md`
 
@@ -73,7 +74,7 @@
 2. 계약 문서(`REQUIREMENTS`, `ARCHITECTURE`, `UI_DESIGN`)를 고친다.
 3. 실행 문서(`IMPLEMENTATION_PLAN`, `TASK_LIST`)를 현재 단계에 맞춘다.
 4. 증빙 문서(`WALKTHROUGH`, `REVIEW_REPORT`, `DEPLOYMENT_PLAN`)를 실제 실행 결과로 채운다.
-5. 외부 노출 문서(`README`, `docs`, `ai_features_summary`)를 맞춘다.
+5. 외부 노출 문서(`docs`, `ai_features_summary`, 명시적으로 요청된 외부 문서)를 맞춘다.
 
 ## 4. 이 스킬을 쓰지 말아야 하는 경우
 

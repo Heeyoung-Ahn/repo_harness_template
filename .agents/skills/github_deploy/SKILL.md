@@ -1,6 +1,6 @@
 ---
 name: GitHub Deploy
-description: Git 초기화, README/CHANGELOG 업데이트, 코드 푸시 및 버전 태깅을 수행하는 표준 스킬
+description: Git 초기화, CHANGELOG 정리, 코드 푸시 및 버전 태깅을 수행하는 표준 스킬. `README.md`는 비운영 문서이므로 명시적으로 요청된 경우에만 함께 다룬다.
 ---
 
 # GitHub Deploy Skill
@@ -23,7 +23,7 @@ description: Git 초기화, README/CHANGELOG 업데이트, 코드 푸시 및 버
 코드를 커밋하기 전, 해당 배포에 반영된 내용을 문서화합니다.
 - 패키지 버전(`package.json` 등)을 배포 버전에 맞게 수정합니다.
 - `CHANGELOG.md` 파일 상단에 최신 버전, 날짜, 변경 사항(구현된 기능, 수정된 버그 등)을 명확하게 업데이트합니다.
-- 실행 방법, 환경 변수 등 변경된 내용이 있다면 `README.md`를 함께 업데이트합니다.
+- 저장소 소개나 외부 노출 설명까지 함께 바꿔야 한다는 명시적 요청이 있을 때만 `README.md`를 업데이트합니다.
 
 ### 3단계: 코드 검증 및 포매팅
 - 필요 시 `npm run lint` 등 정적 분석 및 포매팅 스크립트를 실행하여 코드를 정리합니다.

@@ -15,7 +15,7 @@ description: 인프라 및 배포(DevOps) 에이전트 워크플로우
 - `DEPLOYMENT_PLAN.md > Quick Read`
 - `REVIEW_REPORT.md > Approval Status`
 - `TASK_LIST.md`의 배포 대상 Scope
-- 필요 시 `README.md` 또는 `CHANGELOG.md`
+- 필요 시 `CHANGELOG.md` 또는 별도 배포 가이드
 
 ### Step 2: 배포 전 사전 점검
 - 현재 버전, 커밋 범위, 환경 변수, 롤백 경로를 확인합니다.
