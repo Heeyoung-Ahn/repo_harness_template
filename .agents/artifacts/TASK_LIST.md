@@ -79,6 +79,7 @@
 ## Workflow Stage: Documentation and Closeout
 - [ ] DOC-01 day_wrap_up 또는 같은 버전 내 문서 정리 준비 — Scope: `CURRENT_STATE.md`, `TASK_LIST.md`, 관련 아티팩트
 - [ ] DOC-02 version_closeout / Documenter 정리 — Scope: archive, `CURRENT_STATE.md`, `HANDOFF_ARCHIVE.md`
+- [x] DOC-03 Harness Admin App 운영 가이드 상세화 및 튜토리얼 동기화 — Scope: `docs/HARNESS_ADMIN_APP_GUIDE.md`, `PROJECT_WORKFLOW_MANUAL.md`
 
 ## Blockers
 - [없으면 비워둠]
