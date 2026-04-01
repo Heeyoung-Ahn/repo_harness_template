@@ -581,7 +581,9 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 중요한 점:
 - Remote approval은 **긴 대화를 대신하는 기능이 아닙니다.**
 - 모든 승인을 모바일로 보내는 것이 아니라, **짧고 안전한 결정만** 모바일 승인으로 넘깁니다.
-- 이 저장소에서는 주로 [`.agents/scripts/open_user_gate.ps1`](.agents/scripts/open_user_gate.ps1), [`.agents/scripts/watch_user_gates.ps1`](.agents/scripts/watch_user_gates.ps1), [`.agents/skills/remote_approval_notify/SKILL.md`](.agents/skills/remote_approval_notify/SKILL.md) 조합으로 사용합니다.
+- 이 저장소에서는 주로 [`.agents/scripts/open_user_gate.ps1`](.agents/scripts/open_user_gate.ps1), [`.agents/scripts/invoke_user_gate.ps1`](.agents/scripts/invoke_user_gate.ps1), [`.agents/skills/remote_approval_notify/SKILL.md`](.agents/skills/remote_approval_notify/SKILL.md) 조합으로 사용합니다.
+- 표준 운영 경로는 별도 operator app인 [docs/HARNESS_ADMIN_APP_GUIDE.md](docs/HARNESS_ADMIN_APP_GUIDE.md)입니다.
+- repo 안에는 템플릿 계약만 두고, 사용자별 운영 설정과 스케줄러 제어는 앱이 맡습니다.
 
 ### 10.1 언제 쓰는가
 잘 맞는 상황:
@@ -623,7 +625,7 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 4. 시스템은 현재 사용자 상태를 봅니다.
    - `present`면 `local-first`
    - `away`면 즉시 모바일 전송
-5. `watch_user_gates.ps1`가 1분 주기로 state를 확인합니다.
+5. `Harness Admin App` watcher가 1분 주기로 state를 확인합니다.
    - grace가 지나면 자동 fallback
    - Telegram 응답이 오면 state를 `resolved`로 갱신
 6. `hard-block`이면 모바일로 보내지 않고 사용자 응답 대기 blocker로 유지합니다.
@@ -635,6 +637,18 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 ### 10.3 필요한 구성 요소
 Remote approval은 네 부분으로 나뉩니다.
 
+**0. operator app**
+- 표준 경로: [docs/HARNESS_ADMIN_APP_GUIDE.md](docs/HARNESS_ADMIN_APP_GUIDE.md)
+- 역할:
+  - Telegram / ntfy 설정
+  - monitored repo 등록
+  - away mode 전환
+  - watcher 설치 / 제거 / 즉시 실행
+  - repo별 approval state 요약 모니터링
+- 원칙:
+  - repo 안에는 템플릿만 둡니다.
+  - 사용자별 secret, 작업 스케줄러, monitored repo 목록은 user-level runtime과 앱이 관리합니다.
+
 **1. gate router**
 - 담당 스크립트: [`.agents/scripts/open_user_gate.ps1`](.agents/scripts/open_user_gate.ps1)
 - 역할:
@@ -642,16 +656,14 @@ Remote approval은 네 부분으로 나뉩니다.
   - present / away 상태에 맞는 라우팅
 
 **2. watcher**
-- 담당 스크립트: [`.agents/scripts/watch_user_gates.ps1`](.agents/scripts/watch_user_gates.ps1)
+- 담당 주체: `Harness Admin App`
 - 역할:
   - grace 이후 자동 fallback
   - Telegram 응답 polling
   - repo registry 기준으로 여러 프로젝트를 함께 감시
 
 **3. 사용자 상태와 repo registry**
-- 담당 스크립트:
-  - [`.agents/scripts/set_user_presence.ps1`](.agents/scripts/set_user_presence.ps1)
-  - [`.agents/scripts/register_repo_for_approval_watch.ps1`](.agents/scripts/register_repo_for_approval_watch.ps1)
+- 담당 주체: `Harness Admin App`
 - 역할:
   - 사용자가 지금 PC 앞에 있는지 (`present`) 자리를 비웠는지 (`away`) 표시
   - watcher가 볼 프로젝트 목록 관리
@@ -669,6 +681,9 @@ Remote approval은 네 부분으로 나뉩니다.
   - 기본값은 `%USERPROFILE%\\.harness-runtime`
 - `HARNESS_LOCAL_RESPONSE_GRACE_MINUTES`
   - 로컬 질문 후 모바일 fallback 전까지 기다릴 시간
+- `HARNESS_NOTIFICATION_CHANNEL_MODE`
+  - `telegram-only` 또는 `telegram-and-ntfy`
+  - 기본값은 `telegram-only`
 - `HARNESS_NTFY_SERVER`
   - 기본값은 `https://ntfy.sh`
 - `HARNESS_NTFY_TOPIC`
@@ -679,50 +694,29 @@ Remote approval은 네 부분으로 나뉩니다.
   - 승인 응답을 받을 개인 chat id
 
 초보자는 이렇게 이해하면 됩니다.
+- Harness Admin App은 “운영 제어판”
 - `open_user_gate.ps1`는 “승인을 어느 길로 보낼지 정하는 접수 창구”
-- `watch_user_gates.ps1`는 “대기 중인 승인들을 계속 확인하는 관리자”
+- 앱 watcher는 “대기 중인 승인들을 계속 확인하는 관리자”
 - Telegram은 “실제 승인 버튼”
 
 ### 10.5 기본 사용 순서
 Remote approval은 보통 아래 순서로 사용합니다.
 
-**Step 1. 먼저 watcher 대상 repo로 등록**
+**Step 0. 표준 경로는 앱을 먼저 연다**
+- [docs/HARNESS_ADMIN_APP_GUIDE.md](docs/HARNESS_ADMIN_APP_GUIDE.md)를 따라 앱을 실행합니다.
+- 앱의 `Setup Wizard`에서 Telegram / ntfy를 먼저 설정합니다.
+- 앱의 `Projects` 탭에서 watcher 대상 repo를 등록합니다.
+- 앱의 `Install Watcher`로 Windows 작업 스케줄러 watcher를 설치합니다.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File ".agents/scripts/register_repo_for_approval_watch.ps1" `
-  -Action add
-```
+**Step 1. 자리를 비울 때 Away mode 켜기**
 
-**Step 2. watcher를 Task Scheduler에 설치**
+앱의 `Presence` 탭에서 `Away 30/60/120 min` 또는 custom away duration을 사용합니다.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File ".agents/scripts/install_approval_watcher_task.ps1" `
-  -Force
-```
-
-기본 설치는 hidden window로 등록되므로, 1분 주기 watcher가 돌아도 콘솔 창이 뜨지 않습니다.
-디버깅이 필요할 때만 `-VisibleWindow`를 추가합니다.
-
-**Step 3. 자리를 비울 때 away mode 켜기**
-
-```powershell
-powershell -ExecutionPolicy Bypass -File ".agents/scripts/set_user_presence.ps1" `
-  -Mode away `
-  -DurationMinutes 120
-```
-
-복귀하면:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File ".agents/scripts/set_user_presence.ps1" `
-  -Mode present
-```
-
-**Step 4. 먼저 artifact에 gate를 기록**
+**Step 2. 먼저 artifact에 gate를 기록**
 - 예: `CURRENT_STATE.md`에 `Needs User Decision`을 남깁니다.
 - 이유: 나중에 다른 AI가 들어와도 “지금 왜 멈춰 있는지” 알아야 하기 때문입니다.
 
-**Step 5. `remote-choice` gate 열기**
+**Step 3. `remote-choice` gate 열기**
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File ".agents/scripts/open_user_gate.ps1" `
@@ -737,7 +731,7 @@ powershell -ExecutionPolicy Bypass -File ".agents/scripts/open_user_gate.ps1" `
 
 present mode면 보통 `local_wait`로 시작하고, away mode면 바로 모바일 전송으로 이어집니다.
 
-**Step 6. watcher가 나머지를 이어받음**
+**Step 4. watcher가 나머지를 이어받음**
 - 사용자가 응답하지 않으면 watcher가 grace 이후 자동 fallback합니다.
 - Telegram 응답이 오면 watcher가 `resolved`로 반영합니다.
 

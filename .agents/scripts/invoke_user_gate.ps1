@@ -8,6 +8,7 @@ param(
     [string]$DecisionId,
     [string]$DefaultAction = 'hold',
     [string]$DeliveryMode = $env:HARNESS_REMOTE_APPROVAL_MODE,
+    [string]$NotificationChannelMode = $env:HARNESS_NOTIFICATION_CHANNEL_MODE,
     [string]$LocalPromptedAt,
     [int]$LocalResponseGraceMinutes = 10,
     [string]$NtfyServer = $env:HARNESS_NTFY_SERVER,
@@ -45,7 +46,7 @@ function Read-Utf8Json {
         return $null
     }
 
-    return $json | ConvertFrom-Json -Depth 8
+    return $json | ConvertFrom-Json
 }
 
 function Write-Utf8Json {
@@ -461,6 +462,18 @@ if ([string]::IsNullOrWhiteSpace($NtfyServer)) {
 if ([string]::IsNullOrWhiteSpace($DeliveryMode)) {
     $DeliveryMode = 'local-first'
 }
+$NotificationChannelMode = if ([string]::IsNullOrWhiteSpace($NotificationChannelMode)) {
+    'telegram-only'
+} else {
+    $NotificationChannelMode.Trim().ToLowerInvariant()
+}
+$channelModes = @('telegram-only', 'telegram-and-ntfy')
+if ($channelModes -notcontains $NotificationChannelMode) {
+    throw "HARNESS_NOTIFICATION_CHANNEL_MODE must be one of: telegram-only, telegram-and-ntfy. Received: $NotificationChannelMode"
+}
+if ($NotificationChannelMode -eq 'telegram-only') {
+    $SkipNtfy = $true
+}
 
 $DeliveryMode = $DeliveryMode.Trim().ToLowerInvariant()
 if (@('local-first', 'always', 'never') -notcontains $DeliveryMode) {
@@ -529,6 +542,7 @@ $state = [ordered]@{
     options                       = @($optionObjects)
     default_action                = $DefaultAction
     delivery_mode                 = $DeliveryMode
+    notification_channel_mode     = $NotificationChannelMode
     local_response_grace_minutes  = $LocalResponseGraceMinutes
     status                        = 'initializing'
     channels                      = @()

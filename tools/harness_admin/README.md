@@ -1,0 +1,45 @@
+# Harness Admin App
+
+`Harness Admin App`는 repo-local 템플릿 바깥의 운영 작업을 담당하는 Windows 전용 관리자 앱입니다.
+
+앱이 다루는 영역:
+
+- Windows 작업 스케줄러 watcher 설치 / 제거 / 즉시 실행
+- monitored project 목록 관리
+- present / away mode 전환
+- Telegram / ntfy 설정
+- `local_wait`, `pending`, `timeout`, `send_failed` 상태 모니터링
+
+repo 안의 canonical gate contract는 그대로 유지합니다.
+
+- `.agents/scripts/open_user_gate.ps1`
+- `.agents/scripts/invoke_user_gate.ps1`
+- `.agents/runtime/approvals/*.json`
+
+## Source Run
+
+```powershell
+Set-Location tools/harness_admin
+python -m harness_admin
+```
+
+Watcher 1회 실행:
+
+```powershell
+Set-Location tools/harness_admin
+python -m harness_admin --watch-once
+```
+
+## Build
+
+빌드 전 `PyInstaller`가 필요합니다.
+
+```powershell
+Set-Location tools/harness_admin
+python -m pip install .[build]
+powershell -ExecutionPolicy Bypass -File .\build_exe.ps1
+```
+
+빌드 결과:
+
+- `tools/harness_admin/dist/harness-admin.exe`

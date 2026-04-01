@@ -90,10 +90,9 @@ powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1
 - 코드 식별자, 파일명, 경로, 명령어, 고정 상태 라벨은 영어를 유지할 수 있습니다.
 
 ## 9. Unattended Approval Routing
-- 기본 presence mode는 `present`입니다. 사용자가 자리를 비울 때만 `.agents/scripts/set_user_presence.ps1 -Mode away`로 전환하고, 복귀하면 `present`로 되돌립니다.
-- presence와 repo registry는 user-level runtime (`%USERPROFILE%\.harness-runtime` 기본값)에서 관리합니다. repo-tracked artifact에 secret이나 개인 채널 값을 남기지 않습니다.
-- unattended watcher는 `.agents/scripts/watch_user_gates.ps1`를 1분 주기로 실행하는 Windows Task Scheduler 작업을 기준으로 운용합니다.
-- repo를 watcher 대상에 넣을 때는 `.agents/scripts/register_repo_for_approval_watch.ps1 -Action add`를 사용합니다.
+- 기본 presence mode는 `present`입니다. 사용자가 자리를 비울 때와 복귀할 때의 전환은 `Harness Admin App`에서 관리합니다.
+- presence, repo registry, Telegram offset은 user-level runtime (`%USERPROFILE%\.harness-runtime` 기본값)에서 관리합니다. repo-tracked artifact에 secret이나 개인 채널 값을 남기지 않습니다.
+- unattended watcher의 설치, 제거, 주기 실행 제어는 `Harness Admin App`의 operator layer 책임입니다. repo template 안에 별도 watcher / scheduler 제어 스크립트를 다시 추가하지 않습니다.
 - `remote-choice` gate는 `.agents/scripts/open_user_gate.ps1`가 canonical entrypoint입니다. low-level `.agents/scripts/invoke_user_gate.ps1`는 delivery primitive이며 직접 사용은 예외 상황으로 제한합니다.
 - `safe-auto` 작업은 artifact health를 회복하는 범위에서만 자동 적용합니다. 코드/데이터/배포 상태를 바꾸는 실제 제품 동작은 여기에 포함하지 않습니다.
 - `hard-block`은 runtime state에 남길 수 있지만, 작업 재개 전까지는 반드시 명시적 사용자 응답 또는 secret materialization이 필요합니다.

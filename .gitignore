@@ -1,1 +1,7 @@
 .agents/runtime/
+tools/harness_admin/.venv/
+tools/harness_admin/build/
+tools/harness_admin/dist/
+tools/harness_admin/__pycache__/
+tools/harness_admin/harness_admin/__pycache__/
+tools/harness_admin/tests/__pycache__/

@@ -7,6 +7,12 @@ description: Use this skill when a task enters `Needs User Decision`, `manual ga
 
 이 스킬은 하네스 템플릿에서 `사용자 확인이 필요한 짧은 gate`를 unattended-friendly 방식으로 다룰 때 사용합니다.
 
+표준 운영 경로는 `Harness Admin App`입니다.
+
+- repo 안에는 `open_user_gate.ps1`, `invoke_user_gate.ps1`, approval state 같은 canonical contract만 둡니다.
+- 사용자별 설정, monitored repo 목록, away mode, Windows Task Scheduler watcher 설치는 앱이 담당합니다.
+- repo template 안에 operator-only watcher / scheduler / presence / registry 스크립트를 다시 만들지 않습니다.
+
 핵심 정책은 아래 세 가지입니다.
 
 1. `safe-auto`
@@ -26,7 +32,7 @@ description: Use this skill when a task enters `Needs User Decision`, `manual ga
    - 맞으면 바로 적용하고 결과만 요약합니다.
 3. `remote-choice`면 `.agents/scripts/open_user_gate.ps1`를 실행합니다.
 4. present mode에서는 `local-first`, away mode에서는 즉시 모바일 전송으로 처리됩니다.
-5. `.agents/scripts/watch_user_gates.ps1`가 미응답 gate를 재확인하고 grace 이후 자동 fallback 및 Telegram 응답 반영을 담당합니다.
+5. `Harness Admin App` watcher가 미응답 gate를 재확인하고 grace 이후 자동 fallback 및 Telegram 응답 반영을 담당합니다.
 
 ## 언제 쓰는가
 
@@ -42,22 +48,13 @@ description: Use this skill when a task enters `Needs User Decision`, `manual ga
 
 ## canonical 명령
 
-### 1. away mode 전환
+### 0. 표준 운영 경로
 
-```powershell
-powershell -ExecutionPolicy Bypass -File ".agents/scripts/set_user_presence.ps1" `
-  -Mode away `
-  -DurationMinutes 120
-```
+- `docs/HARNESS_ADMIN_APP_GUIDE.md`를 먼저 따릅니다.
+- 앱에서 Telegram / ntfy 설정, repo 등록, watcher 설치, away mode 전환을 수행합니다.
+- repo-local command surface는 `open_user_gate.ps1`와 `invoke_user_gate.ps1`만 유지합니다.
 
-### 2. repo 등록
-
-```powershell
-powershell -ExecutionPolicy Bypass -File ".agents/scripts/register_repo_for_approval_watch.ps1" `
-  -Action add
-```
-
-### 3. short decision 열기
+### 1. short decision 열기
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File ".agents/scripts/open_user_gate.ps1" `
@@ -69,22 +66,6 @@ powershell -ExecutionPolicy Bypass -File ".agents/scripts/open_user_gate.ps1" `
   -Options existing-access fresh-provisioning hold `
   -LocalResponseGraceMinutes 15
 ```
-
-### 4. watcher 수동 1회 실행
-
-```powershell
-powershell -ExecutionPolicy Bypass -File ".agents/scripts/watch_user_gates.ps1"
-```
-
-### 5. Windows Task Scheduler 설치
-
-```powershell
-powershell -ExecutionPolicy Bypass -File ".agents/scripts/install_approval_watcher_task.ps1" `
-  -Force
-```
-
-기본 설치는 hidden window로 동작합니다.
-콘솔을 보면서 디버깅해야 할 때만 `-VisibleWindow`를 붙입니다.
 
 ## 상태 의미
 
@@ -101,8 +82,9 @@ powershell -ExecutionPolicy Bypass -File ".agents/scripts/install_approval_watch
 ## 운영 규칙
 
 - `open_user_gate.ps1`가 canonical entrypoint입니다. `invoke_user_gate.ps1`는 low-level delivery primitive입니다.
+- 표준 운영은 앱이 담당하고, repo에는 operator-specific secret이나 scheduler 상태를 남기지 않습니다.
 - away mode면 `remote-choice` gate를 즉시 모바일로 보냅니다.
-- watcher는 repo registry에 등록된 저장소만 감시합니다.
+- watcher는 앱에 등록된 저장소만 감시합니다.
 - Telegram polling은 bot/session당 하나의 consumer만 허용합니다.
 - timeout이 나면 artifact의 `Needs User Decision` 또는 `manual gate pending` 상태를 그대로 방치하지 말고, timeout 사실과 다음 액션을 갱신합니다.
 - 모바일 메시지에는 `Task ID`, 짧은 질문, 선택지, 기본 동작만 넣고 secret이나 민감정보는 넣지 않습니다.

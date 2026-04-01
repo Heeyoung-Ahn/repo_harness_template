@@ -16,6 +16,20 @@ param(
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'approval_common.ps1')
 
+function Set-StateProperty {
+    param(
+        [Parameter(Mandatory = $true)]$State,
+        [Parameter(Mandatory = $true)][string]$Name,
+        $Value
+    )
+
+    if ($State.PSObject.Properties.Name -contains $Name) {
+        $State.$Name = $Value
+    } else {
+        $State | Add-Member -NotePropertyName $Name -NotePropertyValue $Value
+    }
+}
+
 $repoRoot = Resolve-HarnessRepoRoot
 if ([string]::IsNullOrWhiteSpace($ProjectName)) {
     $ProjectName = Split-Path -Leaf $repoRoot
@@ -92,12 +106,12 @@ if ($null -eq $state) {
     throw "Expected approval state at '$statePath' after invoke_user_gate execution."
 }
 
-$state.decision_class = 'remote-choice'
-$state.presence_mode = $presence.mode
-$state.repo_root = $repoRoot
-$state.opened_by = $OpenedBy
-$state.watcher_managed = $true
-$state.updated_at = Get-HarnessTimestamp
+Set-StateProperty -State $state -Name 'decision_class' -Value 'remote-choice'
+Set-StateProperty -State $state -Name 'presence_mode' -Value $presence.mode
+Set-StateProperty -State $state -Name 'repo_root' -Value $repoRoot
+Set-StateProperty -State $state -Name 'opened_by' -Value $OpenedBy
+Set-StateProperty -State $state -Name 'watcher_managed' -Value $true
+Set-StateProperty -State $state -Name 'updated_at' -Value (Get-HarnessTimestamp)
 
 Write-HarnessJson -Path $statePath -Value $state
 [pscustomobject]$state

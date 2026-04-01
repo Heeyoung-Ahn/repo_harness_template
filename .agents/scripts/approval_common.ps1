@@ -50,7 +50,7 @@ function Read-HarnessJson {
         return $null
     }
 
-    return $json | ConvertFrom-Json -Depth 12
+    return $json | ConvertFrom-Json
 }
 
 function Write-HarnessJson {
