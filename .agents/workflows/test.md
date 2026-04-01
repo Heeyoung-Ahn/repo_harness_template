@@ -50,6 +50,7 @@ description: 테스터/QA(Tester) 에이전트 워크플로우
 - `TASK_LIST.md` 상태를 업데이트합니다.
 - `CURRENT_STATE.md`의 `Snapshot`, `Next Recommended Agent`, `Must Read Next`, `Required Skills`, `Active Scope`, `Task Pointers`, `Open Decisions / Blockers`, `Latest Handoff Summary`, `Recent History Summary`를 갱신합니다.
 - archive 전에 미해결 불일치, 릴리즈 차단 요소, 남아 있는 수동 / 실환경 검증, 다음 Agent가 꼭 알아야 할 제약을 `TASK_LIST.md > ## Blockers`와 `CURRENT_STATE.md > Open Decisions / Blockers`로 승격합니다.
+- If a short user choice is needed for device checks, browser approval, or preview smoke resume, ask in the current session first. If there is no response, use `remote_approval_notify` in `local-first` mode so mobile fallback reduces idle wait time.
 - rules / workflows / artifacts를 수정했다면 `powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1"`를 실행합니다.
 - `## Handoff Log`에 표준 양식으로 기록합니다.
 - `Fail`이면 Developer 또는 Planner, `Release Pass`이면 Reviewer로 넘깁니다.

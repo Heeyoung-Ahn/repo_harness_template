@@ -68,6 +68,7 @@ repo-tracked 파일을 수정하기 직전 아래를 다시 확인합니다.
 - 작업 시작 시 관련 태스크를 `[-]`로 바꾸고 `## Active Locks`에 점유 정보를 추가합니다.
 - 작업 종료 시 태스크 상태를 갱신하고 lock을 제거합니다.
 - 다음 Agent가 꼭 알아야 할 blocker, user decision, manual gate만 `CURRENT_STATE.md`와 필요한 handoff에 남깁니다.
+- If the user may be away or a current-session question has gone unanswered past the grace window, record the gate in artifacts first, then use `.agents/skills/remote_approval_notify` or `.agents/scripts/invoke_user_gate.ps1` in `local-first` mode for a mobile fallback.
 - `CURRENT_STATE.md > Snapshot`의 `Current Stage`, `Current Focus`, `Current Release Goal`과 `TASK_LIST.md > Current Release Target`은 항상 같은 값으로 유지합니다.
 - `version_closeout`으로 새 버전을 시작할 때는 자유서술 새 Draft 문서를 쓰지 말고 `powershell -ExecutionPolicy Bypass -File ".agents/scripts/reset_version_artifacts.ps1"`로 reset 대상 문서를 복원한 뒤 starter content만 채웁니다.
 - artifact harness 오류는 별도 정비 작업으로 분리하고, release blocker인지 아닌지를 명시합니다.
@@ -80,6 +81,7 @@ powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1
 ## 8. Security and Language
 - API Key, Secret, Token, 개인정보를 코드와 문서에 하드코딩하지 않습니다.
 - 민감값과 사용자 데이터는 로그, 디버그 출력, 문서에 평문으로 남기지 않습니다.
+- 원격 알림에는 `Task ID`, 짧은 결정 문장, 선택지, 기본 동작만 보내고, 토큰/secret/민감 URL은 보내지 않습니다.
 - `.agents/artifacts/*.md`, `.agents/rules/*.md`, `AGENTS.md`, `README.md`, `docs/*.md`는 UTF-8 without BOM으로 유지합니다.
 - 위 문서를 shell로 다룰 때는 explicit UTF-8 read/write를 사용합니다.
 - artifact 본문 설명, 요약, blocker, handoff는 기본적으로 한국어로 작성합니다.

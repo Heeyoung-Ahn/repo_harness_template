@@ -36,4 +36,5 @@ description: 인프라 및 배포(DevOps) 에이전트 워크플로우
 - 배포 결과와 롤백 여부를 기록합니다.
 - `CURRENT_STATE.md`의 `Snapshot`, `Next Recommended Agent`, `Must Read Next`, `Active Scope`, `Task Pointers`, `Open Decisions / Blockers`, `Latest Handoff Summary`를 갱신합니다.
 - archive 전에 배포 후 주의사항, 남은 운영 이슈, 사용자 결정이 필요한 항목, release-ready를 막는 실환경 / dependency 게이트를 `TASK_LIST.md > ## Blockers`와 `CURRENT_STATE.md > Open Decisions / Blockers`로 승격합니다.
+- If a short user decision remains for deploy go/no-go, domain cutover, or similar release gates, ask in the current session first. Only when that stays unanswered should `remote_approval_notify` send a mobile fallback in `local-first` mode.
 - `## Handoff Log`에 표준 양식으로 기록합니다.
