@@ -25,10 +25,17 @@ description: Documenter Agent wrapper workflow for version closeout
 
 ### Step 3: 요약층 유지
 - `CURRENT_STATE.md`가 실제 다음 시작점과 일치하는지 확인합니다.
+- `CURRENT_STATE.md > Snapshot`의 `Current Stage`, `Current Focus`, `Current Release Goal`이 `TASK_LIST.md > Current Release Target`과 같은 값인지 확인합니다.
 - `TASK_LIST.md > ## Handoff Log`는 기본적으로 최근 8개 이내를 유지하되, 활성 manual / review loop와 직접 연결된 relevant entry는 loop가 닫힐 때까지 임시 유지할 수 있습니다.
 - 초과분은 `HANDOFF_ARCHIVE.md`로 옮기고 `CURRENT_STATE.md > Recent History Summary`가 최신 상태를 설명하도록 맞춥니다.
 - 오래된 history는 요약만 남기고, 다음 세션에 필요한 최신 상태만 남깁니다.
+- `Latest Handoff Summary`, `Task Pointers`, `Recent History Summary`에 같은 handoff 원문을 반복 복사하지 않습니다.
 
 ### Step 4: Closeout 시 추가 작업
 - version closeout이면 `CURRENT_STATE.md`와 `HANDOFF_ARCHIVE.md`까지 archive 대상으로 포함합니다.
-- 새 버전 시작 문서에는 초기 `CURRENT_STATE.md`와 초기 `## Handoff Log`를 준비합니다.
+- `powershell -ExecutionPolicy Bypass -File ".agents/scripts/reset_version_artifacts.ps1"`를 실행해 reset 대상 7개 문서를 canonical template에서 복원합니다.
+- reset 직후에는 새 버전 starter content만 최소 범위로 채웁니다.
+  - `CURRENT_STATE.md`: `Snapshot`, `Next Recommended Agent`, `Must Read Next`, `Active Scope`, `Task Pointers`, `Open Decisions / Blockers`, `Latest Handoff Summary`, `Recent History Summary`
+  - `TASK_LIST.md`: `Current Release Target`, carry-over backlog, `## Active Locks`, 초기 `## Handoff Log`
+- `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `UI_DESIGN.md`는 living document로 유지합니다.
+- `# Walkthrough (Draft)` 같은 대체 제목이나 축약 스키마를 새로 쓰지 않습니다.

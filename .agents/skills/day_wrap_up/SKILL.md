@@ -43,6 +43,7 @@ description: 오늘 하루 진행했던 업무 내용을 검토하여 물리적 
 - 오늘 끝난 작업은 `TASK_LIST.md` 상태와 handoff에 반영한다.
 - 오늘 해결하지 못한 버그, 미완성 기능, 수동 검증, dependency triage는 미완료 상태로 남긴다.
 - "준비 완료"와 "실행 완료"를 섞어 쓰지 않는다.
+- `CURRENT_STATE.md > Snapshot`의 `Current Stage`, `Current Focus`, `Current Release Goal`을 `TASK_LIST.md > Current Release Target`과 같은 값으로 맞춘다.
 
 ### 특히 구분할 것
 
@@ -57,7 +58,7 @@ description: 오늘 하루 진행했던 업무 내용을 검토하여 물리적 
 
 - 내가 실제로 끝낸 작업만 lock 해제한다.
 - 다른 Agent가 잡고 있는 lock은 임의로 해제하지 않는다.
-- lock을 유지한 채 하루를 넘길 경우, 다음 사람이 혼동하지 않도록 Handoff Log에 이유를 적는다.
+- lock을 유지한 채 하루를 넘길 경우, `## Active Locks`의 `Note`와 최신 handoff에 유지 이유와 다음 세션 첫 액션을 함께 적는다.
 - stale lock 의심이 있어도 증거 없이 정리하지 않는다. `workspace.md` 절차를 따른다.
 
 ## 4단계: 실기기 / 빌드 / dependency 후속을 명시한다
@@ -97,7 +98,9 @@ description: 오늘 하루 진행했던 업무 내용을 검토하여 물리적 
 ### 좋은 `Next`의 조건
 
 - 누가 시작하는지 분명하다.
-- 첫 명령이나 첫 문서가 분명하다.
+- 첫 `Task ID`가 적혀 있다.
+- 첫 명령이나 첫 문서가 backticks로 분명하다.
+- blocker, manual gate, dependency gate가 있으면 첫 순서 전에 적혀 있다.
 - "필요 시"가 아니라 구체적인 순서가 적혀 있다.
 
 ## 7단계: `CURRENT_STATE.md`를 마지막에 맞춘다
@@ -113,6 +116,8 @@ description: 오늘 하루 진행했던 업무 내용을 검토하여 물리적 
 - `Recent History Summary`
 
 `CURRENT_STATE.md`는 마지막에 맞춰야 다음 세션 진입점이 정확해진다.
+- `Latest Handoff Summary`는 최신 delta만 적고, `Task Pointers`와 `Recent History Summary`에 같은 handoff 원문을 반복 복사하지 않는다.
+- `CURRENT_STATE.md`가 길어지면 과거 상세는 `HANDOFF_ARCHIVE.md`와 relevant artifact에 남기고, resume에 필요한 사실만 압축한다.
 
 ## 완료 후 사용자 보고 원칙
 

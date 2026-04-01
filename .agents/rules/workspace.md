@@ -24,6 +24,7 @@ trigger: always_on
 - 운영 규칙의 최상위 정본은 이 `workspace.md`입니다.
 - 이 템플릿은 repo 안의 요구사항, 구조, 계획, 상태, review/deploy gate를 문서와 validator로 관리하는 `repo-level governance harness`입니다.
 - 실제 프로젝트 상태의 단일 진실 공급원은 `.agents/artifacts/` 아래 문서입니다.
+- `CURRENT_STATE.md`는 day-start용 resume router, `TASK_LIST.md`는 task / lock truth, `TASK_LIST.md > ## Handoff Log`는 최신 delta, `HANDOFF_ARCHIVE.md`는 오래된 원문 보관입니다.
 - 역할 문서는 기본적으로 `Quick Read`, `Current Iteration`, `Latest Result`, `Approval Status`, `Must Read Next`에 적힌 범위만 읽습니다.
 - `README.md`와 `PROJECT_WORKFLOW_MANUAL.md`는 설명용 문서이며, 운영 규칙과 live state 문서의 정본이 아닙니다.
 
@@ -32,6 +33,7 @@ trigger: always_on
 - `CURRENT_STATE.md`는 가능하면 120줄 이하, 800단어 이하로 유지합니다.
 - `TASK_LIST.md > ## Handoff Log`는 최신 live item 5개 이내를 기본값으로 둡니다.
 - 오래된 handoff는 `HANDOFF_ARCHIVE.md`로 옮기고, 필요한 요약만 `CURRENT_STATE.md`에 남깁니다.
+- `Latest Handoff Summary`, `Task Pointers`, `Recent History Summary`에는 같은 원문을 반복 복사하지 않고 resume에 필요한 delta만 남깁니다.
 - 작업 중 turn-by-turn 상태 기록은 `CURRENT_STATE.md`에만 남기고, `TASK_LIST.md` handoff는 역할 전환이나 세션 종료 때만 추가합니다.
 - `REVIEW_REPORT.md`는 리뷰가 끝났을 때 1회 갱신하고, `DEPLOYMENT_PLAN.md`는 배포 직전/직후 1회 갱신합니다.
 
@@ -66,6 +68,8 @@ repo-tracked 파일을 수정하기 직전 아래를 다시 확인합니다.
 - 작업 시작 시 관련 태스크를 `[-]`로 바꾸고 `## Active Locks`에 점유 정보를 추가합니다.
 - 작업 종료 시 태스크 상태를 갱신하고 lock을 제거합니다.
 - 다음 Agent가 꼭 알아야 할 blocker, user decision, manual gate만 `CURRENT_STATE.md`와 필요한 handoff에 남깁니다.
+- `CURRENT_STATE.md > Snapshot`의 `Current Stage`, `Current Focus`, `Current Release Goal`과 `TASK_LIST.md > Current Release Target`은 항상 같은 값으로 유지합니다.
+- `version_closeout`으로 새 버전을 시작할 때는 자유서술 새 Draft 문서를 쓰지 말고 `powershell -ExecutionPolicy Bypass -File ".agents/scripts/reset_version_artifacts.ps1"`로 reset 대상 문서를 복원한 뒤 starter content만 채웁니다.
 - artifact harness 오류는 별도 정비 작업으로 분리하고, release blocker인지 아닌지를 명시합니다.
 - `AGENTS.md`, `.agents/rules/*.md`, `.agents/workflows/*.md`, `.agents/artifacts/*.md`를 수정했다면 handoff 전에 아래 validator를 실행합니다.
 

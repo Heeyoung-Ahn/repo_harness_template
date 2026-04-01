@@ -29,7 +29,7 @@ function Get-LineFieldValue {
     )
 
     $escapedLabel = [regex]::Escape($Label)
-    $pattern = '(?m)^- {0}:\s*(?<value>.+?)\s*$' -f $escapedLabel
+    $pattern = '(?m)^- {0}:[ \t]*(?<value>[^\r\n]+?)\s*$' -f $escapedLabel
     $match = [regex]::Match($Text, $pattern)
     if ($match.Success) {
         return $match.Groups['value'].Value.Trim()
@@ -80,6 +80,94 @@ function Normalize-Scope {
     return $value.TrimEnd('/')
 }
 
+function Get-MarkdownTitle {
+    param([string]$Text)
+
+    $match = [regex]::Match($Text, '(?m)^#\s+(?<title>[^\r\n]+)$')
+    if ($match.Success) {
+        return $match.Groups['title'].Value.Trim()
+    }
+
+    return $null
+}
+
+function Get-SectionBody {
+    param(
+        [Parameter(Mandatory = $true)][string]$Text,
+        [Parameter(Mandatory = $true)][string]$Heading
+    )
+
+    $escapedHeading = [regex]::Escape($Heading)
+    $pattern = '(?ms)^{0}\r?\n(?<body>.*?)(?=^## |\z)' -f $escapedHeading
+    $match = [regex]::Match($Text, $pattern)
+    if ($match.Success) {
+        return $match.Groups['body'].Value
+    }
+
+    return ''
+}
+
+function Get-NormalizedBulletLines {
+    param([string]$SectionBody)
+
+    $lines = @()
+    foreach ($match in [regex]::Matches($SectionBody, '(?m)^- (?<value>.+?)\s*$')) {
+        $value = $match.Groups['value'].Value.Trim()
+        if ($value -match '^\[') {
+            continue
+        }
+
+        $value = $value -replace '^\*\*[^:]+:\*\*\s*', ''
+        $value = $value -replace '\s+', ' '
+        if (-not [string]::IsNullOrWhiteSpace($value)) {
+            $lines += $value.Trim()
+        }
+    }
+
+    return $lines
+}
+
+function Get-HandoffEntryMatches {
+    param([string]$Text)
+
+    return [regex]::Matches($Text, '(?ms)^### \[(?<timestamp>[^\]]+)\] \[(?<from>[^\]]+)\] -> \[(?<to>[^\]]+)\]\r?\n(?<body>.*?)(?=^### |\z)')
+}
+
+function Validate-ArtifactSchema {
+    param(
+        [Parameter(Mandatory = $true)][string]$Text,
+        [Parameter(Mandatory = $true)][string]$Path,
+        [Parameter(Mandatory = $true)][pscustomobject]$Schema
+    )
+
+    $title = Get-MarkdownTitle -Text $Text
+    if ($title -ne $Schema.ExpectedTitle) {
+        if ([string]::IsNullOrWhiteSpace($title)) {
+            Add-Finding -Severity 'ERROR' -Path $Path -Message ('Missing or malformed top-level title. Expected "# {0}".' -f $Schema.ExpectedTitle)
+        } else {
+            Add-Finding -Severity 'ERROR' -Path $Path -Message ('Unexpected top-level title: "{0}". Expected "# {1}".' -f $title, $Schema.ExpectedTitle)
+        }
+    }
+
+    foreach ($section in $Schema.RequiredSections) {
+        if (-not $Text.Contains($section)) {
+            Add-Finding -Severity 'ERROR' -Path $Path -Message ('Missing required section: {0}' -f $section)
+        }
+    }
+
+    foreach ($field in $Schema.RequiredFields) {
+        if (-not $Text.Contains($field)) {
+            Add-Finding -Severity 'ERROR' -Path $Path -Message ('Missing required field: {0}' -f $field)
+        }
+    }
+
+    foreach ($check in $Schema.ForbiddenChecks) {
+        if ([regex]::IsMatch($Text, $check.Pattern)) {
+            Add-Finding -Severity 'ERROR' -Path $Path -Message $check.Message
+        }
+    }
+}
+
 $labelUserConfirmPending = U '\uC0AC\uC6A9\uC790 \uB2F5\uBCC0 / \uD655\uC778 \uB300\uAE30'
 $placeholderScope = '[' + (U '\uAE30\uB2A5/\uB3C4\uBA54\uC778 \uBC94\uC704 \uC791\uC131') + ']'
 $placeholderRequirement = '[' + (U '\uC694\uAD6C\uC0AC\uD56D') + ']'
@@ -93,6 +181,7 @@ $planQuestionPhrase = U '\uC9C8\uBB38\uC774'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $pathMap = @{
     CurrentState       = Join-Path $repoRoot '.agents\artifacts\CURRENT_STATE.md'
+    HandoffArchive     = Join-Path $repoRoot '.agents\artifacts\HANDOFF_ARCHIVE.md'
     TaskList           = Join-Path $repoRoot '.agents\artifacts\TASK_LIST.md'
     Requirements       = Join-Path $repoRoot '.agents\artifacts\REQUIREMENTS.md'
     Architecture       = Join-Path $repoRoot '.agents\artifacts\ARCHITECTURE_GUIDE.md'
@@ -107,11 +196,28 @@ $pathMap = @{
     TestWorkflow       = Join-Path $repoRoot '.agents\workflows\test.md'
     HandoffWorkflow    = Join-Path $repoRoot '.agents\workflows\handoff.md'
     ExpoDeviceSkill    = Join-Path $repoRoot '.agents\skills\expo_real_device_test\SKILL.md'
+    ResetScript        = Join-Path $repoRoot '.agents\scripts\reset_version_artifacts.ps1'
+}
+
+$templateArtifactMap = @{
+    CurrentState       = Join-Path $repoRoot '.agents\templates\artifacts\CURRENT_STATE.md'
+    HandOffArchive     = Join-Path $repoRoot '.agents\templates\artifacts\HANDOFF_ARCHIVE.md'
+    TaskList           = Join-Path $repoRoot '.agents\templates\artifacts\TASK_LIST.md'
+    ImplementationPlan = Join-Path $repoRoot '.agents\templates\artifacts\IMPLEMENTATION_PLAN.md'
+    Walkthrough        = Join-Path $repoRoot '.agents\templates\artifacts\WALKTHROUGH.md'
+    ReviewReport       = Join-Path $repoRoot '.agents\templates\artifacts\REVIEW_REPORT.md'
+    DeploymentPlan     = Join-Path $repoRoot '.agents\templates\artifacts\DEPLOYMENT_PLAN.md'
 }
 
 foreach ($entry in $pathMap.GetEnumerator()) {
     if (-not (Test-Path -LiteralPath $entry.Value)) {
         Add-Finding -Severity 'ERROR' -Path $entry.Value -Message 'Missing required harness document.'
+    }
+}
+
+foreach ($entry in $templateArtifactMap.GetEnumerator()) {
+    if (-not (Test-Path -LiteralPath $entry.Value)) {
+        Add-Finding -Severity 'ERROR' -Path $entry.Value -Message 'Missing required reset template artifact.'
     }
 }
 
@@ -129,6 +235,7 @@ $culture = [System.Globalization.CultureInfo]::InvariantCulture
 $currentStateText = [System.IO.File]::ReadAllText($pathMap.CurrentState, $utf8)
 $currentStateLines = [System.IO.File]::ReadAllLines($pathMap.CurrentState, $utf8)
 $taskListText = [System.IO.File]::ReadAllText($pathMap.TaskList, $utf8)
+$handoffArchiveText = [System.IO.File]::ReadAllText($pathMap.HandoffArchive, $utf8)
 $requirementsText = [System.IO.File]::ReadAllText($pathMap.Requirements, $utf8)
 $architectureText = [System.IO.File]::ReadAllText($pathMap.Architecture, $utf8)
 $implementationPlanText = [System.IO.File]::ReadAllText($pathMap.ImplementationPlan, $utf8)
@@ -142,6 +249,13 @@ $reviewWorkflowText = [System.IO.File]::ReadAllText($pathMap.ReviewWorkflow, $ut
 $testWorkflowText = [System.IO.File]::ReadAllText($pathMap.TestWorkflow, $utf8)
 $handoffWorkflowText = [System.IO.File]::ReadAllText($pathMap.HandoffWorkflow, $utf8)
 $expoDeviceSkillText = [System.IO.File]::ReadAllText($pathMap.ExpoDeviceSkill, $utf8)
+$templateCurrentStateText = [System.IO.File]::ReadAllText($templateArtifactMap.CurrentState, $utf8)
+$templateHandoffArchiveText = [System.IO.File]::ReadAllText($templateArtifactMap.HandOffArchive, $utf8)
+$templateTaskListText = [System.IO.File]::ReadAllText($templateArtifactMap.TaskList, $utf8)
+$templateImplementationPlanText = [System.IO.File]::ReadAllText($templateArtifactMap.ImplementationPlan, $utf8)
+$templateWalkthroughText = [System.IO.File]::ReadAllText($templateArtifactMap.Walkthrough, $utf8)
+$templateReviewReportText = [System.IO.File]::ReadAllText($templateArtifactMap.ReviewReport, $utf8)
+$templateDeploymentPlanText = [System.IO.File]::ReadAllText($templateArtifactMap.DeploymentPlan, $utf8)
 
 $wordCount = ([regex]::Matches($currentStateText, '\S+')).Count
 if ($currentStateLines.Count -gt 120) {
@@ -154,31 +268,117 @@ if ([regex]::IsMatch($currentStateText, '(?m)^## \d{4}-\d{2}-\d{2}\b')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message 'CURRENT_STATE still contains dated update blocks.'
 }
 
-foreach ($section in @(
-    '## Snapshot',
-    '## Next Recommended Agent',
-    '## Must Read Next',
-    '## Required Skills',
-    '## Active Scope',
-    '## Task Pointers',
-    '## Open Decisions / Blockers',
-    '## Latest Handoff Summary',
-    '## Recent History Summary'
-)) {
-    if (-not $currentStateText.Contains($section)) {
-        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('Missing CURRENT_STATE section: {0}' -f $section)
+$resetArtifactSchemas = @{
+    CurrentState = [pscustomobject]@{
+        ExpectedTitle  = 'Current State'
+        RequiredSections = @(
+            '## Snapshot',
+            '## Next Recommended Agent',
+            '## Must Read Next',
+            '## Required Skills',
+            '## Active Scope',
+            '## Task Pointers',
+            '## Open Decisions / Blockers',
+            '## Latest Handoff Summary',
+            '## Recent History Summary'
+        )
+        RequiredFields = @(
+            'Review Gate',
+            'Requirement Baseline',
+            'Requirements Sync Check',
+            $labelUserConfirmPending
+        )
+        ForbiddenChecks = @(
+            [pscustomobject]@{
+                Pattern = '(?mi)^#\s*CURRENT STATE SNAPSHOT\s*$'
+                Message = 'CURRENT_STATE uses a forbidden closeout title. Use "# Current State".'
+            },
+            [pscustomobject]@{
+                Pattern = '(?i)single source of truth'
+                Message = 'CURRENT_STATE should not describe itself as single source of truth.'
+            }
+        )
+    }
+    HandOffArchive = [pscustomobject]@{
+        ExpectedTitle    = 'Handoff Archive'
+        RequiredSections = @('## Usage Rules', '## Archived Entries')
+        RequiredFields   = @()
+        ForbiddenChecks  = @()
+    }
+    TaskList = [pscustomobject]@{
+        ExpectedTitle    = 'Task List'
+        RequiredSections = @('## Current Release Target', '## Active Locks', '## Blockers', '## Handoff Log')
+        RequiredFields   = @('Current Stage', 'Current Focus', 'Current Release Goal')
+        ForbiddenChecks  = @()
+    }
+    ImplementationPlan = [pscustomobject]@{
+        ExpectedTitle    = 'Implementation Plan'
+        RequiredSections = @('## Quick Read', '## Status', '## Current Iteration', '## Validation Commands', '## Requirement Trace', '## Requirement Change Impact')
+        RequiredFields   = @('Requirement Baseline', 'Change Sync Check')
+        ForbiddenChecks  = @(
+            [pscustomobject]@{
+                Pattern = '(?mi)^#\s*Implementation Plan \(Draft\)\s*$'
+                Message = 'IMPLEMENTATION_PLAN uses a forbidden closeout title. Use "# Implementation Plan".'
+            }
+        )
+    }
+    Walkthrough = [pscustomobject]@{
+        ExpectedTitle    = 'Walkthrough'
+        RequiredSections = @('## Quick Read', '## Latest Result', '## Test Scope Snapshot', '## User Report Alignment', '## Commands Executed', '## Automated Test Results', '## Manual Test Checklist', '## Bugs / Mismatches Found')
+        RequiredFields   = @('Requirement Baseline Tested', 'Requirements Sync Check')
+        ForbiddenChecks  = @(
+            [pscustomobject]@{
+                Pattern = '(?mi)^#\s*Walkthrough \(Draft\)\s*$'
+                Message = 'WALKTHROUGH uses a forbidden closeout title. Use "# Walkthrough".'
+            }
+        )
+    }
+    ReviewReport = [pscustomobject]@{
+        ExpectedTitle    = 'Review Report'
+        RequiredSections = @('## Quick Read', '## Approval Status', '## Findings', '## Residual Release Risks', '## Document / Harness Debt')
+        RequiredFields   = @('Requirement Baseline Reviewed', 'Requirements Sync Check')
+        ForbiddenChecks  = @(
+            [pscustomobject]@{
+                Pattern = '(?mi)^#\s*Review Report \(Draft\)\s*$'
+                Message = 'REVIEW_REPORT uses a forbidden closeout title. Use "# Review Report".'
+            }
+        )
+    }
+    DeploymentPlan = [pscustomobject]@{
+        ExpectedTitle    = 'Deployment Plan'
+        RequiredSections = @('## Quick Read', '## Release Status', '## Preflight Checklist', '## Deployment History')
+        RequiredFields   = @('Requirement Baseline for Release', 'Requirements Sync Gate', 'Reviewer Gate')
+        ForbiddenChecks  = @(
+            [pscustomobject]@{
+                Pattern = '(?mi)^#\s*Deployment Plan \(Draft\)\s*$'
+                Message = 'DEPLOYMENT_PLAN uses a forbidden closeout title. Use "# Deployment Plan".'
+            }
+        )
     }
 }
 
-foreach ($requiredField in @(
-    'Review Gate',
-    'Requirement Baseline',
-    'Requirements Sync Check',
-    $labelUserConfirmPending
-)) {
-    if (-not $currentStateText.Contains($requiredField)) {
-        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('Missing CURRENT_STATE field: {0}' -f $requiredField)
-    }
+Validate-ArtifactSchema -Text $currentStateText -Path '.agents/artifacts/CURRENT_STATE.md' -Schema $resetArtifactSchemas.CurrentState
+Validate-ArtifactSchema -Text $handoffArchiveText -Path '.agents/artifacts/HANDOFF_ARCHIVE.md' -Schema $resetArtifactSchemas.HandOffArchive
+Validate-ArtifactSchema -Text $taskListText -Path '.agents/artifacts/TASK_LIST.md' -Schema $resetArtifactSchemas.TaskList
+Validate-ArtifactSchema -Text $implementationPlanText -Path '.agents/artifacts/IMPLEMENTATION_PLAN.md' -Schema $resetArtifactSchemas.ImplementationPlan
+Validate-ArtifactSchema -Text $walkthroughText -Path '.agents/artifacts/WALKTHROUGH.md' -Schema $resetArtifactSchemas.Walkthrough
+Validate-ArtifactSchema -Text $reviewReportText -Path '.agents/artifacts/REVIEW_REPORT.md' -Schema $resetArtifactSchemas.ReviewReport
+Validate-ArtifactSchema -Text $deploymentPlanText -Path '.agents/artifacts/DEPLOYMENT_PLAN.md' -Schema $resetArtifactSchemas.DeploymentPlan
+Validate-ArtifactSchema -Text $templateCurrentStateText -Path '.agents/templates/artifacts/CURRENT_STATE.md' -Schema $resetArtifactSchemas.CurrentState
+Validate-ArtifactSchema -Text $templateHandoffArchiveText -Path '.agents/templates/artifacts/HANDOFF_ARCHIVE.md' -Schema $resetArtifactSchemas.HandOffArchive
+Validate-ArtifactSchema -Text $templateTaskListText -Path '.agents/templates/artifacts/TASK_LIST.md' -Schema $resetArtifactSchemas.TaskList
+Validate-ArtifactSchema -Text $templateImplementationPlanText -Path '.agents/templates/artifacts/IMPLEMENTATION_PLAN.md' -Schema $resetArtifactSchemas.ImplementationPlan
+Validate-ArtifactSchema -Text $templateWalkthroughText -Path '.agents/templates/artifacts/WALKTHROUGH.md' -Schema $resetArtifactSchemas.Walkthrough
+Validate-ArtifactSchema -Text $templateReviewReportText -Path '.agents/templates/artifacts/REVIEW_REPORT.md' -Schema $resetArtifactSchemas.ReviewReport
+Validate-ArtifactSchema -Text $templateDeploymentPlanText -Path '.agents/templates/artifacts/DEPLOYMENT_PLAN.md' -Schema $resetArtifactSchemas.DeploymentPlan
+
+$latestHandoffBullets = Get-NormalizedBulletLines -SectionBody (Get-SectionBody -Text $currentStateText -Heading '## Latest Handoff Summary')
+$recentHistoryBullets = Get-NormalizedBulletLines -SectionBody (Get-SectionBody -Text $currentStateText -Heading '## Recent History Summary')
+$taskPointerBullets = Get-NormalizedBulletLines -SectionBody (Get-SectionBody -Text $currentStateText -Heading '## Task Pointers')
+
+$duplicateResumeLines = @($latestHandoffBullets | Where-Object { $recentHistoryBullets -contains $_ -or $taskPointerBullets -contains $_ } | Select-Object -Unique)
+if ($duplicateResumeLines.Count -gt 0) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('CURRENT_STATE repeats the same resume line across sections: {0}' -f ($duplicateResumeLines[0]))
 }
 
 foreach ($requiredField in @(
@@ -204,51 +404,14 @@ foreach ($requiredField in @(
     }
 }
 
-foreach ($requiredField in @(
-    'Requirement Baseline',
-    'Change Sync Check',
-    '## Requirement Change Impact'
-)) {
-    if (-not $implementationPlanText.Contains($requiredField)) {
-        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/IMPLEMENTATION_PLAN.md' -Message ('IMPLEMENTATION_PLAN is missing field or section: {0}' -f $requiredField)
-    }
-}
-
-foreach ($requiredField in @(
-    'Requirement Baseline Tested',
-    'Requirements Sync Check'
-)) {
-    if (-not $walkthroughText.Contains($requiredField)) {
-        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/WALKTHROUGH.md' -Message ('WALKTHROUGH is missing field: {0}' -f $requiredField)
-    }
-}
-
-foreach ($requiredField in @(
-    'Requirement Baseline Reviewed',
-    'Requirements Sync Check'
-)) {
-    if (-not $reviewReportText.Contains($requiredField)) {
-        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/REVIEW_REPORT.md' -Message ('REVIEW_REPORT is missing field: {0}' -f $requiredField)
-    }
-}
-
-foreach ($requiredField in @(
-    'Requirement Baseline for Release',
-    'Requirements Sync Gate'
-)) {
-    if (-not $deploymentPlanText.Contains($requiredField)) {
-        Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/DEPLOYMENT_PLAN.md' -Message ('DEPLOYMENT_PLAN is missing field: {0}' -f $requiredField)
-    }
-}
-
-$handoffPattern = '(?m)^### \[(?<timestamp>[^\]]+)\] \[(?<from>[^\]]+)\] -> \[(?<to>[^\]]+)\]$'
-$handoffMatches = [regex]::Matches($taskListText, $handoffPattern)
+$handoffMatches = Get-HandoffEntryMatches -Text $taskListText
 if ($handoffMatches.Count -gt 5) {
     Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/TASK_LIST.md' -Message ('Handoff Log has {0} live entries. Keep it within 5 unless an active loop requires more.' -f $handoffMatches.Count)
 }
 if ($handoffMatches.Count -gt 0) {
     $latestHandoff = $null
     $latestTimestamp = [datetime]::MinValue
+    $lastHandoff = $handoffMatches[$handoffMatches.Count - 1]
 
     foreach ($match in $handoffMatches) {
         try {
@@ -272,6 +435,21 @@ if ($handoffMatches.Count -gt 0) {
         if ($syncedValue -and $syncedValue -ne $latestHandoffText) {
             Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('CURRENT_STATE handoff sync mismatch. CURRENT_STATE={0} / TASK_LIST={1}' -f $syncedValue, $latestHandoffText)
         }
+
+        if ($latestHandoff.Index -ne $lastHandoff.Index) {
+            Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/TASK_LIST.md' -Message 'Latest handoff by timestamp is not the last live Handoff Log entry. Append newest delta at the bottom.'
+        }
+
+        $handoffSource = Get-LineFieldValue -Text $currentStateText -Label 'Handoff source'
+        if ($handoffSource) {
+            $expectedBits = @(
+                $latestHandoff.Groups['from'].Value,
+                $latestHandoff.Groups['timestamp'].Value.Substring(0, 10)
+            )
+            if (-not (Contains-Any -Text $handoffSource -Patterns $expectedBits)) {
+                Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('Latest Handoff Summary source may be stale. CURRENT_STATE={0} / TASK_LIST={1}' -f $handoffSource, $latestHandoffText)
+            }
+        }
     }
 }
 
@@ -280,6 +458,11 @@ $lockRows = [regex]::Matches($taskListText, $lockPattern) | Where-Object {
     $_.Groups['task'].Value.Trim() -ne 'Task ID' -and
     $_.Groups['task'].Value.Trim() -notmatch '^-+$'
 }
+
+$activeLockRows = @($lockRows | Where-Object {
+    $_.Groups['task'].Value.Trim() -notin @('없음', 'None') -and
+    $_.Groups['started'].Value.Trim() -ne '-'
+})
 
 $normalizedScopes = @()
 foreach ($row in $lockRows) {
@@ -307,6 +490,62 @@ for ($i = 0; $i -lt $normalizedScopes.Count; $i++) {
     }
 }
 
+$latestDayWrapUp = $null
+$latestDayWrapUpTimestamp = [datetime]::MinValue
+foreach ($match in $handoffMatches) {
+    if ($match.Groups['from'].Value -ne 'Day Wrap Up') {
+        continue
+    }
+
+    try {
+        $timestamp = [datetime]::ParseExact($match.Groups['timestamp'].Value, 'yyyy-MM-dd HH:mm', $culture)
+    } catch {
+        continue
+    }
+
+    if ($timestamp -gt $latestDayWrapUpTimestamp) {
+        $latestDayWrapUpTimestamp = $timestamp
+        $latestDayWrapUp = $match
+    }
+}
+
+if ($null -ne $latestDayWrapUp) {
+    $latestDayWrapUpBody = $latestDayWrapUp.Groups['body'].Value
+    $nextMatch = [regex]::Match($latestDayWrapUpBody, '(?im)^- (?:\*\*)?Next:(?:\*\*)?\s*(?<value>.+?)\s*$')
+    $notesMatch = [regex]::Match($latestDayWrapUpBody, '(?im)^- (?:\*\*)?Notes:(?:\*\*)?\s*(?<value>.+?)\s*$')
+
+    if ($nextMatch.Success) {
+        $nextValue = $nextMatch.Groups['value'].Value.Trim()
+        if ($nextValue -notmatch '(?:PLN|DSG|DEV|TST|REV|REL|DOC|BACKLOG)-\d+') {
+            Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/TASK_LIST.md' -Message 'Day Wrap Up handoff Next should include the first Task ID for the next session.'
+        }
+        if ($nextValue -notmatch '`[^`]+`|[A-Za-z0-9_\-/]+\.md') {
+            Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/TASK_LIST.md' -Message 'Day Wrap Up handoff Next should include the first document or command in backticks.'
+        }
+    }
+
+    if ($activeLockRows.Count -gt 0) {
+        $notesValue = ''
+        if ($notesMatch.Success) {
+            $notesValue = $notesMatch.Groups['value'].Value.Trim()
+        }
+
+        $mentionsLock = $notesValue -match '(?i)\block\b'
+        if (-not $mentionsLock) {
+            foreach ($row in $activeLockRows) {
+                if ($notesValue.Contains($row.Groups['task'].Value.Trim())) {
+                    $mentionsLock = $true
+                    break
+                }
+            }
+        }
+
+        if (-not $mentionsLock) {
+            Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/TASK_LIST.md' -Message 'Active locks remain, but the latest Day Wrap Up notes do not explain the retained lock or first next action.'
+        }
+    }
+}
+
 $requirementsStatus = Get-LineFieldValue -Text $requirementsText -Label 'Document Status'
 $requirementsBaseline = Get-LineFieldValue -Text $requirementsText -Label 'Current Requirement Baseline'
 $requirementsSyncStatus = Get-LineFieldValue -Text $requirementsText -Label 'Requirements Sync Status'
@@ -319,6 +558,12 @@ $planChangeSync = Get-LineFieldValue -Text $implementationPlanText -Label 'Chang
 $currentRequirementsStatus = Get-LineFieldValue -Text $currentStateText -Label 'Requirements Status'
 $currentRequirementBaseline = Get-LineFieldValue -Text $currentStateText -Label 'Requirement Baseline'
 $currentRequirementsSync = Get-LineFieldValue -Text $currentStateText -Label 'Requirements Sync Check'
+$currentStage = Get-LineFieldValue -Text $currentStateText -Label 'Current Stage'
+$currentFocus = Get-LineFieldValue -Text $currentStateText -Label 'Current Focus'
+$currentReleaseGoal = Get-LineFieldValue -Text $currentStateText -Label 'Current Release Goal'
+$taskListCurrentStage = Get-LineFieldValue -Text $taskListText -Label 'Current Stage'
+$taskListCurrentFocus = Get-LineFieldValue -Text $taskListText -Label 'Current Focus'
+$taskListCurrentReleaseGoal = Get-LineFieldValue -Text $taskListText -Label 'Current Release Goal'
 $currentArchitectureStatus = Get-LineFieldValue -Text $currentStateText -Label 'Architecture Status'
 $currentPlanStatus = Get-LineFieldValue -Text $currentStateText -Label 'Plan Status'
 $releasePass = Get-LineFieldValue -Text $walkthroughText -Label 'Release Pass'
@@ -333,6 +578,16 @@ if ((Is-ConcreteValue $currentArchitectureStatus) -and $currentArchitectureStatu
 }
 if ((Is-ConcreteValue $currentPlanStatus) -and $currentPlanStatus -eq 'Ready for Execution' -and $planStatus -ne 'Ready for Execution') {
     Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('Plan status mismatch. CURRENT_STATE={0} / IMPLEMENTATION_PLAN={1}' -f $currentPlanStatus, $planStatus)
+}
+
+if ((Is-ConcreteValue $currentStage) -and (Is-ConcreteValue $taskListCurrentStage) -and $currentStage -ne $taskListCurrentStage) {
+    Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('Current stage mismatch. CURRENT_STATE={0} / TASK_LIST={1}' -f $currentStage, $taskListCurrentStage)
+}
+if ((Is-ConcreteValue $currentFocus) -and (Is-ConcreteValue $taskListCurrentFocus) -and $currentFocus -ne $taskListCurrentFocus) {
+    Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('Current focus mismatch. CURRENT_STATE={0} / TASK_LIST={1}' -f $currentFocus, $taskListCurrentFocus)
+}
+if ((Is-ConcreteValue $currentReleaseGoal) -and (Is-ConcreteValue $taskListCurrentReleaseGoal) -and $currentReleaseGoal -ne $taskListCurrentReleaseGoal) {
+    Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('Current release goal mismatch. CURRENT_STATE={0} / TASK_LIST={1}' -f $currentReleaseGoal, $taskListCurrentReleaseGoal)
 }
 
 if ($requirementsStatus -eq 'Approved' -and -not (Is-ConcreteValue $requirementsBaseline)) {
@@ -410,10 +665,6 @@ $reviewReadiness = Get-LineFieldValue -Text $reviewReportText -Label 'Release Re
 $reviewRequirementBaseline = Get-LineFieldValue -Text $reviewReportText -Label 'Requirement Baseline Reviewed'
 $reviewRequirementsSync = Get-LineFieldValue -Text $reviewReportText -Label 'Requirements Sync Check'
 $currentReviewGate = Get-LineFieldValue -Text $currentStateText -Label 'Review Gate'
-
-if (-not $deploymentPlanText.Contains('Reviewer Gate:')) {
-    Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/DEPLOYMENT_PLAN.md' -Message 'DEPLOYMENT_PLAN is missing the Reviewer Gate field.'
-}
 
 if ((Is-ConcreteValue $reviewReadiness) -and $reviewReadiness -eq 'Ready') {
     if ($reviewRequirementsSync -ne 'Pass') {
@@ -556,9 +807,6 @@ if (-not $expoDeviceSkillText.Contains('Please confirm whether my understanding 
 }
 if (-not $expoDeviceSkillText.Contains('Needs Clarification')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/skills/expo_real_device_test/SKILL.md' -Message 'Expo Real Device Test skill is missing the no-response clarification rule.'
-}
-if (-not $implementationPlanText.Contains('## Requirement Trace')) {
-    Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/IMPLEMENTATION_PLAN.md' -Message 'IMPLEMENTATION_PLAN is missing the Requirement Trace section.'
 }
 if (-not $architectureText.Contains('## Requirement Change Sync')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/ARCHITECTURE_GUIDE.md' -Message 'ARCHITECTURE_GUIDE is missing the Requirement Change Sync section.'
