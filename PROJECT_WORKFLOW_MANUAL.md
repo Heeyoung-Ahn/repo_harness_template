@@ -567,7 +567,204 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 
 ---
 
-## 10. 자주 하는 실수와 방지법
+## 10. Remote approval은 무엇이고 어떻게 쓰는가
+가끔은 사용자가 PC 앞을 잠시 비운 상태에서,  
+아주 짧은 승인이나 선택지만 받으면 다음 단계로 넘어갈 수 있는 경우가 있습니다.
+
+예:
+- 실기기 테스트를 지금 시작해도 되는지
+- preview 접근 정보를 받을지, 다른 경로로 진행할지
+- production deploy를 진행해도 되는지
+
+이럴 때 쓰는 것이 **Remote approval**입니다.
+
+중요한 점:
+- Remote approval은 **긴 대화를 대신하는 기능이 아닙니다.**
+- 모든 승인을 모바일로 보내는 것이 아니라, **짧고 안전한 결정만** 모바일 승인으로 넘깁니다.
+- 이 저장소에서는 주로 [`.agents/scripts/open_user_gate.ps1`](.agents/scripts/open_user_gate.ps1), [`.agents/scripts/watch_user_gates.ps1`](.agents/scripts/watch_user_gates.ps1), [`.agents/skills/remote_approval_notify/SKILL.md`](.agents/skills/remote_approval_notify/SKILL.md) 조합으로 사용합니다.
+
+### 10.1 언제 쓰는가
+잘 맞는 상황:
+- `Needs User Decision`
+- `manual gate pending`
+- 실기기 테스트 시작 승인
+- preview smoke 시작 승인
+- production deploy go/no-go 같은 짧은 결정
+
+잘 맞지 않는 상황:
+- secret, token, 민감 URL을 보내야 하는 경우
+- 긴 설명과 토론이 필요한 경우
+- 선택지를 2~4개의 짧은 옵션으로 줄일 수 없는 경우
+
+### 10.2 작동원리
+이제는 단순히 “로컬 질문 -> 수동 재실행” 구조만 쓰지 않습니다.  
+현재 템플릿의 핵심은 **승인 종류를 세 가지로 나누는 것**입니다.
+
+**1. `safe-auto`**
+- 문서 건강 회복과 read-only 검증처럼 위험이 낮은 작업입니다.
+- 예: `LF` 정규화, `CURRENT_STATE.md` compact, live handoff reorder, validator 실행
+- 이런 작업은 사용자 승인 질문으로 만들지 않고 바로 적용합니다.
+
+**2. `remote-choice`**
+- 짧은 선택지 기반 사용자 결정입니다.
+- 예: 실기기 테스트 시작 여부, preview smoke 재개 여부, deploy go/no-go
+- 이 범위만 모바일 승인으로 보냅니다.
+
+**3. `hard-block`**
+- secret, token, destructive action, 긴 토론이 필요한 질문입니다.
+- 이 범위는 모바일 승인으로 보내지 않고 blocker로 남깁니다.
+
+실제 흐름은 아래와 같습니다.
+
+1. 먼저 artifact에 gate 상태를 기록합니다.
+2. `safe-auto`인지 판단합니다.
+   - 맞으면 바로 적용하고 결과만 요약합니다.
+3. `remote-choice`면 `open_user_gate.ps1`를 실행합니다.
+4. 시스템은 현재 사용자 상태를 봅니다.
+   - `present`면 `local-first`
+   - `away`면 즉시 모바일 전송
+5. `watch_user_gates.ps1`가 1분 주기로 state를 확인합니다.
+   - grace가 지나면 자동 fallback
+   - Telegram 응답이 오면 state를 `resolved`로 갱신
+6. `hard-block`이면 모바일로 보내지 않고 사용자 응답 대기 blocker로 유지합니다.
+
+핵심은 아래 두 가지입니다.
+- **사용자가 자리를 비운 동안에는 away mode를 켜 두면 됩니다.**
+- **저위험 작업은 묻지 않고 진행하고, 짧은 결정만 모바일로 보냅니다.**
+
+### 10.3 필요한 구성 요소
+Remote approval은 네 부분으로 나뉩니다.
+
+**1. gate router**
+- 담당 스크립트: [`.agents/scripts/open_user_gate.ps1`](.agents/scripts/open_user_gate.ps1)
+- 역할:
+  - `safe-auto / remote-choice / hard-block` 분류
+  - present / away 상태에 맞는 라우팅
+
+**2. watcher**
+- 담당 스크립트: [`.agents/scripts/watch_user_gates.ps1`](.agents/scripts/watch_user_gates.ps1)
+- 역할:
+  - grace 이후 자동 fallback
+  - Telegram 응답 polling
+  - repo registry 기준으로 여러 프로젝트를 함께 감시
+
+**3. 사용자 상태와 repo registry**
+- 담당 스크립트:
+  - [`.agents/scripts/set_user_presence.ps1`](.agents/scripts/set_user_presence.ps1)
+  - [`.agents/scripts/register_repo_for_approval_watch.ps1`](.agents/scripts/register_repo_for_approval_watch.ps1)
+- 역할:
+  - 사용자가 지금 PC 앞에 있는지 (`present`) 자리를 비웠는지 (`away`) 표시
+  - watcher가 볼 프로젝트 목록 관리
+
+**4. 실제 모바일 채널**
+- `ntfy.sh`: optional 알림 미러
+- Telegram Bot: 실제 승인/거절 응답 채널
+
+### 10.4 환경 변수
+비밀값은 저장소에 commit하지 않고 로컬 환경 변수에 둡니다.
+
+주요 변수:
+- `HARNESS_RUNTIME_HOME`
+  - present / away 상태, repo registry, Telegram offset을 저장하는 user-level 경로
+  - 기본값은 `%USERPROFILE%\\.harness-runtime`
+- `HARNESS_LOCAL_RESPONSE_GRACE_MINUTES`
+  - 로컬 질문 후 모바일 fallback 전까지 기다릴 시간
+- `HARNESS_NTFY_SERVER`
+  - 기본값은 `https://ntfy.sh`
+- `HARNESS_NTFY_TOPIC`
+  - 모바일에서 구독할 `ntfy.sh` topic
+- `HARNESS_TELEGRAM_BOT_TOKEN`
+  - Telegram Bot token
+- `HARNESS_TELEGRAM_CHAT_ID`
+  - 승인 응답을 받을 개인 chat id
+
+초보자는 이렇게 이해하면 됩니다.
+- `open_user_gate.ps1`는 “승인을 어느 길로 보낼지 정하는 접수 창구”
+- `watch_user_gates.ps1`는 “대기 중인 승인들을 계속 확인하는 관리자”
+- Telegram은 “실제 승인 버튼”
+
+### 10.5 기본 사용 순서
+Remote approval은 보통 아래 순서로 사용합니다.
+
+**Step 1. 먼저 watcher 대상 repo로 등록**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ".agents/scripts/register_repo_for_approval_watch.ps1" `
+  -Action add
+```
+
+**Step 2. watcher를 Task Scheduler에 설치**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ".agents/scripts/install_approval_watcher_task.ps1" `
+  -Force
+```
+
+기본 설치는 hidden window로 등록되므로, 1분 주기 watcher가 돌아도 콘솔 창이 뜨지 않습니다.
+디버깅이 필요할 때만 `-VisibleWindow`를 추가합니다.
+
+**Step 3. 자리를 비울 때 away mode 켜기**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ".agents/scripts/set_user_presence.ps1" `
+  -Mode away `
+  -DurationMinutes 120
+```
+
+복귀하면:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ".agents/scripts/set_user_presence.ps1" `
+  -Mode present
+```
+
+**Step 4. 먼저 artifact에 gate를 기록**
+- 예: `CURRENT_STATE.md`에 `Needs User Decision`을 남깁니다.
+- 이유: 나중에 다른 AI가 들어와도 “지금 왜 멈춰 있는지” 알아야 하기 때문입니다.
+
+**Step 5. `remote-choice` gate 열기**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ".agents/scripts/open_user_gate.ps1" `
+  -TaskId "TST-02" `
+  -DecisionClass remote-choice `
+  -DecisionId "tst02-preview-access" `
+  -Prompt "Preview access 정보를 제공할까요, 아니면 새 preview infra provisioning으로 진행할까요?" `
+  -Context "present mode면 local-first, away mode면 즉시 모바일 승인으로 전환합니다." `
+  -Options existing-access fresh-provisioning hold `
+  -LocalResponseGraceMinutes 15
+```
+
+present mode면 보통 `local_wait`로 시작하고, away mode면 바로 모바일 전송으로 이어집니다.
+
+**Step 6. watcher가 나머지를 이어받음**
+- 사용자가 응답하지 않으면 watcher가 grace 이후 자동 fallback합니다.
+- Telegram 응답이 오면 watcher가 `resolved`로 반영합니다.
+
+### 10.6 상태 읽는 법
+상태는 [`.agents/runtime/approvals/<decision-id>.json`](.agents/runtime/approvals/)에 남습니다.
+
+자주 보는 상태:
+- `auto_apply`: 묻지 않고 바로 진행하는 작업
+- `blocked_local`: 모바일로 보내지 않는 blocker
+- `local_wait`: 지금은 로컬 응답을 먼저 기다리는 중
+- `pending`: 모바일 알림 발송 완료, 응답 대기 중
+- `resolved`: 응답 회수 완료
+- `timeout`: 대기 시간 내 응답 없음
+- `send_failed`: 알림 채널 발송 실패
+
+### 10.7 꼭 지켜야 할 주의점
+- artifact 기록 없이 Remote approval만 먼저 보내지 않습니다.
+- `safe-auto` 범위는 사용자 승인 질문으로 만들지 않습니다.
+- secret, token, 민감 URL은 알림 본문에 넣지 않습니다.
+- 같은 승인 요청은 같은 `DecisionId`를 재사용합니다.
+- 같은 Telegram bot/session에 여러 polling consumer를 동시에 띄우지 않습니다.
+- away mode를 켜지 않으면 기본 동작은 여전히 `present` 기준입니다.
+- timeout이 났으면 `Needs User Decision`을 그냥 방치하지 말고 timeout 사실과 다음 액션을 artifact에 갱신합니다.
+
+---
+
+## 11. 자주 하는 실수와 방지법
 초보자가 자주 하는 실수를 먼저 알고 있으면 실수를 크게 줄일 수 있습니다.
 
 ### 실수 1. `CURRENT_STATE`만 보고 `TASK_LIST`를 안 읽음
@@ -635,7 +832,7 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 
 ---
 
-## 11. 문과생용 용어 사전
+## 12. 문과생용 용어 사전
 이 절은 처음 보는 단어를 빠르게 이해하기 위한 작은 사전입니다.
 
 - `AI 개발`: 사람이 목표를 정하고, AI가 문서를 기준으로 역할별 작업을 수행하는 개발 방식
@@ -647,6 +844,12 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 - `skill`: 자주 하는 특정 작업을 위한 전문 가이드
 - `artifact`: 실제 상태가 기록되는 문서
 - `approval`: 사용자가 “이 상태로 다음 단계로 넘어가도 된다”고 승인하는 것
+- `remote approval`: 사용자가 자리를 비웠을 때 모바일 알림으로 짧은 승인/보류/거절을 받는 보조 승인 방식
+- `DecisionId`: 같은 승인 요청을 식별하는 고정 ID. grace 이후 다시 실행할 때도 같은 값을 사용함
+- `local-first`: 먼저 현재 세션에서 질문하고, 응답이 없을 때만 모바일 알림으로 넘기는 정책
+- `away mode`: 사용자가 PC에서 떨어져 있는 동안 짧은 승인 요청을 바로 모바일로 보내도록 하는 상태
+- `safe-auto`: 사용자에게 묻지 않고 바로 처리하는 저위험 harness maintenance 범주
+- `hard-block`: 모바일로 보내지 않고 명시적 사용자 응답을 기다리는 민감/고위험 blocker
 - `DDD`: 비즈니스 중심으로 구조를 나누는 설계 방식
 - `scope`: 내가 지금 건드리는 작업 범위
 - `lock`: “이 작업은 지금 누가 잡고 있다”는 점유 표시
@@ -657,7 +860,7 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 
 ---
 
-## 12. 처음 시작할 때 읽는 최소 순서
+## 13. 처음 시작할 때 읽는 최소 순서
 이 절만 따로 봐도 시작은 가능합니다.
 
 1. [AGENTS.md](AGENTS.md)
@@ -672,7 +875,7 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 
 ---
 
-## 13. 역할별 빠른 시작 표
+## 14. 역할별 빠른 시작 표
 처음에는 이 표만 봐도 방향을 잡기 쉽습니다.
 
 | 내가 맡은 역할 | 가장 먼저 볼 것 | 그 다음 볼 것 | 끝날 때 꼭 할 것 |
@@ -687,7 +890,7 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 
 ---
 
-## 14. 마지막 정리
+## 15. 마지막 정리
 이 템플릿의 핵심은 “AI가 똑똑하니까 알아서 하겠지”가 아닙니다.
 
 핵심은 아래입니다.

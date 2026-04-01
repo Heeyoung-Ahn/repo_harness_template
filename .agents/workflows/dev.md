@@ -31,6 +31,9 @@ description: 개발자(Developer) 에이전트 워크플로우
 - UI 작업이면 `UI_DESIGN.md`의 핵심 interaction과 상태 규칙을 지킵니다.
 - 코드 변경으로 문서의 사실관계가 바뀌면 관련 아티팩트와 `CURRENT_STATE.md`를 함께 갱신합니다.
 - 민감 정보 하드코딩과 민감 로그 출력은 금지합니다.
+- low-risk harness maintenance와 read-only verification은 `safe-auto`로 처리하고 승인 대기를 만들지 않습니다.
+- 짧은 사용자 결정이 남으면 artifact에 먼저 기록하고 `.agents/scripts/open_user_gate.ps1`로 넘깁니다.
+- secret, destructive git/filesystem action, 장문 설계 토론은 `hard-block`으로 유지합니다.
 
 ### Step 4: 자체 검증
 - `IMPLEMENTATION_PLAN.md > Validation Commands` 또는 프로젝트 스크립트의 검증 명령을 실행합니다.

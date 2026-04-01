@@ -79,6 +79,25 @@ function Get-DateTimeOffsetOrNull {
     }
 }
 
+function Merge-StateExtraFields {
+    param(
+        [Parameter(Mandatory = $true)]$BaseState,
+        $ExistingState
+    )
+
+    if ($null -eq $ExistingState) {
+        return $BaseState
+    }
+
+    foreach ($property in $ExistingState.PSObject.Properties) {
+        if (-not $BaseState.Contains($property.Name)) {
+            $BaseState[$property.Name] = $property.Value
+        }
+    }
+
+    return $BaseState
+}
+
 function Invoke-HarnessRestMethod {
     param(
         [Parameter(Mandatory = $true)][string]$Uri,
@@ -531,6 +550,7 @@ $state = [ordered]@{
     expires_at                    = $expiresAtText
     timeout_minutes               = $timeoutMinutesValue
 }
+$state = Merge-StateExtraFields -BaseState $state -ExistingState $existingState
 
 if ($localPromptedAtValue) {
     $state.local_prompted_at = $localPromptedAtValue.ToString('o')

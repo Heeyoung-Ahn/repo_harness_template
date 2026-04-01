@@ -42,5 +42,8 @@ description: 리뷰어 및 보안 검증(Reviewer) 에이전트 워크플로우
 - `TASK_LIST.md` 상태를 갱신합니다.
 - `CURRENT_STATE.md`의 `Snapshot`, `Next Recommended Agent`, `Must Read Next`, `Required Skills`, `Active Scope`, `Task Pointers`, `Open Decisions / Blockers`, `Latest Handoff Summary`, `Recent History Summary`를 갱신합니다.
 - archive 전에 재작업 필요 항목, 배포 차단 요소, 사용자 결정이 필요한 구조 이슈를 `TASK_LIST.md > ## Blockers`와 `CURRENT_STATE.md > Open Decisions / Blockers`로 승격합니다.
+- low-risk harness maintenance와 read-only review evidence 정리는 `safe-auto`로 처리합니다.
+- 짧은 사용자 결정이 필요한 release gate는 artifact에 먼저 기록하고 `.agents/scripts/open_user_gate.ps1`로 넘깁니다.
+- secret, destructive remediation, 장문 구조 협의는 `hard-block`으로 유지합니다.
 - rules / workflows / artifacts를 수정했다면 `powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1"`를 실행합니다.
 - `## Handoff Log`에 표준 양식으로 기록합니다.
