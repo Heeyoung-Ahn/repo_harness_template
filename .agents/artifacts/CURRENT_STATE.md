@@ -20,71 +20,70 @@
 - `Last Updated By / At`는 실제 마지막 갱신 주체와 시각으로 즉시 덮어씁니다.
 
 ## Snapshot
-- Version / Milestone: `template-maintenance`
-- Current Stage: `Documentation and Closeout`
-- Current Focus: `로컬 승인 기준 기본 템플릿 설명 유지`
-- Current Release Goal: `원격 승인 자산을 backup으로 격리한 기본 템플릿 설명을 최신 상태로 유지`
-- Requirements Status: `N/A (template maintenance)`
-- Requirement Baseline: `remote-approval-removal-2026-04-03`
-- Requirements Sync Check: `In Sync`
-- Architecture Status: `No Architecture Change`
-- Plan Status: `Completed`
-- Review Gate: `Not Requested`
-- Manual / Environment Gate: `None`
-- Dependency / Compliance Gate: `Not Assessed`
-- Last Synced From Task / Handoff: `DOC-05`
-- Sync Checked At: `2026-04-04`
-- Task List Sync Check: `In Sync`
-- Document Health: `README / PROJECT_WORKFLOW_MANUAL까지 backup 구조와 로컬 승인 기준으로 재동기화됨`
-- Last Updated By / At: `Codex / 2026-04-04`
+- Version / Milestone:
+- Current Stage:
+- Current Focus:
+- Current Release Goal:
+- Requirements Status:
+- Requirement Baseline:
+- Requirements Sync Check: In Sync / Downstream Update Required / Needs Re-Approval
+- Architecture Status:
+- Plan Status:
+- Review Gate:
+- Manual / Environment Gate:
+- Dependency / Compliance Gate:
+- Last Synced From Task / Handoff:
+- Sync Checked At:
+- Task List Sync Check: In Sync / Needs Review
+- Document Health:
+- Last Updated By / At:
 
 ## Next Recommended Agent
-- Recommended role: `Planner`
-- Reason: `원격 승인 없는 기본 템플릿 기준으로 다음 범위 조정이나 새 프로젝트 baseline 작성이 가능함`
-- Trigger to switch: `추가 템플릿 범위 변경이나 새 프로젝트 요구사항 정리가 필요할 때`
+- Recommended role:
+- Reason:
+- Trigger to switch:
 
 ## Must Read Next
-- 1. `TASK_LIST.md > Current Release Target + Workflow Stage: Documentation and Closeout`
-- 2. `.agents/rules/workspace.md > 1. Entry Load Policy, 7. Handoff and Validation, 9. User Decision Handling`
-- 3. `없음 (새 task scope가 열릴 때만 추가 문서 확인)`
-- Optional follow-up: `backup/remote_approval/README.md`, `README.md > 현재 기본 템플릿 범위`
+- 1. `TASK_LIST.md > ## Active Locks + 관련 Task ID row`
+- 2. [필수 문서 경로 + 읽어야 할 섹션]
+- 3. [필수 문서 경로 + 읽어야 할 섹션]
+- Optional follow-up:
 - Do not read by default: `README.md`, `PROJECT_WORKFLOW_MANUAL.md`, `HANDOFF_ARCHIVE.md`
 
 ## Required Skills
 - Tester Agent: [필요할 때만 작성]
 - Reviewer Agent: [필요할 때만 작성]
 - DevOps / release gate: [필요할 때만 작성]
-- Rules / workflows / artifact edits: `korean-artifact-utf8-guard`
+- Rules / workflows / artifact edits: `korean-artifact-utf8-guard` 등 필요 시만 작성
 
 ## Active Scope
-- Active Task IDs: `없음`
-- Relevant paths / modules: `README.md`, `PROJECT_WORKFLOW_MANUAL.md`, `backup/remote_approval`, `.agents/rules`, `.agents/artifacts`
-- Current locks to respect: `없음`
-- Worktree recommendation: `Not needed`
+- Active Task IDs:
+- Relevant paths / modules:
+- Current locks to respect:
+- Worktree recommendation:
 
 ## Task Pointers
-- `DOC-05` Last relevant handoff: `2026-04-04 Codex`
-- `DOC-05` Current owner / next check: `Completed / monitor only if entry guidance or template scope changes again`
-- `DOC-05` Blocker or caution: `README와 매뉴얼은 설명 문서이며 운영 정본이 아님`
+- [Task ID] Last relevant handoff:
+- [Task ID] Current owner / next check:
+- [Task ID] Blocker or caution:
 
 ## Open Decisions / Blockers
-- Release blocker: `없음`
-- Manual / environment-specific blocker: `없음`
-- Dependency / compliance gate: `없음`
-- 사용자 답변 / 확인 대기: `없음`
-- 기술 블로커: `없음`
-- Document / harness maintenance: `완료`
-- Stale lock watch: `없음`
-- Needs User Decision: `없음`
+- Release blocker:
+- Manual / environment-specific blocker:
+- Dependency / compliance gate:
+- 사용자 답변 / 확인 대기:
+- 기술 블로커:
+- Document / harness maintenance:
+- Stale lock watch:
+- Needs User Decision:
 
 ## Latest Handoff Summary
-- Handoff source: `DOC-05 / Codex / 2026-04-04`
-- Completed: `README / PROJECT_WORKFLOW_MANUAL를 현재 진입 순서, 로컬 승인 기준, backup 구조에 맞게 정리함`
-- Next: `새 템플릿 범위 변경이 생기면 설명 문서와 운영 정본을 같은 턴에 다시 동기화함`
-- Notes: `README와 매뉴얼은 설명층이고, 실제 규칙과 상태 정본은 계속 .agents 아래 문서가 담당함`
+- Handoff source:
+- Completed:
+- Next:
+- Notes:
 
 ## Recent History Summary
-- `2026-04-03` 원격 승인 관련 자산을 `backup/remote_approval`로 이관함.
-- `2026-04-03` rules / workflows / tutorial 문구를 로컬 사용자 승인 기준으로 정리함.
-- `2026-04-03` 기본 템플릿에서 별도 승인 운영 계층 전제를 제거함.
-- `2026-04-04` README와 튜토리얼 문서를 현재 기본 템플릿 범위에 맞게 재동기화함.
+- [최근 기록 요약 1]
+- [최근 기록 요약 2]
+- [최근 기록 요약 3]

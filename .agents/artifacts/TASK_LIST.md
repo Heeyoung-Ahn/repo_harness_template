@@ -5,8 +5,6 @@
 
 ## Changelog
 - [YYYY-MM-DD] Planner: initial draft
-- [2026-04-03] Codex: removed optional approval extension features from the default template and archived related assets under `backup/remote_approval`
-- [2026-04-04] Codex: synced README and tutorial docs with the current local-approval template scope
 
 ## Usage Rules
 - 상태는 `[ ]`, `[-]`, `[x]`, `[!]`만 사용합니다.
@@ -32,10 +30,10 @@
 - artifact harness debt는 release blocker와 분리해 별도 maintenance task 또는 blocker note로 관리합니다.
 
 ## Current Release Target
-- Version / Milestone: `template-maintenance`
-- Current Stage: `Documentation and Closeout`
-- Current Focus: `로컬 승인 기준 기본 템플릿 설명 유지`
-- Current Release Goal: `원격 승인 자산을 backup으로 격리한 기본 템플릿 설명을 최신 상태로 유지`
+- Version / Milestone:
+- Current Stage:
+- Current Focus:
+- Current Release Goal:
 
 ## Next Version Backlog
 - [ ] BACKLOG-01 [다음 버전 후보 작업] — Scope: [제품/문서/기술 부채]
@@ -81,20 +79,9 @@
 ## Workflow Stage: Documentation and Closeout
 - [ ] DOC-01 day_wrap_up 또는 같은 버전 내 문서 정리 준비 — Scope: `CURRENT_STATE.md`, `TASK_LIST.md`, 관련 아티팩트
 - [ ] DOC-02 version_closeout / Documenter 정리 — Scope: archive, `CURRENT_STATE.md`, `HANDOFF_ARCHIVE.md`
-- [x] DOC-03 운영 가이드 / 튜토리얼 동기화 — Scope: `PROJECT_WORKFLOW_MANUAL.md`
-- [x] DOC-04 원격 승인 기능 backup 이관 및 템플릿 제외 — Scope: `backup/remote_approval`, `.agents/rules`, `.agents/workflows`, `.agents/artifacts`, `PROJECT_WORKFLOW_MANUAL.md`
-- [x] DOC-05 README / 튜토리얼 현재 범위 동기화 — Scope: `README.md`, `PROJECT_WORKFLOW_MANUAL.md`, `.agents/artifacts/CURRENT_STATE.md`, `.agents/artifacts/TASK_LIST.md`
 
 ## Blockers
 - [없으면 비워둠]
 - [승격된 blocker / 사용자 결정 대기 / stale lock 판단 보류]
 
 ## Handoff Log
-- [2026-04-03] Codex — Task: `DOC-04`
-  - Completed: 제외 대상 승인 확장 자산을 `backup/remote_approval`로 이관하고 기본 템플릿의 관련 참조를 제거함.
-  - Next: 추가 지시가 없으면 기본 템플릿은 로컬 사용자 승인 전제만 유지함.
-  - Notes: `tools/harness_admin`의 기존 미커밋 변경은 보존된 채 backup 위치로 함께 이동됨.
-- [2026-04-04] Codex — Task: `DOC-05`
-  - Completed: `README.md`와 `PROJECT_WORKFLOW_MANUAL.md`를 현재 기본 템플릿 범위, 로컬 사용자 승인 기준, `backup/remote_approval` 보관 구조에 맞게 동기화함.
-  - Next: 추가 범위 변경이 없으면 현재 설명 문구를 유지하고, 새 진입 규칙이 생기면 README와 튜토리얼을 함께 갱신함.
-  - Notes: `README.md`, `PROJECT_WORKFLOW_MANUAL.md`는 설명 문서이며 운영 정본은 계속 `.agents/rules`와 `.agents/artifacts`에 남겨 둠.
