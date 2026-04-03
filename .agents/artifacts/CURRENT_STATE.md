@@ -22,8 +22,8 @@
 ## Snapshot
 - Version / Milestone: `template-maintenance`
 - Current Stage: `Documentation and Closeout`
-- Current Focus: `원격 승인 기능 기본 템플릿 제외 완료`
-- Current Release Goal: `기본 템플릿을 로컬 사용자 승인 기준으로 유지`
+- Current Focus: `원격 승인 제외 이후 기본 템플릿 설명 문서 동기화`
+- Current Release Goal: `원격 승인 자산을 backup으로 격리한 기본 템플릿 설명을 최신 상태로 유지`
 - Requirements Status: `N/A (template maintenance)`
 - Requirement Baseline: `remote-approval-removal-2026-04-03`
 - Requirements Sync Check: `In Sync`
@@ -32,11 +32,11 @@
 - Review Gate: `Not Requested`
 - Manual / Environment Gate: `None`
 - Dependency / Compliance Gate: `Not Assessed`
-- Last Synced From Task / Handoff: `DOC-04`
-- Sync Checked At: `2026-04-03`
+- Last Synced From Task / Handoff: `DOC-05`
+- Sync Checked At: `2026-04-04`
 - Task List Sync Check: `In Sync`
-- Document Health: `원격 승인 참조를 기본 템플릿에서 제거하고 backup으로 이관함`
-- Last Updated By / At: `Codex / 2026-04-03`
+- Document Health: `README / PROJECT_WORKFLOW_MANUAL가 backup 구조와 로컬 승인 기준에 맞게 재동기화 진행 중`
+- Last Updated By / At: `Codex / 2026-04-04`
 
 ## Next Recommended Agent
 - Recommended role: `Planner`
@@ -57,15 +57,15 @@
 - Rules / workflows / artifact edits: `korean-artifact-utf8-guard`
 
 ## Active Scope
-- Active Task IDs: `없음`
-- Relevant paths / modules: `backup/remote_approval`, `.agents/rules`, `.agents/workflows`, `.agents/artifacts`, `PROJECT_WORKFLOW_MANUAL.md`
-- Current locks to respect: `없음`
+- Active Task IDs: `DOC-05`
+- Relevant paths / modules: `README.md`, `PROJECT_WORKFLOW_MANUAL.md`, `backup/remote_approval`, `.agents/rules`, `.agents/artifacts`
+- Current locks to respect: `DOC-05 (self)`
 - Worktree recommendation: `Not needed`
 
 ## Task Pointers
-- `DOC-04` Last relevant handoff: `2026-04-03 Codex`
-- `DOC-04` Current owner / next check: `Completed / monitor only if more template pruning is requested`
-- `DOC-04` Blocker or caution: `backup에 보관된 원격 승인 자산은 기본 템플릿에서 더 이상 참조하지 않음`
+- `DOC-05` Last relevant handoff: `없음 (current session)`
+- `DOC-05` Current owner / next check: `Codex / README + manual sync 후 closeout`
+- `DOC-05` Blocker or caution: `README와 매뉴얼은 설명 문서이며 운영 정본이 아님`
 
 ## Open Decisions / Blockers
 - Release blocker: `없음`

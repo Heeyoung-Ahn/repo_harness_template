@@ -6,6 +6,7 @@
 ## Changelog
 - [YYYY-MM-DD] Planner: initial draft
 - [2026-04-03] Codex: removed optional approval extension features from the default template and archived related assets under `backup/remote_approval`
+- [2026-04-04] Codex: opened DOC-05 to sync README and tutorial docs with the current template scope
 
 ## Usage Rules
 - 상태는 `[ ]`, `[-]`, `[x]`, `[!]`만 사용합니다.
@@ -33,8 +34,8 @@
 ## Current Release Target
 - Version / Milestone: `template-maintenance`
 - Current Stage: `Documentation and Closeout`
-- Current Focus: `기본 템플릿에서 원격 승인 기능 제외`
-- Current Release Goal: `원격 승인 자산을 backup으로 격리하고 기본 템플릿은 로컬 승인 기준으로 유지`
+- Current Focus: `원격 승인 제외 이후 기본 템플릿 설명 문서 동기화`
+- Current Release Goal: `원격 승인 자산을 backup으로 격리한 기본 템플릿 설명을 최신 상태로 유지`
 
 ## Next Version Backlog
 - [ ] BACKLOG-01 [다음 버전 후보 작업] — Scope: [제품/문서/기술 부채]
@@ -43,6 +44,7 @@
 
 | Task ID | Owner | Role | Started At | Scope | Note |
 |---|---|---|---|---|---|
+| DOC-05 | Codex | Documenter | 2026-04-04 00:23 | `README.md`, `PROJECT_WORKFLOW_MANUAL.md`, `.agents/artifacts/CURRENT_STATE.md`, `.agents/artifacts/TASK_LIST.md` | README / tutorial sync after remote approval removal |
 
 ## Workflow Stage: Planning and Architecture
 - [ ] PLN-01 요구사항 초안 정리 — Scope: `REQUIREMENTS.md`
@@ -82,6 +84,7 @@
 - [ ] DOC-02 version_closeout / Documenter 정리 — Scope: archive, `CURRENT_STATE.md`, `HANDOFF_ARCHIVE.md`
 - [x] DOC-03 운영 가이드 / 튜토리얼 동기화 — Scope: `PROJECT_WORKFLOW_MANUAL.md`
 - [x] DOC-04 원격 승인 기능 backup 이관 및 템플릿 제외 — Scope: `backup/remote_approval`, `.agents/rules`, `.agents/workflows`, `.agents/artifacts`, `PROJECT_WORKFLOW_MANUAL.md`
+- [-] DOC-05 README / 튜토리얼 현재 범위 동기화 — Scope: `README.md`, `PROJECT_WORKFLOW_MANUAL.md`, `.agents/artifacts/CURRENT_STATE.md`, `.agents/artifacts/TASK_LIST.md`
 
 ## Blockers
 - [없으면 비워둠]

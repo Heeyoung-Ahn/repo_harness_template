@@ -24,6 +24,11 @@
 - **실제 작업 상태의 정본은 [`.agents/artifacts/`](.agents/artifacts/) 아래 문서들입니다.**
 - 이 매뉴얼은 그 규칙과 문서를 **쉽게 이해하게 풀어 쓴 안내서**입니다.
 
+현재 기본 템플릿 범위에 대한 추가 메모:
+- 사용자 승인과 짧은 결정은 기본적으로 **현재 세션의 로컬 대화**에서 처리합니다.
+- 원격 승인 watcher / scheduler / registry / mobile routing 같은 확장 자산은 기본 템플릿에서 제외되었습니다.
+- 관련 자산은 [`backup/remote_approval/`](backup/remote_approval/README.md)에 보관되어 있으며, 기본 workflow와 artifact는 이를 전제로 하지 않습니다.
+
 ---
 
 ## 1. AI 개발이란 무엇인가
@@ -173,12 +178,18 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 ## 5. 이 저장소에서 가장 먼저 따라 하는 시작 절차
 처음 작업을 시작할 때는 아래 순서를 **거의 그대로** 따라가면 됩니다.
 
-### Step 1. [`AGENTS.md`](AGENTS.md) 읽기
-이 파일은 아주 짧은 입구 안내판입니다.
+### Step 1. `AGENTS.md` 진입 안내 확인
+어떤 IDE는 [`AGENTS.md`](AGENTS.md) 내용을 세션 시작 전에 이미 보여 줍니다.  
+이 저장소에서는 이 차이를 먼저 이해하면 헷갈림이 크게 줄어듭니다.
 
 여기서 알 수 있는 것:
-- 가장 먼저 읽어야 할 파일이 무엇인지
+- 첫 repo 파일로 무엇을 열어야 하는지
 - 무엇을 기본 진입 문서로 보지 말아야 하는지
+- 기본 템플릿이 어떤 범위까지 포함하는지
+
+실전 기준:
+- `AGENTS.md`가 이미 IDE에 노출되었다면 첫 repo 파일로 `workspace.md`를 엽니다.
+- `AGENTS.md`가 자동으로 보이지 않는 환경이라면 이 파일을 먼저 한 번 읽고 같은 순서로 들어갑니다.
 
 ### Step 2. [`workspace.md`](.agents/rules/workspace.md) 읽기
 이 파일이 정본입니다.
@@ -239,7 +250,7 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 
 ### 초보자를 위한 한 줄 요약
 처음 시작할 때는:
-1. `AGENTS.md`
+1. `AGENTS.md` 안내 확인 또는 IDE가 이미 노출한 entry guide 확인
 2. `workspace.md`
 3. `CURRENT_STATE.md`
 4. `TASK_LIST.md > ## Active Locks`
@@ -583,6 +594,7 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 - 짧은 사용자 결정이 필요하면 현재 세션에서 바로 확인하고 답을 기다립니다.
 - secret, token, destructive action, 긴 설명이 필요한 논의는 blocker로 남기고 명시적 사용자 응답을 기다립니다.
 - 모바일 전달과 별도 운영 계층은 기본 템플릿 범위에 포함하지 않습니다.
+- 과거 원격 승인 확장 자산은 [`backup/remote_approval/`](backup/remote_approval/README.md)에만 보관되며 현재 기본 workflow에서는 사용하지 않습니다.
 
 ### 10.1 언제 artifact에 기록하는가
 - `Needs User Decision`
@@ -701,7 +713,7 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 ## 13. 처음 시작할 때 읽는 최소 순서
 이 절만 따로 봐도 시작은 가능합니다.
 
-1. [AGENTS.md](AGENTS.md)
+1. [AGENTS.md](AGENTS.md) 또는 IDE가 이미 노출한 동등한 entry guide
 2. [workspace.md](.agents/rules/workspace.md)
 3. [CURRENT_STATE.md](.agents/artifacts/CURRENT_STATE.md)
 4. [TASK_LIST.md > ## Active Locks](.agents/artifacts/TASK_LIST.md)
@@ -709,7 +721,7 @@ worktree는 **작업 공간을 물리적으로 분리하는 방식**입니다.
 6. 내 역할의 workflow
 
 기억할 한 줄:
-- **매뉴얼보다 먼저 읽는 것은 `AGENTS.md`, `workspace.md`, `CURRENT_STATE.md`, `TASK_LIST.md > ## Active Locks`입니다.**
+- **매뉴얼보다 먼저 확인하는 것은 `AGENTS.md` entry guide, `workspace.md`, `CURRENT_STATE.md`, `TASK_LIST.md > ## Active Locks`입니다.**
 
 ---
 
