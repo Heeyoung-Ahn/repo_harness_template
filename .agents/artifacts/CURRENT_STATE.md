@@ -22,7 +22,7 @@
 ## Snapshot
 - Version / Milestone: `template-maintenance`
 - Current Stage: `Documentation and Closeout`
-- Current Focus: `원격 승인 제외 이후 기본 템플릿 설명 문서 동기화`
+- Current Focus: `로컬 승인 기준 기본 템플릿 설명 유지`
 - Current Release Goal: `원격 승인 자산을 backup으로 격리한 기본 템플릿 설명을 최신 상태로 유지`
 - Requirements Status: `N/A (template maintenance)`
 - Requirement Baseline: `remote-approval-removal-2026-04-03`
@@ -35,7 +35,7 @@
 - Last Synced From Task / Handoff: `DOC-05`
 - Sync Checked At: `2026-04-04`
 - Task List Sync Check: `In Sync`
-- Document Health: `README / PROJECT_WORKFLOW_MANUAL가 backup 구조와 로컬 승인 기준에 맞게 재동기화 진행 중`
+- Document Health: `README / PROJECT_WORKFLOW_MANUAL까지 backup 구조와 로컬 승인 기준으로 재동기화됨`
 - Last Updated By / At: `Codex / 2026-04-04`
 
 ## Next Recommended Agent
@@ -45,9 +45,9 @@
 
 ## Must Read Next
 - 1. `TASK_LIST.md > Current Release Target + Workflow Stage: Documentation and Closeout`
-- 2. `.agents/rules/workspace.md > 7. Handoff and Validation, 9. User Decision Handling`
-- 3. `PROJECT_WORKFLOW_MANUAL.md > 10. 사용자 승인 처리는 어떻게 하는가`
-- Optional follow-up: `backup/remote_approval/README.md`
+- 2. `.agents/rules/workspace.md > 1. Entry Load Policy, 7. Handoff and Validation, 9. User Decision Handling`
+- 3. `없음 (새 task scope가 열릴 때만 추가 문서 확인)`
+- Optional follow-up: `backup/remote_approval/README.md`, `README.md > 현재 기본 템플릿 범위`
 - Do not read by default: `README.md`, `PROJECT_WORKFLOW_MANUAL.md`, `HANDOFF_ARCHIVE.md`
 
 ## Required Skills
@@ -57,14 +57,14 @@
 - Rules / workflows / artifact edits: `korean-artifact-utf8-guard`
 
 ## Active Scope
-- Active Task IDs: `DOC-05`
+- Active Task IDs: `없음`
 - Relevant paths / modules: `README.md`, `PROJECT_WORKFLOW_MANUAL.md`, `backup/remote_approval`, `.agents/rules`, `.agents/artifacts`
-- Current locks to respect: `DOC-05 (self)`
+- Current locks to respect: `없음`
 - Worktree recommendation: `Not needed`
 
 ## Task Pointers
-- `DOC-05` Last relevant handoff: `없음 (current session)`
-- `DOC-05` Current owner / next check: `Codex / README + manual sync 후 closeout`
+- `DOC-05` Last relevant handoff: `2026-04-04 Codex`
+- `DOC-05` Current owner / next check: `Completed / monitor only if entry guidance or template scope changes again`
 - `DOC-05` Blocker or caution: `README와 매뉴얼은 설명 문서이며 운영 정본이 아님`
 
 ## Open Decisions / Blockers
@@ -78,12 +78,13 @@
 - Needs User Decision: `없음`
 
 ## Latest Handoff Summary
-- Handoff source: `DOC-04 / Codex / 2026-04-03`
-- Completed: `원격 승인 스킬, 앱, 스크립트, runtime 예시를 backup으로 이관하고 기본 템플릿 참조를 제거함`
-- Next: `추가 템플릿 범위 조정이 없으면 현재 상태 유지`
-- Notes: `기본 템플릿은 로컬 사용자 승인 전제만 유지함`
+- Handoff source: `DOC-05 / Codex / 2026-04-04`
+- Completed: `README / PROJECT_WORKFLOW_MANUAL를 현재 진입 순서, 로컬 승인 기준, backup 구조에 맞게 정리함`
+- Next: `새 템플릿 범위 변경이 생기면 설명 문서와 운영 정본을 같은 턴에 다시 동기화함`
+- Notes: `README와 매뉴얼은 설명층이고, 실제 규칙과 상태 정본은 계속 .agents 아래 문서가 담당함`
 
 ## Recent History Summary
 - `2026-04-03` 원격 승인 관련 자산을 `backup/remote_approval`로 이관함.
 - `2026-04-03` rules / workflows / tutorial 문구를 로컬 사용자 승인 기준으로 정리함.
 - `2026-04-03` 기본 템플릿에서 별도 승인 운영 계층 전제를 제거함.
+- `2026-04-04` README와 튜토리얼 문서를 현재 기본 템플릿 범위에 맞게 재동기화함.
