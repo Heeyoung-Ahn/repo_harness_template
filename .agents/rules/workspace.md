@@ -68,9 +68,9 @@ repo-tracked 파일을 수정하기 직전 아래를 다시 확인합니다.
 - 작업 시작 시 관련 태스크를 `[-]`로 바꾸고 `## Active Locks`에 점유 정보를 추가합니다.
 - 작업 종료 시 태스크 상태를 갱신하고 lock을 제거합니다.
 - 다음 Agent가 꼭 알아야 할 blocker, user decision, manual gate만 `CURRENT_STATE.md`와 필요한 handoff에 남깁니다.
-- low-risk harness maintenance (`LF` 정규화, `CURRENT_STATE.md` compact, live handoff reorder, validator 실행, non-destructive sync, read-only verification)는 `safe-auto`로 분류하고 사용자 승인 없이 바로 적용한 뒤 결과만 요약합니다.
-- If a short user decision is still needed, record the gate in artifacts first and route it through `.agents/scripts/open_user_gate.ps1`. When presence mode is `away`, the gate should go to mobile immediately; otherwise `local-first` plus the watcher handles fallback.
-- secret, token, destructive filesystem / git action, 장문 토론이 필요한 질문은 `hard-block`으로 두고 모바일 알림으로 보내지 않습니다.
+- low-risk harness maintenance (`LF` 정규화, `CURRENT_STATE.md` compact, live handoff reorder, validator 실행, non-destructive sync, read-only verification)는 사용자 승인 없이 바로 적용한 뒤 결과만 요약합니다.
+- If a short user decision is still needed, record the gate in artifacts first and keep it as a local user decision in the active session.
+- secret, token, destructive filesystem / git action, 장문 토론이 필요한 질문은 명시적 사용자 응답이 필요한 blocker로 유지합니다.
 - `CURRENT_STATE.md > Snapshot`의 `Current Stage`, `Current Focus`, `Current Release Goal`과 `TASK_LIST.md > Current Release Target`은 항상 같은 값으로 유지합니다.
 - `version_closeout`으로 새 버전을 시작할 때는 자유서술 새 Draft 문서를 쓰지 말고 `powershell -ExecutionPolicy Bypass -File ".agents/scripts/reset_version_artifacts.ps1"`로 reset 대상 문서를 복원한 뒤 starter content만 채웁니다.
 - artifact harness 오류는 별도 정비 작업으로 분리하고, release blocker인지 아닌지를 명시합니다.
@@ -89,10 +89,10 @@ powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1
 - artifact 본문 설명, 요약, blocker, handoff는 기본적으로 한국어로 작성합니다.
 - 코드 식별자, 파일명, 경로, 명령어, 고정 상태 라벨은 영어를 유지할 수 있습니다.
 
-## 9. Unattended Approval Routing
-- 기본 presence mode는 `present`입니다. 사용자가 자리를 비울 때와 복귀할 때의 전환은 `Harness Admin App`에서 관리합니다.
-- presence, repo registry, Telegram offset은 user-level runtime (`%USERPROFILE%\.harness-runtime` 기본값)에서 관리합니다. repo-tracked artifact에 secret이나 개인 채널 값을 남기지 않습니다.
-- unattended watcher의 설치, 제거, 주기 실행 제어는 `Harness Admin App`의 operator layer 책임입니다. repo template 안에 별도 watcher / scheduler 제어 스크립트를 다시 추가하지 않습니다.
-- `remote-choice` gate는 `.agents/scripts/open_user_gate.ps1`가 canonical entrypoint입니다. low-level `.agents/scripts/invoke_user_gate.ps1`는 delivery primitive이며 직접 사용은 예외 상황으로 제한합니다.
-- `safe-auto` 작업은 artifact health를 회복하는 범위에서만 자동 적용합니다. 코드/데이터/배포 상태를 바꾸는 실제 제품 동작은 여기에 포함하지 않습니다.
-- `hard-block`은 runtime state에 남길 수 있지만, 작업 재개 전까지는 반드시 명시적 사용자 응답 또는 secret materialization이 필요합니다.
+## 9. User Decision Handling
+- 기본 사용자 응답 경로는 현재 세션의 로컬 대화입니다.
+- presence, repo registry, 모바일 채널, watcher 같은 사용자별 runtime 구성은 기본 템플릿 범위에 포함하지 않습니다.
+- repo template 안에 원격 승인용 watcher / scheduler / registry / mobile routing 스크립트를 다시 추가하지 않습니다.
+- 짧은 사용자 결정이 남으면 artifact에 gate 상태를 기록하고 현재 세션 응답 대기로 유지합니다.
+- low-risk maintenance는 artifact health를 회복하는 범위에서만 자동 적용합니다. 코드/데이터/배포 상태를 바꾸는 실제 제품 동작은 여기에 포함하지 않습니다.
+- secret, token, destructive action, 장문 논의가 필요한 항목은 명시적 사용자 응답 전까지 blocker로 유지합니다.

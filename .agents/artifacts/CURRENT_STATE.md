@@ -20,70 +20,70 @@
 - `Last Updated By / At`는 실제 마지막 갱신 주체와 시각으로 즉시 덮어씁니다.
 
 ## Snapshot
-- Version / Milestone:
-- Current Stage:
-- Current Focus:
-- Current Release Goal:
-- Requirements Status:
-- Requirement Baseline:
-- Requirements Sync Check: In Sync / Downstream Update Required / Needs Re-Approval
-- Architecture Status:
-- Plan Status:
-- Review Gate:
-- Manual / Environment Gate:
-- Dependency / Compliance Gate:
-- Last Synced From Task / Handoff:
-- Sync Checked At:
-- Task List Sync Check: In Sync / Needs Review
-- Document Health:
-- Last Updated By / At:
+- Version / Milestone: `template-maintenance`
+- Current Stage: `Documentation and Closeout`
+- Current Focus: `원격 승인 기능 기본 템플릿 제외 완료`
+- Current Release Goal: `기본 템플릿을 로컬 사용자 승인 기준으로 유지`
+- Requirements Status: `N/A (template maintenance)`
+- Requirement Baseline: `remote-approval-removal-2026-04-03`
+- Requirements Sync Check: `In Sync`
+- Architecture Status: `No Architecture Change`
+- Plan Status: `Completed`
+- Review Gate: `Not Requested`
+- Manual / Environment Gate: `None`
+- Dependency / Compliance Gate: `Not Assessed`
+- Last Synced From Task / Handoff: `DOC-04`
+- Sync Checked At: `2026-04-03`
+- Task List Sync Check: `In Sync`
+- Document Health: `원격 승인 참조를 기본 템플릿에서 제거하고 backup으로 이관함`
+- Last Updated By / At: `Codex / 2026-04-03`
 
 ## Next Recommended Agent
-- Recommended role:
-- Reason:
-- Trigger to switch:
+- Recommended role: `Planner`
+- Reason: `원격 승인 없는 기본 템플릿 기준으로 다음 범위 조정이나 새 프로젝트 baseline 작성이 가능함`
+- Trigger to switch: `추가 템플릿 범위 변경이나 새 프로젝트 요구사항 정리가 필요할 때`
 
 ## Must Read Next
-- 1. `TASK_LIST.md > ## Active Locks + 관련 Task ID row`
-- 2. [필수 문서 경로 + 읽어야 할 섹션]
-- 3. [필수 문서 경로 + 읽어야 할 섹션]
-- Optional follow-up:
+- 1. `TASK_LIST.md > Current Release Target + Workflow Stage: Documentation and Closeout`
+- 2. `.agents/rules/workspace.md > 7. Handoff and Validation, 9. User Decision Handling`
+- 3. `PROJECT_WORKFLOW_MANUAL.md > 10. 사용자 승인 처리는 어떻게 하는가`
+- Optional follow-up: `backup/remote_approval/README.md`
 - Do not read by default: `README.md`, `PROJECT_WORKFLOW_MANUAL.md`, `HANDOFF_ARCHIVE.md`
 
 ## Required Skills
 - Tester Agent: [필요할 때만 작성]
 - Reviewer Agent: [필요할 때만 작성]
 - DevOps / release gate: [필요할 때만 작성]
-- Rules / workflows / artifact edits: `korean-artifact-utf8-guard` 등 필요 시만 작성
+- Rules / workflows / artifact edits: `korean-artifact-utf8-guard`
 
 ## Active Scope
-- Active Task IDs:
-- Relevant paths / modules:
-- Current locks to respect:
-- Worktree recommendation:
+- Active Task IDs: `없음`
+- Relevant paths / modules: `backup/remote_approval`, `.agents/rules`, `.agents/workflows`, `.agents/artifacts`, `PROJECT_WORKFLOW_MANUAL.md`
+- Current locks to respect: `없음`
+- Worktree recommendation: `Not needed`
 
 ## Task Pointers
-- [Task ID] Last relevant handoff:
-- [Task ID] Current owner / next check:
-- [Task ID] Blocker or caution:
+- `DOC-04` Last relevant handoff: `2026-04-03 Codex`
+- `DOC-04` Current owner / next check: `Completed / monitor only if more template pruning is requested`
+- `DOC-04` Blocker or caution: `backup에 보관된 원격 승인 자산은 기본 템플릿에서 더 이상 참조하지 않음`
 
 ## Open Decisions / Blockers
-- Release blocker:
-- Manual / environment-specific blocker:
-- Dependency / compliance gate:
-- 사용자 답변 / 확인 대기:
-- 기술 블로커:
-- Document / harness maintenance:
-- Stale lock watch:
-- Needs User Decision:
+- Release blocker: `없음`
+- Manual / environment-specific blocker: `없음`
+- Dependency / compliance gate: `없음`
+- 사용자 답변 / 확인 대기: `없음`
+- 기술 블로커: `없음`
+- Document / harness maintenance: `완료`
+- Stale lock watch: `없음`
+- Needs User Decision: `없음`
 
 ## Latest Handoff Summary
-- Handoff source:
-- Completed:
-- Next:
-- Notes:
+- Handoff source: `DOC-04 / Codex / 2026-04-03`
+- Completed: `원격 승인 스킬, 앱, 스크립트, runtime 예시를 backup으로 이관하고 기본 템플릿 참조를 제거함`
+- Next: `추가 템플릿 범위 조정이 없으면 현재 상태 유지`
+- Notes: `기본 템플릿은 로컬 사용자 승인 전제만 유지함`
 
 ## Recent History Summary
-- [최근 기록 요약 1]
-- [최근 기록 요약 2]
-- [최근 기록 요약 3]
+- `2026-04-03` 원격 승인 관련 자산을 `backup/remote_approval`로 이관함.
+- `2026-04-03` rules / workflows / tutorial 문구를 로컬 사용자 승인 기준으로 정리함.
+- `2026-04-03` 기본 템플릿에서 별도 승인 운영 계층 전제를 제거함.

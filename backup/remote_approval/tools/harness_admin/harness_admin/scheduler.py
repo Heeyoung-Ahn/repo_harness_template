@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .constants import TASK_NAME
 from .models import LaunchSpec, WatcherTaskInfo
+from .subprocess_utils import hidden_subprocess_kwargs
 
 
 class SchedulerError(RuntimeError):
@@ -27,6 +28,7 @@ def _run_powershell(script: str) -> str:
         capture_output=True,
         text=True,
         check=False,
+        **hidden_subprocess_kwargs(),
     )
     if completed.returncode != 0:
         stderr = completed.stderr.strip() or completed.stdout.strip()

@@ -30,7 +30,7 @@ description: Documenter Agent wrapper workflow for version closeout
 - 초과분은 `HANDOFF_ARCHIVE.md`로 옮기고 `CURRENT_STATE.md > Recent History Summary`가 최신 상태를 설명하도록 맞춥니다.
 - 오래된 history는 요약만 남기고, 다음 세션에 필요한 최신 상태만 남깁니다.
 - `Latest Handoff Summary`, `Task Pointers`, `Recent History Summary`에 같은 handoff 원문을 반복 복사하지 않습니다.
-- `LF` 정규화, `CURRENT_STATE.md` compact, live handoff reorder, validator 실행 같은 문서 건강 회복 작업은 `safe-auto`로 보고 바로 적용합니다.
+- `LF` 정규화, `CURRENT_STATE.md` compact, live handoff reorder, validator 실행 같은 문서 건강 회복 작업은 사용자 승인 없이 바로 적용합니다.
 - Documenter는 이런 범위의 artifact hygiene를 사용자 승인 질문으로 올리지 않습니다.
 
 ### Step 4: Closeout 시 추가 작업
@@ -41,5 +41,5 @@ description: Documenter Agent wrapper workflow for version closeout
   - `TASK_LIST.md`: `Current Release Target`, carry-over backlog, `## Active Locks`, 초기 `## Handoff Log`
 - `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `UI_DESIGN.md`는 living document로 유지합니다.
 - `# Walkthrough (Draft)` 같은 대체 제목이나 축약 스키마를 새로 쓰지 않습니다.
-- closeout 도중 짧은 사용자 결정이 꼭 필요하면 artifact에 먼저 남기고 `.agents/scripts/open_user_gate.ps1`로 넘깁니다.
-- secret, destructive archive action, 장문 정책 확인은 `hard-block`으로 유지합니다.
+- closeout 도중 짧은 사용자 결정이 꼭 필요하면 artifact에 먼저 남기고 현재 세션의 로컬 사용자 응답 대기로 유지합니다.
+- secret, destructive archive action, 장문 정책 확인은 명시적 사용자 응답이 필요한 blocker로 유지합니다.

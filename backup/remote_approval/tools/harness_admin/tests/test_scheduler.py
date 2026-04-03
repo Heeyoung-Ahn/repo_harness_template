@@ -9,7 +9,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from harness_admin.scheduler import SchedulerError, build_launch_spec  # noqa: E402
+from harness_admin.scheduler import SchedulerError, _run_powershell, build_launch_spec  # noqa: E402
 
 
 class SchedulerTests(unittest.TestCase):
@@ -29,6 +29,22 @@ class SchedulerTests(unittest.TestCase):
         with mock.patch("harness_admin.scheduler.is_frozen", return_value=True):
             with self.assertRaises(SchedulerError):
                 build_launch_spec(visible_debug=True)
+
+    def test_run_powershell_uses_hidden_subprocess_kwargs(self) -> None:
+        completed = mock.Mock(returncode=0, stdout='{"ok":true}', stderr="")
+
+        with mock.patch(
+            "harness_admin.scheduler.hidden_subprocess_kwargs",
+            return_value={"creationflags": 123},
+        ) as hidden_mock, mock.patch(
+            "harness_admin.scheduler.subprocess.run",
+            return_value=completed,
+        ) as run_mock:
+            result = _run_powershell("Write-Output ok")
+
+        self.assertEqual(result, '{"ok":true}')
+        hidden_mock.assert_called_once_with()
+        self.assertEqual(run_mock.call_args.kwargs["creationflags"], 123)
 
 
 if __name__ == "__main__":

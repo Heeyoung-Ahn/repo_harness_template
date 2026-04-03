@@ -5,3 +5,10 @@ tools/harness_admin/dist/
 tools/harness_admin/__pycache__/
 tools/harness_admin/harness_admin/__pycache__/
 tools/harness_admin/tests/__pycache__/
+backup/remote_approval/.agents/runtime/
+backup/remote_approval/tools/harness_admin/.venv/
+backup/remote_approval/tools/harness_admin/build/
+backup/remote_approval/tools/harness_admin/dist/
+backup/remote_approval/tools/harness_admin/__pycache__/
+backup/remote_approval/tools/harness_admin/harness_admin/__pycache__/
+backup/remote_approval/tools/harness_admin/tests/__pycache__/

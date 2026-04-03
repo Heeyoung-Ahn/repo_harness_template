@@ -36,7 +36,7 @@ description: 인프라 및 배포(DevOps) 에이전트 워크플로우
 - 배포 결과와 롤백 여부를 기록합니다.
 - `CURRENT_STATE.md`의 `Snapshot`, `Next Recommended Agent`, `Must Read Next`, `Active Scope`, `Task Pointers`, `Open Decisions / Blockers`, `Latest Handoff Summary`를 갱신합니다.
 - archive 전에 배포 후 주의사항, 남은 운영 이슈, 사용자 결정이 필요한 항목, release-ready를 막는 실환경 / dependency 게이트를 `TASK_LIST.md > ## Blockers`와 `CURRENT_STATE.md > Open Decisions / Blockers`로 승격합니다.
-- low-risk harness maintenance와 read-only deploy validation은 `safe-auto`로 처리하고 승인 대기를 만들지 않습니다.
-- If a short user decision remains for deploy go/no-go, domain cutover, or similar release gates, record it in artifacts first and route it through `.agents/scripts/open_user_gate.ps1`.
-- secret materialization, destructive rollback, production credential 교체는 `hard-block`으로 유지하고 모바일 알림으로 보내지 않습니다.
+- low-risk harness maintenance와 read-only deploy validation은 사용자 승인 없이 바로 적용하고 결과만 요약합니다.
+- If a short user decision remains for deploy go/no-go, domain cutover, or similar release gates, record it in artifacts first and keep it as a local user decision in the active session.
+- secret materialization, destructive rollback, production credential 교체는 명시적 사용자 응답이 필요한 blocker로 유지합니다.
 - `## Handoff Log`에 표준 양식으로 기록합니다.

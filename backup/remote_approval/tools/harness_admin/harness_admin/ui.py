@@ -4,6 +4,7 @@ import os
 import sys
 import tkinter as tk
 import webbrowser
+from datetime import datetime
 from tkinter import filedialog, messagebox, ttk
 
 from .channels import (
@@ -30,6 +31,7 @@ from .runtime_store import (
     add_repo_to_registry,
     collect_overview,
     default_runtime_home,
+    parse_timestamp,
     remove_repo_from_registry,
     resolve_runtime_home,
     set_presence,
@@ -39,6 +41,36 @@ from .runtime_store import (
 )
 from .scheduler import SchedulerError, get_task_info, install_task, remove_task
 from .watcher import watch_once
+
+
+def _format_presence_timestamp(timestamp: object) -> str:
+    if not isinstance(timestamp, str) or not timestamp.strip():
+        return ""
+
+    parsed = parse_timestamp(timestamp)
+    if parsed is None:
+        return timestamp
+
+    local_value = parsed.astimezone()
+    local_now = datetime.now().astimezone()
+    if local_value.date() == local_now.date():
+        return local_value.strftime("%H:%M:%S")
+    return local_value.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def build_presence_text(presence: dict[str, object]) -> str:
+    mode = str(presence.get("mode") or "present")
+    expires_at_text = _format_presence_timestamp(presence.get("expires_at"))
+
+    if presence.get("expired"):
+        if expires_at_text:
+            return f"{mode} (expired at {expires_at_text})"
+        return f"{mode} (expired -> present)"
+
+    if expires_at_text:
+        return f"{mode} (until {expires_at_text})"
+
+    return mode
 
 
 class HarnessAdminUI(tk.Tk):
@@ -500,11 +532,7 @@ class HarnessAdminUI(tk.Tk):
         )
         self.task_command_var.set(task_command)
 
-        presence_text = presence["mode"]
-        if presence.get("expires_at"):
-            presence_text += f" (until {presence['expires_at']})"
-        elif presence.get("expired"):
-            presence_text += " (expired -> present)"
+        presence_text = build_presence_text(presence)
         self.presence_status_var.set(presence_text)
         self.presence_detail_var.set(presence_text)
 

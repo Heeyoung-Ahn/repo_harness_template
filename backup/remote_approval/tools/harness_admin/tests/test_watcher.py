@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from harness_admin.runtime_store import utc_now, write_json  # noqa: E402
 from harness_admin.models import AppSettings  # noqa: E402
 from harness_admin.channels import ChannelError  # noqa: E402
-from harness_admin.watcher import watch_once  # noqa: E402
+from harness_admin.watcher import _replay_remote_choice_gate, watch_once  # noqa: E402
 
 
 class WatcherTests(unittest.TestCase):
@@ -291,6 +291,34 @@ class WatcherTests(unittest.TestCase):
             self.assertEqual(summary.resolved, 1)
             self.assertEqual(updated["status"], "resolved")
             self.assertEqual(updated["decision_source"], "message_command")
+
+    def test_replay_remote_choice_gate_uses_hidden_subprocess_kwargs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_repo:
+            repo_root = self._create_repo(Path(tmp_repo))
+            completed = mock.Mock(returncode=0, stdout="", stderr="")
+
+            with mock.patch(
+                "harness_admin.watcher.hidden_subprocess_kwargs",
+                return_value={"creationflags": 456},
+            ) as hidden_mock, mock.patch(
+                "harness_admin.watcher.subprocess.run",
+                return_value=completed,
+            ) as run_mock:
+                replayed = _replay_remote_choice_gate(
+                    repo_root,
+                    {
+                        "task_id": "APP-TEST-05",
+                        "prompt": "Hide window test",
+                        "decision_id": "hide-window-test",
+                        "default_action": "hold",
+                        "options": [{"label": "approve", "value": "approve"}],
+                    },
+                    force_immediate=False,
+                )
+
+        self.assertTrue(replayed)
+        hidden_mock.assert_called_once_with()
+        self.assertEqual(run_mock.call_args.kwargs["creationflags"], 456)
 
 
 if __name__ == "__main__":

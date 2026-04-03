@@ -36,6 +36,7 @@ from .runtime_store import (
     watcher_summary_path,
     write_json,
 )
+from .subprocess_utils import hidden_subprocess_kwargs
 
 _CALLBACK_PATTERN = re.compile(r"^gate:(?P<decision>[A-Za-z0-9]+):(?P<choice>[a-z0-9-]+)$")
 _COMMAND_PATTERN = re.compile(r"^/(?P<command>[a-z0-9-]+)(?:\s+(?P<decision>[A-Za-z0-9]+))?\s*$")
@@ -169,6 +170,7 @@ def _replay_remote_choice_gate(
         capture_output=True,
         text=True,
         check=False,
+        **hidden_subprocess_kwargs(),
     )
     if completed.returncode != 0:
         stderr = completed.stderr.strip() or completed.stdout.strip()

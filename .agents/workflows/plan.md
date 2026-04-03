@@ -32,9 +32,9 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 - 미결정 제품 항목이 남아 있으면 handoff하지 말고 사용자와 추가 대화를 계속합니다.
 - 사용자의 세부 답변만으로 전체 승인으로 간주하지 않습니다. 최신 문서 기준 명시적 승인 전까지 다음 단계로 넘어가지 않습니다.
 - downstream 문서가 아직 새 기준선을 반영하지 못했으면 `Requirements Sync Status`를 `Downstream Update Required`로 두고 Review / Deploy로 넘기지 않습니다.
-- low-risk harness maintenance와 read-only validation은 `safe-auto`로 처리하고 승인 대기를 만들지 않습니다.
-- 짧은 정책 선택지가 즉시 필요하지만 사용자가 자리를 비웠을 수 있으면 artifact에 먼저 기록하고 `.agents/scripts/open_user_gate.ps1`로 넘깁니다.
-- secret, destructive action, 장문 토론이 필요한 기획 질문은 `hard-block`으로 유지합니다.
+- low-risk harness maintenance와 read-only validation은 사용자 승인 없이 바로 적용하고 결과만 요약합니다.
+- 짧은 정책 선택지가 즉시 필요하면 artifact에 먼저 기록하고 현재 세션의 로컬 사용자 응답 대기로 유지합니다.
+- secret, destructive action, 장문 토론이 필요한 기획 질문은 명시적 사용자 응답이 필요한 blocker로 유지합니다.
 
 ### Step 3: 아키텍처 계약 수립
 - `REQUIREMENTS.md`가 `Approved`일 때만 `ARCHITECTURE_GUIDE.md`를 작성하거나 갱신합니다.

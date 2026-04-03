@@ -50,9 +50,9 @@ description: 테스터/QA(Tester) 에이전트 워크플로우
 - `TASK_LIST.md` 상태를 업데이트합니다.
 - `CURRENT_STATE.md`의 `Snapshot`, `Next Recommended Agent`, `Must Read Next`, `Required Skills`, `Active Scope`, `Task Pointers`, `Open Decisions / Blockers`, `Latest Handoff Summary`, `Recent History Summary`를 갱신합니다.
 - archive 전에 미해결 불일치, 릴리즈 차단 요소, 남아 있는 수동 / 실환경 검증, 다음 Agent가 꼭 알아야 할 제약을 `TASK_LIST.md > ## Blockers`와 `CURRENT_STATE.md > Open Decisions / Blockers`로 승격합니다.
-- low-risk harness maintenance와 read-only validation은 `safe-auto`로 처리하고 승인 대기를 만들지 않습니다.
-- If a short user choice is needed for device checks, browser approval, or preview smoke resume, record the gate in artifacts first and route it through `.agents/scripts/open_user_gate.ps1`.
-- secret, token, 민감 URL, destructive test cleanup는 `hard-block`으로 남기고 모바일 알림으로 보내지 않습니다.
+- low-risk harness maintenance와 read-only validation은 사용자 승인 없이 바로 적용하고 결과만 요약합니다.
+- If a short user choice is needed for device checks, browser approval, or preview smoke resume, record the gate in artifacts first and keep it as a local user decision in the active session.
+- secret, token, 민감 URL, destructive test cleanup는 명시적 사용자 응답이 필요한 blocker로 유지합니다.
 - rules / workflows / artifacts를 수정했다면 `powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1"`를 실행합니다.
 - `## Handoff Log`에 표준 양식으로 기록합니다.
 - `Fail`이면 Developer 또는 Planner, `Release Pass`이면 Reviewer로 넘깁니다.
