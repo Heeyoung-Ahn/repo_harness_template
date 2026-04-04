@@ -89,7 +89,16 @@ powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1
 - artifact 본문 설명, 요약, blocker, handoff는 기본적으로 한국어로 작성합니다.
 - 코드 식별자, 파일명, 경로, 명령어, 고정 상태 라벨은 영어를 유지할 수 있습니다.
 
-## 9. User Decision Handling
+## 9. Explicit User Orders
+- 읽기, 상태 확인, 당연한 사전 검토는 사용자에게 확인 질문 없이 진행합니다.
+- 사용자가 명시적으로 오더한 실행은 범위, 대상, 실행 여부를 임의로 축소, 확장, 변경하지 않고 그대로 수행합니다.
+- 코드/문서 수정, 롤백, 빌드/배포, 백그라운드 프로세스 시작, 장시간 검증, 기타 repo/product state를 바꾸는 작업을 시작하기 전에는 사용자 오더 기준의 짧은 실행 계획을 먼저 공유합니다.
+- 위 계획이 사용자 오더를 그대로 반영한다면 추가 승인 질문 없이 바로 실행합니다.
+- 실행 중 목표, 범위, 대상 환경, 실행 종류, 명령어 세트가 달라져야 하면 작업을 멈추고 이유, 대안, 영향을 짧게 설명한 뒤 사용자 확정 전까지 진행하지 않습니다.
+- 사용자가 명령어, 설명, 초안만 요청했다면 실제 실행, 백그라운드 실행, 추가 작업을 하지 않습니다.
+- 부분 롤백, 부분 배포, 누락된 후속 실행, 무단 백그라운드 작업처럼 사용자 오더에서 벗어나는 동작은 금지합니다.
+
+## 10. User Decision Handling
 - 기본 사용자 응답 경로는 현재 세션의 로컬 대화입니다.
 - presence, repo registry, 모바일 채널, watcher 같은 사용자별 runtime 구성은 기본 템플릿 범위에 포함하지 않습니다.
 - repo template 안에 원격 승인용 watcher / scheduler / registry / mobile routing 스크립트를 다시 추가하지 않습니다.

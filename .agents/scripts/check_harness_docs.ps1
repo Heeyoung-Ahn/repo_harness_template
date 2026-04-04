@@ -83,7 +83,12 @@ function Normalize-Scope {
 function Get-MarkdownTitle {
     param([string]$Text)
 
-    $match = [regex]::Match($Text, '(?m)^#\s+(?<title>[^\r\n]+)$')
+    if ([string]::IsNullOrEmpty($Text)) {
+        return $null
+    }
+
+    $normalizedText = $Text.TrimStart([char]0xFEFF)
+    $match = [regex]::Match($normalizedText, '\A(?:[ \t]*\r?\n)*#\s+(?<title>[^\r\n]+?)\s*(?:\r?\n|$)')
     if ($match.Success) {
         return $match.Groups['title'].Value.Trim()
     }

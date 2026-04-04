@@ -8,6 +8,13 @@ description: 테스터/QA(Tester) 에이전트 워크플로우
 
 > 가정으로 pass를 선언하지 않습니다. 현재 Scope의 요구사항과 구현 결과가 실제로 일치해야 합니다.
 
+## Explicit User Order Handling
+- 읽기, 상태 확인, 당연한 사전 검토는 사용자에게 확인 질문 없이 진행합니다.
+- 사용자가 명시적으로 오더한 실행은 범위, 대상, 실행 여부를 임의로 바꾸지 않고 그대로 진행합니다.
+- 상태를 바꾸는 작업을 시작할 때는 사용자 오더 기준의 짧은 실행 계획을 먼저 대화에 보여주고, 그 계획이 오더와 일치하면 추가 승인 질문 없이 바로 실행합니다.
+- 실행 중 목표, 범위, 대상 파일/환경, 실행 종류, 명령 세트가 달라져야 하면 멈추고 이유와 대안을 설명한 뒤 사용자 확정 전까지 진행하지 않습니다.
+- 사용자가 명령어, 설명, 초안만 요청했다면 실제 실행, 백그라운드 실행, 추가 작업을 하지 않습니다.
+
 ## Mandatory Skills
 - Expo / React Native 범위에서 실기기, Development Build 재사용 여부, native/config footprint 판단이 걸리면 `expo_real_device_test`를 사용합니다.
 - 테스트 결과가 release gate, dependency 근거, 기존 build 재사용 판단까지 바꾸면 `dependency_audit` 결과와 함께 봅니다.
