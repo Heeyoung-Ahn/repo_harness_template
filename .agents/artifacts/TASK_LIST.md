@@ -4,7 +4,9 @@
 > 이 문서는 task / lock truth이며, `CURRENT_STATE.md`는 resume router, `## Handoff Log`는 최신 delta, `HANDOFF_ARCHIVE.md`는 오래된 원문 보관용입니다.
 
 ## Changelog
-- [YYYY-MM-DD] Planner: initial draft
+- [2026-04-05] Developer: self-hosting live docs와 deployable template source 분리 작업을 완료했다.
+- [2026-04-05] Developer: safe downstream rollout과 `templates/version_reset` 반영까지 3개 운영 프로젝트에 완료했다.
+- [2026-04-05] Developer: root README를 새 구조 기준으로 갱신했고, root PROJECT_WORKFLOW_MANUAL은 삭제해 starter manual만 `templates/project/PROJECT_WORKFLOW_MANUAL.md`에 남겼다.
 
 ## Usage Rules
 - 상태는 `[ ]`, `[-]`, `[x]`, `[!]`만 사용합니다.
@@ -30,13 +32,13 @@
 - artifact harness debt는 release blocker와 분리해 별도 maintenance task 또는 blocker note로 관리합니다.
 
 ## Current Release Target
-- Version / Milestone:
-- Current Stage:
-- Current Focus:
-- Current Release Goal:
+- Version / Milestone: Template Repo Separation
+- Current Stage: Documentation and Closeout
+- Current Focus: root live docs와 `templates/project/*`, `templates/version_reset/artifacts/*`를 분리 유지하고 downstream rollout은 live artifact 보존 sync로 수행
+- Current Release Goal: self-hosting 운영 문서와 starter/reset template를 혼동 없이 유지하고 기존 운영 프로젝트에도 안전하게 rollout한다
 
 ## Next Version Backlog
-- [ ] BACKLOG-01 [다음 버전 후보 작업] — Scope: [제품/문서/기술 부채]
+- [ ] BACKLOG-01 downstream rollout dry-run/reporting 강화 — Scope: `.agents/scripts/sync_template_docs.ps1`, preset-aware rollout evidence
 
 ## Active Locks
 
@@ -44,44 +46,49 @@
 |---|---|---|---|---|---|
 
 ## Workflow Stage: Planning and Architecture
-- [ ] PLN-01 요구사항 초안 정리 — Scope: `REQUIREMENTS.md`
-- [ ] PLN-02 요구사항 승인 / 변경 반영 — Scope: `REQUIREMENTS.md`, `IMPLEMENTATION_PLAN.md`, `CURRENT_STATE.md`
-- [ ] PLN-03 아키텍처 초안 정리 — Scope: `ARCHITECTURE_GUIDE.md`
-- [ ] PLN-04 구현 계획 및 작업 목록 작성 — Scope: `IMPLEMENTATION_PLAN.md`, `TASK_LIST.md`, `CURRENT_STATE.md`
+- [x] PLN-01 self-hosting repo와 deployable template source 분리 요구사항 정리 — Scope: `AGENTS.md`, `.agents/rules/*`, `templates/project/*`, `templates/version_reset/artifacts/*`
+- [x] PLN-02 live/root vs deployable/template 경계 확정 — Scope: `.agents/rules/workspace.md`, `.agents/rules/template_repo.md`
+- [x] PLN-03 source tree / sync path 구조 정리 — Scope: `templates/project/*`, `templates/version_reset/artifacts/*`, `.agents/scripts/*`
+- [x] PLN-04 작업 목록과 운영 경로 정리 — Scope: `TASK_LIST.md`, `CURRENT_STATE.md`
 
 ## Workflow Stage: Design Gate
-- [ ] DSG-01 UI/UX 필요 여부 결정 — Scope: `UI_DESIGN.md` 필요성 판정
-- [ ] DSG-02 UI scope일 경우 화면 구조 및 사용자 동선 정의 — Scope: `UI_DESIGN.md`
-- [ ] DSG-03 UI scope일 경우 디자인 토큰 및 interaction 규칙 정리 — Scope: `UI_DESIGN.md`
-- [ ] DSG-04 비UI scope일 경우 `UI_DESIGN.md not required for this scope` 기록 및 design gate 종료 — Scope: `UI_DESIGN.md`, `CURRENT_STATE.md`
+- [x] DSG-01 이 작업이 비UI governance scope임을 확정 — Scope: `UI_DESIGN.md` 필요성 판정
+- [x] DSG-04 `UI_DESIGN.md not required for this scope` 유지 — Scope: `CURRENT_STATE.md`
 
 ## Workflow Stage: Development and Test Loop
 
 ### Iteration 1
-- [ ] DEV-01 [개발 작업] — Scope: [폴더/모듈/문서]
-- [ ] DEV-02 [개발 작업] — Scope: [폴더/모듈/문서]
-- [ ] TST-01 [검증 작업] — Scope: [대상 Task ID / 경로 / 요구사항]
+- [x] DEV-01 deployable template source tree 분리 — Scope: `templates/project/*`, `templates/version_reset/artifacts/*`
+- [x] DEV-02 root live 문서 self-hosting 전환 — Scope: `AGENTS.md`, `.agents/rules/*`, `.agents/workflows/*`, `.agents/artifacts/*`
+- [x] TST-01 validator / mojibake / source split 검증 — Scope: `.agents/scripts/check_harness_docs.ps1`, `.agents/scripts/sync_template_docs.ps1`, `templates/project/*`, `templates/version_reset/artifacts/*`
 
 ### Iteration 2
-- [ ] DEV-03 [개발 작업] — Scope: [폴더/모듈/문서]
-- [ ] DEV-04 [개발 작업] — Scope: [폴더/모듈/문서]
-- [ ] TST-02 [검증 작업] — Scope: [대상 Task ID / 경로 / 요구사항]
+- [x] DEV-03 downstream rollout automation 확장 — Scope: `.agents/scripts/sync_template_docs.ps1`, rollout evidence
+- [x] DEV-04 rollout target preset 분리 — Scope: `.agents/scripts/sync_template_docs.ps1`, `.agents/runtime/downstream_target_presets.psd1`, live rollout docs
+- [ ] DEV-05 template skill/source split 추가 확장 여부 검토 — Scope: `templates/project/.agents/skills/*`, `.agents/skills/*`
+- [x] TST-02 sample downstream repo dry-run 및 예외 처리 검증 — Scope: template rollout workflow
 
 ## Workflow Stage: Review Gate
-- [ ] REV-01 구조 / 보안 / 품질 리뷰 — Scope: [릴리즈 범위 / 대상 Task ID]
-- [ ] REV-02 리뷰 반영 확인 — Scope: [릴리즈 범위 / 대상 Task ID]
+- [ ] REV-01 self-hosting / deployable source 경계 리뷰 — Scope: root live docs, `templates/project/*`, `templates/version_reset/artifacts/*`, sync/validator script
+- [ ] REV-02 리뷰 반영 확인 — Scope: `REV-01` findings
 
 ## Workflow Stage: Deployment
-- [ ] REL-01 배포 전 사전 점검 — Scope: [환경 / 버전 / 커밋 범위]
-- [ ] REL-02 배포 실행 — Scope: [환경 / 명령 / 배포 대상]
-- [ ] REL-03 배포 결과 기록 — Scope: `DEPLOYMENT_PLAN.md`, `CURRENT_STATE.md`
+- [x] REL-01 downstream rollout 대상/범위 점검 — Scope: target repos, `templates/project/*`, `templates/version_reset/artifacts/*`, sync path
+- [x] REL-02 template source downstream rollout — Scope: `.agents/scripts/sync_template_docs.ps1`
+- [x] REL-03 rollout 결과 기록 — Scope: `DEPLOYMENT_PLAN.md`, `CURRENT_STATE.md`
 
 ## Workflow Stage: Documentation and Closeout
-- [ ] DOC-01 day_wrap_up 또는 같은 버전 내 문서 정리 준비 — Scope: `CURRENT_STATE.md`, `TASK_LIST.md`, 관련 아티팩트
-- [ ] DOC-02 version_closeout / Documenter 정리 — Scope: archive, `CURRENT_STATE.md`, `HANDOFF_ARCHIVE.md`
+- [x] DOC-01 self-hosting 현재 상태와 template source 경계 정리 — Scope: `CURRENT_STATE.md`, `TASK_LIST.md`, `.agents/rules/template_repo.md`
+- [x] DOC-02 version_closeout / Documenter 정리 — Scope: archive, `CURRENT_STATE.md`, `HANDOFF_ARCHIVE.md`
+- [x] DOC-03 root README / manual 정리 — Scope: `README.md`, `PROJECT_WORKFLOW_MANUAL.md`
+- [x] DOC-04 root manual 삭제 및 참조 정리 — Scope: `AGENTS.md`, `.agents/rules/workspace.md`, `README.md`, `PROJECT_WORKFLOW_MANUAL.md`
 
 ## Blockers
-- [없으면 비워둠]
-- [승격된 blocker / 사용자 결정 대기 / stale lock 판단 보류]
+- none
 
 ## Handoff Log
+- [2026-04-05] DEV-02/TST-01 completed. root live 문서와 deployable template source가 분리되었고, downstream rollout은 `.agents/scripts/sync_template_docs.ps1` 기준으로 수행한다.
+- [2026-04-05] REL-01~REL-03/TST-02 completed. `sync_template_docs.ps1`는 기존 운영 프로젝트의 live `.agents/artifacts/*`를 보존하도록 보강되었고, 3개 운영 프로젝트에 `templates/version_reset` 포함 구조를 반영했다.
+- [2026-04-05] DEV-04 completed. rollout target group은 script hard-code 대신 `.agents/runtime/downstream_target_presets.psd1` preset으로 관리하도록 전환했다.
+- [2026-04-05] DOC-03 completed. root README는 self-hosting/starter/reset 구조를 설명하도록 갱신했다.
+- [2026-04-05] DOC-04 completed. root `PROJECT_WORKFLOW_MANUAL.md`는 삭제했고, 관련 안내는 `templates/project/PROJECT_WORKFLOW_MANUAL.md` 기준으로 정리했다.

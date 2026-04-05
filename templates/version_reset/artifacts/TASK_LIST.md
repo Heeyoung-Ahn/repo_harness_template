@@ -11,6 +11,7 @@
 - 각 태스크는 가능한 한 안정적인 `Task ID`를 가집니다.
 - 각 태스크는 가능한 한 `— Scope: [경로/모듈/문서 범위]`를 함께 적습니다. 특히 개발/테스트/리뷰 태스크는 Scope가 필수입니다.
 - 요구사항 승인 후에는 개발/테스트/리뷰 태스크가 어떤 `FR-*`, `NFR-*`를 다루는지 `IMPLEMENTATION_PLAN.md > Requirement Trace`로 역추적 가능해야 합니다.
+- 릴리즈 범위 또는 cross-role handoff가 걸린 `DEV-*`, `TST-*`, `REV-*`, `REL-*` 태스크는 `IMPLEMENTATION_PLAN.md > Task Packet Ledger`에서 `Objective`, `Acceptance Checks`, `Artifacts To Update`, `Escalate When`이 추적 가능해야 합니다.
 - 승인 후 요구사항이나 완료 기준이 바뀌면 Planner task를 다시 열고, `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`를 먼저 같은 기준선으로 갱신한 뒤 관련 Task Scope와 `Requirement Trace`를 재동기화합니다.
 - 중간 요구사항 변경이 문서에 아직 반영되지 않았다면 리뷰/배포 태스크를 완료 처리하지 않고 blocker 또는 planner follow-up으로 남깁니다.
 - 작업 시작 시 상태를 `[-]`로 바꾸고 `## Active Locks`에 점유 정보를 추가합니다.
@@ -19,6 +20,7 @@
 - turn-by-turn 진행 메모는 `CURRENT_STATE.md`에 남기고, `## Handoff Log`는 역할 전환, 세션 종료, lock handoff 때만 추가합니다.
 - `## Handoff Log`에는 최신 delta만 남기고 전체 작업일지나 상세 구현 로그를 반복 복사하지 않습니다.
 - `## Handoff Log`에는 기본적으로 최근 실제 항목 5개만 유지합니다.
+- `## Handoff Log` 항목은 가능하면 `Completed`, `Next`, `First Action`, `Notes`를 함께 적어 다음 세션 첫 액션이 바로 보이게 합니다.
 - 작업 시작 전에는 항상 `## Active Locks`와 본인 관련 Task row를 직접 읽습니다. `CURRENT_STATE.md`만 보고 건너뛰면 안 됩니다.
 - 다만 활성 manual test / review / blocker triage 루프와 직접 연결된 relevant entry는 loop가 닫힐 때까지 임시 유지할 수 있습니다.
 - `## Handoff Log`가 기본 유지 범위를 넘기거나 파일이 220줄을 넘으면 오래된 항목을 `HANDOFF_ARCHIVE.md`로 이동하고, 요약을 `CURRENT_STATE.md > Recent History Summary`에 반영합니다.
@@ -28,12 +30,16 @@
 - `## Active Locks`는 협업용 문서 lock이며 원자적 잠금이 아닙니다. 여러 AI를 동시에 쓸 때는 서로 다른 Task ID와 Scope를 먼저 배정하는 것을 기본 전제로 합니다.
 - review / deploy 판단은 `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`에서 최종 확정하고, 이 문서에는 같은 gate를 매 턴 복사하지 않습니다.
 - artifact harness debt는 release blocker와 분리해 별도 maintenance task 또는 blocker note로 관리합니다.
+- 광범위 실패, 오래 열린 브랜치, 병렬 작업 중인 범위는 원인 분석 전에 `Branch Freshness`를 먼저 확인합니다.
+- `## Blockers`는 가능하면 `Category`, `Impact`, `Observed Symptom`, `Attempted Recovery`, `Next Escalation`을 함께 남깁니다.
 
 ## Current Release Target
 - Version / Milestone:
 - Current Stage:
 - Current Focus:
 - Current Release Goal:
+- Current Green Level:
+- Branch Freshness:
 
 ## Next Version Backlog
 - [ ] BACKLOG-01 [다음 버전 후보 작업] — Scope: [제품/문서/기술 부채]
@@ -81,7 +87,9 @@
 - [ ] DOC-02 version_closeout / Documenter 정리 — Scope: archive, `CURRENT_STATE.md`, `HANDOFF_ARCHIVE.md`
 
 ## Blockers
-- [없으면 비워둠]
-- [승격된 blocker / 사용자 결정 대기 / stale lock 판단 보류]
+
+| ID | Category | Impact | Observed Symptom | Attempted Recovery | Next Escalation |
+|---|---|---|---|---|---|
+| BLK-01 | Requirement / Architecture / Branch / Build / Test / Review / Manual / Dependency / Deploy / External | Iteration / Release / Docs Only | [설명] | [이미 시도한 복구] | [다음 조치] |
 
 ## Handoff Log

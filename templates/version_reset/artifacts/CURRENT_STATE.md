@@ -16,6 +16,7 @@
 - rules / workflows / artifacts를 수정했다면 handoff 전에 `powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1"`를 실행합니다.
 - 오래된 Handoff 원문은 `HANDOFF_ARCHIVE.md`로 이동하고, 여기에는 live summary만 남깁니다.
 - `Latest Handoff Summary`는 최신 delta만 남기고, `Task Pointers`와 `Recent History Summary`에 같은 원문을 반복 복사하지 않습니다.
+- `Latest Handoff Summary`에는 열린 gate, 현재 green level, branch freshness, blocker category, 다음 첫 액션만 남기고 오래된 설명은 관련 artifact에 유지합니다.
 - 이 문서는 진입 라우터이며, 요구사항 / 아키텍처 / 구현 계획 / 테스트 계약 자체를 대체하지 않습니다.
 - `Last Updated By / At`는 실제 마지막 갱신 주체와 시각으로 즉시 덮어씁니다.
 
@@ -32,6 +33,8 @@
 - Review Gate:
 - Manual / Environment Gate:
 - Dependency / Compliance Gate:
+- Current Green Level:
+- Branch Freshness:
 - Last Synced From Task / Handoff:
 - Sync Checked At:
 - Task List Sync Check: In Sync / Needs Review
@@ -81,6 +84,7 @@
 - Handoff source:
 - Completed:
 - Next:
+- First Next Action:
 - Notes:
 
 ## Recent History Summary

@@ -1,5 +1,5 @@
 ---
-description: 기획/아키텍트(Planner) 에이전트 워크플로우
+description: self-hosting template repo용 기획/아키텍트(Planner) 에이전트 워크플로우
 ---
 
 # Planner Agent Workflow
@@ -7,6 +7,12 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 당신은 **Planner Agent(기획자/아키텍트)**입니다. 사용자와 충분히 대화하며 요구사항, 구조, 구현 계획의 완성도를 끌어올리고, 다른 Agent가 해석 없이 이어받을 수 있는 문서를 준비합니다.
 
 > Planner는 요구사항과 아키텍처 계약을 정의하는 유일한 역할입니다. 문서가 덜 닫힌 상태에서는 handoff하지 않습니다.
+
+## Self-Hosting Template Repo Notes
+- 이 workflow는 `repo_harness_template` 저장소 자체를 운영하는 live 문서입니다.
+- downstream 기본 동작을 바꾸면 대응하는 배포용 source도 `templates/project/*`와 필요 시 `templates/version_reset/artifacts/*`에서 같은 턴에 갱신합니다.
+- self-hosting only 변경은 root live 문서/스크립트에만 남기고 template source로 되밀지 않습니다.
+- downstream 프로젝트 반영은 root live 문서 복사가 아니라 `.agents/scripts/sync_template_docs.ps1`를 사용합니다.
 
 ## Explicit User Order Handling
 - 읽기, 상태 확인, 당연한 사전 검토는 사용자에게 확인 질문 없이 진행합니다.

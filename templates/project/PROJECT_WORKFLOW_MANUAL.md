@@ -1,7 +1,7 @@
 # Universal Agents Template Project Workflow Manual
 
-> 이 매뉴얼의 상대 경로는 `repo_harness_template` 폴더 자체를 작업 루트로 열었을 때를 기준으로 작성되어 있습니다.  
-> 이 폴더는 원본 `repo-level governance harness` 템플릿이므로, 이 구조를 그대로 유지한 채 루트로 열어야 합니다.
+> 이 매뉴얼의 상대 경로는 현재 프로젝트 root를 작업 루트로 열었을 때를 기준으로 작성되어 있습니다.  
+> 이 프로젝트는 `repo-level governance harness` 템플릿 구조를 전제로 하므로, 프로젝트 root를 그대로 workspace root로 열어야 합니다.
 
 ## 이 문서는 무엇이고, 무엇이 아닌가
 이 문서는 **처음 개발을 해 보는 문과생도 이 저장소를 따라가며 작업할 수 있게 도와주는 튜토리얼 매뉴얼**입니다.
@@ -335,6 +335,10 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 - 주요 Task ID
 - 검증 명령
 - stage별 목표
+- `Task Packet Ledger`
+- 이번 iteration의 `green level target`
+- `branch freshness precheck`
+- 사용자 실기기 테스트 결과를 받을 계획이 있는지
 
 ### 6.6 [`WALKTHROUGH.md`](.agents/artifacts/WALKTHROUGH.md)
 이 문서는 **Tester가 검증 결과를 남기는 곳**입니다.
@@ -343,6 +347,9 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 - 어떤 환경에서 테스트했는지
 - 어떤 명령을 실행했는지
 - 어떤 버그가 나왔는지
+- 현재 green level이 어디까지 닫혔는지
+- 테스트 시점 branch freshness
+- 사용자가 직접 수행한 실기기 / 브라우저 테스트 원문과 Tester의 최종 해석
 
 ### 6.7 [`REVIEW_REPORT.md`](.agents/artifacts/REVIEW_REPORT.md)
 이 문서는 **Reviewer가 승인 또는 반려를 남기는 곳**입니다.
@@ -353,6 +360,8 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 - 보안 문제
 - 배포 차단 요소
 - 현재 release를 막는 문제와 나중에 정비할 document / harness debt의 구분
+- 리뷰 시점 green level
+- stale branch인지 실제 제품 결함인지 구분한 판단
 
 초보자가 기억할 것:
 - 이 문서는 리뷰가 끝났을 때 1회 정리하는 release 판단 문서입니다.
@@ -366,6 +375,9 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 - 롤백 계획
 - 배포 결과
 - 현재 배포를 막는 gate와 나중에 분리해서 정비할 follow-up
+- 현재 release 기준 green level
+- release 직전 branch freshness
+- 사용자 실기기 raw report와 Tester 최종 판정이 서로 맞는지
 
 초보자가 기억할 것:
 - 이 문서는 배포 직전/직후 1회 갱신하는 release 실행 문서입니다.
@@ -377,6 +389,205 @@ AI 모델은 **실제로 추론하고 답을 만드는 엔진**입니다.
 기본 원칙:
 - 평소에는 읽지 않습니다.
 - 충돌 복구, 회고, version closeout이 필요할 때만 읽습니다.
+
+### 6.10 새 스키마 핵심 5가지
+이번 starter 템플릿에는 `claw_code` 분석을 바탕으로 아래 5가지 개념이 들어갔습니다.
+
+#### 1. Task Packet
+이제 큰 task는 단순히 “개발 작업”이라고만 적지 않습니다.
+
+최소한 아래 질문에 답할 수 있어야 합니다.
+- 이 task의 목적은 무엇인가
+- 어디까지가 범위이고 어디부터는 제외인가
+- 어떤 검증이 통과되어야 하는가
+- 어떤 artifact를 같이 갱신해야 하는가
+- 어느 시점에 Planner / User / Reviewer로 올려야 하는가
+
+이 정보는 주로 [`IMPLEMENTATION_PLAN.md > Task Packet Ledger`](.agents/artifacts/IMPLEMENTATION_PLAN.md)에 적습니다.
+
+#### 2. Green Level
+예전에는 “테스트 통과”라고 한 줄로 쓰기 쉬웠지만, 이제는 아래를 구분합니다.
+- `Targeted`: 현재 scope에 필요한 검증만 통과
+- `Package`: 앱 / 패키지 / 빌드 단위 검증까지 통과
+- `Workspace`: 전체 프로젝트 회귀 관점의 검증까지 통과
+- `Merge Ready`: review, manual, dependency gate까지 닫힌 상태
+
+초보자도 이 감각만 알면 “부분 통과”와 “릴리즈 가능”을 섞어 쓰지 않게 됩니다.
+
+#### 3. Failure Taxonomy + Recovery
+blocker를 그냥 “안 됨”이라고 적지 않고 아래처럼 씁니다.
+- 어떤 종류 문제인가: Requirement / Branch / Build / Manual 등
+- 영향이 iteration만 막는가, release를 막는가
+- 어떤 증상이 있었는가
+- 이미 무엇을 시도했는가
+- 다음 escalation은 누구에게 가는가
+
+이렇게 하면 다음 AI가 같은 복구를 중복으로 시도하는 일을 줄일 수 있습니다.
+
+#### 4. Branch Freshness
+테스트나 리뷰가 크게 깨졌을 때 바로 제품 결함으로 단정하지 않습니다.
+
+먼저 봐야 하는 것:
+- base branch 기준으로 최신인가
+- 뒤처졌는가
+- diverged 상태인가
+
+병렬 작업이 있는 프로젝트에서는 이 확인만으로 불필요한 재작업을 많이 줄일 수 있습니다.
+
+#### 5. Resume Contract
+handoff는 길게 쓰는 것이 목적이 아닙니다.
+
+핵심만 남겨야 합니다.
+- 무엇을 끝냈는가
+- 다음에 무엇을 해야 하는가
+- 첫 액션이 무엇인가
+- 어떤 gate / green level / branch freshness / blocker category를 기억해야 하는가
+
+즉, 다음 세션이 바로 첫 행동을 시작할 수 있어야 좋은 handoff입니다.
+
+### 6.11 새 스키마 예시 작성본
+아래는 실제 프로젝트에서 어떻게 채우는지 보여 주기 위한 샘플입니다.  
+예시는 “영어 학습 앱에 오늘의 표현 저장 기능을 추가하는 작업”을 가정합니다.
+
+#### 6.11.1 `IMPLEMENTATION_PLAN.md` 예시
+```markdown
+## Current Iteration
+- Iteration name: Save today's expression
+- Scope: `src/features/expression-save/*`, `src/screens/home/*`
+- Main Task IDs: `DEV-01`, `TST-01`, `REV-01`
+- Change requests in scope: none
+- Exit criteria: 저장 버튼, 저장 상태 표시, 저장 목록 반영이 요구사항과 일치
+- Green level target: `Targeted`, release 전에는 `Package`
+- Branch freshness precheck: `main` 기준 fresh 확인 후 시작
+- User-captured manual test expected: Yes, Android 실기기에서 저장/재진입 확인
+- Manual / environment validation still open: Android 실기기 저장 유지 확인
+- Dependency / compliance gate still open: none
+
+## Task Packet Ledger
+| Task ID | Objective | In Scope / Out of Scope | Acceptance Checks | Artifacts To Update | Escalate When |
+|---|---|---|---|---|---|
+| DEV-01 | 오늘의 표현 저장 기능 구현 | In: 저장 버튼, 저장 상태 표시, 목록 반영 / Out: 서버 동기화 | 단위 테스트, 홈 화면 저장 플로우, 재진입 시 상태 유지 | `IMPLEMENTATION_PLAN.md`, `TASK_LIST.md`, 필요 시 `CURRENT_STATE.md` | 구조 변경이 필요하면 Planner, 실기기 정책 이슈면 User |
+```
+
+#### 6.11.2 `CURRENT_STATE.md` 예시
+```markdown
+## Snapshot
+- Current Stage: Development and Test Loop
+- Current Focus: 오늘의 표현 저장 기능 구현과 Android 실기기 검증 준비
+- Current Release Goal: 저장 플로우를 요구사항 기준으로 안정화하고 review-ready 상태까지 만든다
+- Current Green Level: Targeted
+- Branch Freshness: Fresh
+
+## Latest Handoff Summary
+- Handoff source: Developer / 2026-04-05 21:30
+- Completed: 저장 버튼과 로컬 상태 반영 구현 완료, 단위 테스트 통과
+- Next: Android 실기기에서 저장 후 재진입 유지 여부 확인
+- First Next Action: `WALKTHROUGH.md > Manual Test Checklist`를 채우고 사용자 실기기 테스트 요청
+- Notes: Package green 전이며 manual gate가 아직 열려 있음
+```
+
+#### 6.11.3 `TASK_LIST.md` 예시
+```markdown
+## Current Release Target
+- Current Stage: Development and Test Loop
+- Current Focus: 오늘의 표현 저장 기능 구현과 Android 실기기 검증 준비
+- Current Release Goal: 저장 플로우를 요구사항 기준으로 안정화하고 review-ready 상태까지 만든다
+- Current Green Level: Targeted
+- Branch Freshness: Fresh
+
+## Blockers
+| ID | Category | Impact | Observed Symptom | Attempted Recovery | Next Escalation |
+|---|---|---|---|---|---|
+| BLK-01 | Manual | Iteration | Android 실기기에서 저장 후 앱 재실행 시 상태 유지 여부 미확인 | 로컬 시뮬레이터 검증 완료, 체크리스트 준비 완료 | 사용자 실기기 결과 수집 후 Tester 판정 |
+```
+
+#### 6.11.4 `WALKTHROUGH.md` 예시
+```markdown
+## Latest Result
+- Result: Partial
+- Iteration Pass: Yes
+- Release Pass: No
+- Code / Automation Pass: Yes
+- Manual / Environment Pass: Pending
+- Requirement Baseline Tested: RB-2026-04-05-A
+- Requirements Sync Check: Pass
+- Green Level Achieved: Targeted
+- Branch Freshness at Test Time: Fresh
+- User-Captured Manual Test Status: Waiting for User Results
+
+## Manual Test Checklist
+| Check Item | Expected Result | Reporter | Actual Result | Tester Assessment | Notes |
+|---|---|---|---|---|---|
+| 홈 화면에서 오늘의 표현 저장 | 저장 버튼 탭 후 저장 상태가 즉시 보임 | User | [사용자 기록 예정] | Pending | Android 실기기 |
+| 앱 종료 후 재진입 | 저장 상태가 유지됨 | User | [사용자 기록 예정] | Pending | 실기기 재실행 필요 |
+
+## User-Captured Manual Test Report
+- Checklist prepared by: Tester
+- Test reporter: User
+- Analysis status: Under Review
+- Raw report source: Codex chat 2026-04-05
+- Tester synthesis: 저장 버튼 반응은 정상으로 보이나, 재진입 후 유지 여부는 사용자 답변 대기
+```
+
+#### 6.11.5 사용자가 남기는 실기기 결과 예시
+사용자에게는 아래처럼 간단히 적어 달라고 안내하면 충분합니다.
+
+```markdown
+## User Test Results
+- Check Item: 홈 화면에서 오늘의 표현 저장
+  - Actual result: 저장 버튼을 누르자 바로 Saved 상태가 보였다.
+  - Pass / Fail guess: Pass
+  - Notes: 애니메이션은 약간 느렸지만 저장은 됐다.
+
+- Check Item: 앱 종료 후 재진입
+  - Actual result: 다시 열었을 때 Saved 표시가 유지됐다.
+  - Pass / Fail guess: Pass
+  - Notes: 두 번 반복해도 같았다.
+```
+
+이 원문을 그대로 최종 판정으로 쓰지 않고, Tester가 먼저 `User Report Alignment`로 정리한 뒤 `Manual Test Checklist`와 `Latest Result`에 반영합니다.
+
+#### 6.11.6 `REVIEW_REPORT.md` 예시
+```markdown
+## Approval Status
+- Static Review Status: Approved
+- Release Readiness: Partial
+- Requirement Baseline Reviewed: RB-2026-04-05-A
+- Requirements Sync Check: Pass
+- Green Level Reviewed: Package
+- Branch Freshness Reviewed: Fresh
+- Release Blocking Issues: Yes
+
+## Residual Release Risks
+- Manual / environment-specific verification: iOS 실기기 저장 유지 검증 미완료
+- Dependency / compliance gate: 없음
+- Requirement / artifact sync gate: 닫힘
+- Deferred product decisions: 서버 동기화는 다음 버전 범위
+```
+
+#### 6.11.7 `DEPLOYMENT_PLAN.md` 예시
+```markdown
+## Release Status
+- Ready to Deploy: No
+- Requirement Baseline for Release: RB-2026-04-05-A
+- Requirements Sync Gate: Closed
+- Reviewer Gate: Closed
+- Manual / Environment Gate: Open
+- Dependency / Compliance Gate: Closed
+- Current Green Level: Package
+- Branch Freshness for Release: Fresh
+
+## Validation Gate Notes
+- branch freshness 판단: `main` 기준 fresh
+- 사용자 수동 테스트 / raw report 처리 상태: Android 결과는 반영 완료, iOS 결과 대기
+- release-ready 차단 요소: iOS manual gate open
+```
+
+#### 6.11.8 초보자가 특히 기억할 것
+- `Targeted` green은 “현재 범위는 좋아 보임”이지 “곧바로 배포 가능”이 아닙니다.
+- 사용자 실기기 테스트 원문은 증거이지 최종 판정 문장이 아닙니다.
+- stale branch는 제품 결함과 다른 종류 문제입니다.
+- handoff에는 긴 회고보다 `First Action`이 더 중요합니다.
 
 ---
 

@@ -185,6 +185,7 @@ $planQuestionPhrase = U '\uC9C8\uBB38\uC774'
 
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $pathMap = @{
+    LiveAgents         = Join-Path $repoRoot 'AGENTS.md'
     CurrentState       = Join-Path $repoRoot '.agents\artifacts\CURRENT_STATE.md'
     HandoffArchive     = Join-Path $repoRoot '.agents\artifacts\HANDOFF_ARCHIVE.md'
     TaskList           = Join-Path $repoRoot '.agents\artifacts\TASK_LIST.md'
@@ -200,18 +201,47 @@ $pathMap = @{
     ReviewWorkflow     = Join-Path $repoRoot '.agents\workflows\review.md'
     TestWorkflow       = Join-Path $repoRoot '.agents\workflows\test.md'
     HandoffWorkflow    = Join-Path $repoRoot '.agents\workflows\handoff.md'
+    TemplateRepoRule   = Join-Path $repoRoot '.agents\rules\template_repo.md'
     ExpoDeviceSkill    = Join-Path $repoRoot '.agents\skills\expo_real_device_test\SKILL.md'
     ResetScript        = Join-Path $repoRoot '.agents\scripts\reset_version_artifacts.ps1'
+    SyncTemplateDocs   = Join-Path $repoRoot '.agents\scripts\sync_template_docs.ps1'
+}
+
+$templateRuntimeMap = @{
+    TemplateAgents        = Join-Path $repoRoot 'templates\project\AGENTS.md'
+    TemplateManual        = Join-Path $repoRoot 'templates\project\PROJECT_WORKFLOW_MANUAL.md'
+    TemplateWorkspace     = Join-Path $repoRoot 'templates\project\.agents\rules\workspace.md'
+    TemplateDesignFlow    = Join-Path $repoRoot 'templates\project\.agents\workflows\design.md'
+    TemplatePlanFlow      = Join-Path $repoRoot 'templates\project\.agents\workflows\plan.md'
+    TemplateDevFlow       = Join-Path $repoRoot 'templates\project\.agents\workflows\dev.md'
+    TemplateTestFlow      = Join-Path $repoRoot 'templates\project\.agents\workflows\test.md'
+    TemplateReviewFlow    = Join-Path $repoRoot 'templates\project\.agents\workflows\review.md'
+    TemplateDeployFlow    = Join-Path $repoRoot 'templates\project\.agents\workflows\deploy.md'
+    TemplateDocuFlow      = Join-Path $repoRoot 'templates\project\.agents\workflows\docu.md'
+    TemplateHandoffFlow   = Join-Path $repoRoot 'templates\project\.agents\workflows\handoff.md'
+    TemplateExpoPublish   = Join-Path $repoRoot 'templates\project\.agents\skills\expo_production_publish\SKILL.md'
+    TemplateCheckScript   = Join-Path $repoRoot 'templates\project\.agents\scripts\check_harness_docs.ps1'
+    TemplateResetScript   = Join-Path $repoRoot 'templates\project\.agents\scripts\reset_version_artifacts.ps1'
 }
 
 $templateArtifactMap = @{
-    CurrentState       = Join-Path $repoRoot '.agents\templates\artifacts\CURRENT_STATE.md'
-    HandOffArchive     = Join-Path $repoRoot '.agents\templates\artifacts\HANDOFF_ARCHIVE.md'
-    TaskList           = Join-Path $repoRoot '.agents\templates\artifacts\TASK_LIST.md'
-    ImplementationPlan = Join-Path $repoRoot '.agents\templates\artifacts\IMPLEMENTATION_PLAN.md'
-    Walkthrough        = Join-Path $repoRoot '.agents\templates\artifacts\WALKTHROUGH.md'
-    ReviewReport       = Join-Path $repoRoot '.agents\templates\artifacts\REVIEW_REPORT.md'
-    DeploymentPlan     = Join-Path $repoRoot '.agents\templates\artifacts\DEPLOYMENT_PLAN.md'
+    CurrentState       = Join-Path $repoRoot 'templates\version_reset\artifacts\CURRENT_STATE.md'
+    HandOffArchive     = Join-Path $repoRoot 'templates\version_reset\artifacts\HANDOFF_ARCHIVE.md'
+    TaskList           = Join-Path $repoRoot 'templates\version_reset\artifacts\TASK_LIST.md'
+    ImplementationPlan = Join-Path $repoRoot 'templates\version_reset\artifacts\IMPLEMENTATION_PLAN.md'
+    Walkthrough        = Join-Path $repoRoot 'templates\version_reset\artifacts\WALKTHROUGH.md'
+    ReviewReport       = Join-Path $repoRoot 'templates\version_reset\artifacts\REVIEW_REPORT.md'
+    DeploymentPlan     = Join-Path $repoRoot 'templates\version_reset\artifacts\DEPLOYMENT_PLAN.md'
+}
+
+$starterResetArtifactMap = @{
+    CurrentState       = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\CURRENT_STATE.md'
+    HandOffArchive     = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\HANDOFF_ARCHIVE.md'
+    TaskList           = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\TASK_LIST.md'
+    ImplementationPlan = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\IMPLEMENTATION_PLAN.md'
+    Walkthrough        = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\WALKTHROUGH.md'
+    ReviewReport       = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\REVIEW_REPORT.md'
+    DeploymentPlan     = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\DEPLOYMENT_PLAN.md'
 }
 
 foreach ($entry in $pathMap.GetEnumerator()) {
@@ -223,6 +253,18 @@ foreach ($entry in $pathMap.GetEnumerator()) {
 foreach ($entry in $templateArtifactMap.GetEnumerator()) {
     if (-not (Test-Path -LiteralPath $entry.Value)) {
         Add-Finding -Severity 'ERROR' -Path $entry.Value -Message 'Missing required reset template artifact.'
+    }
+}
+
+foreach ($entry in $starterResetArtifactMap.GetEnumerator()) {
+    if (-not (Test-Path -LiteralPath $entry.Value)) {
+        Add-Finding -Severity 'ERROR' -Path $entry.Value -Message 'Missing required starter reset template artifact mirror.'
+    }
+}
+
+foreach ($entry in $templateRuntimeMap.GetEnumerator()) {
+    if (-not (Test-Path -LiteralPath $entry.Value)) {
+        Add-Finding -Severity 'ERROR' -Path $entry.Value -Message 'Missing required deployable template source.'
     }
 }
 
@@ -239,6 +281,7 @@ $culture = [System.Globalization.CultureInfo]::InvariantCulture
 
 $currentStateText = [System.IO.File]::ReadAllText($pathMap.CurrentState, $utf8)
 $currentStateLines = [System.IO.File]::ReadAllLines($pathMap.CurrentState, $utf8)
+$liveAgentsText = [System.IO.File]::ReadAllText($pathMap.LiveAgents, $utf8)
 $taskListText = [System.IO.File]::ReadAllText($pathMap.TaskList, $utf8)
 $handoffArchiveText = [System.IO.File]::ReadAllText($pathMap.HandoffArchive, $utf8)
 $requirementsText = [System.IO.File]::ReadAllText($pathMap.Requirements, $utf8)
@@ -369,13 +412,13 @@ Validate-ArtifactSchema -Text $implementationPlanText -Path '.agents/artifacts/I
 Validate-ArtifactSchema -Text $walkthroughText -Path '.agents/artifacts/WALKTHROUGH.md' -Schema $resetArtifactSchemas.Walkthrough
 Validate-ArtifactSchema -Text $reviewReportText -Path '.agents/artifacts/REVIEW_REPORT.md' -Schema $resetArtifactSchemas.ReviewReport
 Validate-ArtifactSchema -Text $deploymentPlanText -Path '.agents/artifacts/DEPLOYMENT_PLAN.md' -Schema $resetArtifactSchemas.DeploymentPlan
-Validate-ArtifactSchema -Text $templateCurrentStateText -Path '.agents/templates/artifacts/CURRENT_STATE.md' -Schema $resetArtifactSchemas.CurrentState
-Validate-ArtifactSchema -Text $templateHandoffArchiveText -Path '.agents/templates/artifacts/HANDOFF_ARCHIVE.md' -Schema $resetArtifactSchemas.HandOffArchive
-Validate-ArtifactSchema -Text $templateTaskListText -Path '.agents/templates/artifacts/TASK_LIST.md' -Schema $resetArtifactSchemas.TaskList
-Validate-ArtifactSchema -Text $templateImplementationPlanText -Path '.agents/templates/artifacts/IMPLEMENTATION_PLAN.md' -Schema $resetArtifactSchemas.ImplementationPlan
-Validate-ArtifactSchema -Text $templateWalkthroughText -Path '.agents/templates/artifacts/WALKTHROUGH.md' -Schema $resetArtifactSchemas.Walkthrough
-Validate-ArtifactSchema -Text $templateReviewReportText -Path '.agents/templates/artifacts/REVIEW_REPORT.md' -Schema $resetArtifactSchemas.ReviewReport
-Validate-ArtifactSchema -Text $templateDeploymentPlanText -Path '.agents/templates/artifacts/DEPLOYMENT_PLAN.md' -Schema $resetArtifactSchemas.DeploymentPlan
+Validate-ArtifactSchema -Text $templateCurrentStateText -Path 'templates/version_reset/artifacts/CURRENT_STATE.md' -Schema $resetArtifactSchemas.CurrentState
+Validate-ArtifactSchema -Text $templateHandoffArchiveText -Path 'templates/version_reset/artifacts/HANDOFF_ARCHIVE.md' -Schema $resetArtifactSchemas.HandOffArchive
+Validate-ArtifactSchema -Text $templateTaskListText -Path 'templates/version_reset/artifacts/TASK_LIST.md' -Schema $resetArtifactSchemas.TaskList
+Validate-ArtifactSchema -Text $templateImplementationPlanText -Path 'templates/version_reset/artifacts/IMPLEMENTATION_PLAN.md' -Schema $resetArtifactSchemas.ImplementationPlan
+Validate-ArtifactSchema -Text $templateWalkthroughText -Path 'templates/version_reset/artifacts/WALKTHROUGH.md' -Schema $resetArtifactSchemas.Walkthrough
+Validate-ArtifactSchema -Text $templateReviewReportText -Path 'templates/version_reset/artifacts/REVIEW_REPORT.md' -Schema $resetArtifactSchemas.ReviewReport
+Validate-ArtifactSchema -Text $templateDeploymentPlanText -Path 'templates/version_reset/artifacts/DEPLOYMENT_PLAN.md' -Schema $resetArtifactSchemas.DeploymentPlan
 
 $latestHandoffBullets = Get-NormalizedBulletLines -SectionBody (Get-SectionBody -Text $currentStateText -Heading '## Latest Handoff Summary')
 $recentHistoryBullets = Get-NormalizedBulletLines -SectionBody (Get-SectionBody -Text $currentStateText -Heading '## Recent History Summary')
@@ -737,6 +780,14 @@ if ((Is-ConcreteValue $readyToDeploy) -and $readyToDeploy -eq 'Yes') {
 if (-not $workspaceText.Contains('replace-in-place snapshot')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the replace-in-place snapshot rule.'
 }
+
+if (-not $workspaceText.Contains('templates/project') -or -not $workspaceText.Contains('templates/version_reset/artifacts')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md should mention the split between root live docs, templates/project, and templates/version_reset/artifacts.'
+}
+
+if (-not $liveAgentsText.Contains('templates/project') -or -not $liveAgentsText.Contains('templates/version_reset/artifacts')) {
+    Add-Finding -Severity 'WARNING' -Path 'AGENTS.md' -Message 'AGENTS.md should mention the project starter template and version reset template trees.'
+}
 if (-not $workspaceText.Contains('check_harness_docs.ps1')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the validator execution rule.'
 }
@@ -797,12 +848,18 @@ if (-not $handoffWorkflowText.Contains('Requirement Baseline')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/handoff.md' -Message 'handoff.md is missing the requirement-baseline stale check.'
 }
 if (
-    (-not $deployWorkflowText.Contains('Release Pass')) -or
-    (-not $deployWorkflowText.Contains('Reviewer Gate')) -or
-    (-not $deployWorkflowText.Contains('ARCHITECTURE_GUIDE.md')) -or
-    (-not $deployWorkflowText.Contains('Requirement Baseline for Release'))
+    (
+        (-not $deployWorkflowText.Contains('Release Pass')) -or
+        (-not $deployWorkflowText.Contains('Reviewer Gate')) -or
+        (-not $deployWorkflowText.Contains('ARCHITECTURE_GUIDE.md')) -or
+        (-not $deployWorkflowText.Contains('Requirement Baseline for Release'))
+    ) -and
+    (
+        (-not $deployWorkflowText.Contains('templates/project')) -or
+        (-not $deployWorkflowText.Contains('sync_template_docs.ps1'))
+    )
 ) {
-    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/deploy.md' -Message 'deploy.md is missing cross-gate release checks.'
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/deploy.md' -Message 'deploy.md is missing either product release gate checks or self-hosting template rollout checks.'
 }
 if (-not $expoDeviceSkillText.Contains('User Report Alignment Check')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/skills/expo_real_device_test/SKILL.md' -Message 'Expo Real Device Test skill is missing the user report alignment step.'

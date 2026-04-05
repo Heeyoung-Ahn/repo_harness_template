@@ -40,6 +40,7 @@ description: 리뷰와 배포가 완료된 버전을 아카이빙하고, 현재 
 
 ### 4단계: 다음 버전 문서 뼈대 생성
 - 아래 명령으로 reset 대상 7개 문서를 canonical template에서 복원합니다.
+- 이 self-hosting 템플릿 저장소에서 canonical reset source는 `templates/version_reset/artifacts/`입니다.
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File ".agents/scripts/reset_version_artifacts.ps1"

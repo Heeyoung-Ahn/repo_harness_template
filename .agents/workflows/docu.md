@@ -1,5 +1,5 @@
 ---
-description: Documenter Agent wrapper workflow for version closeout
+description: self-hosting template repo용 Documenter Agent wrapper workflow
 ---
 
 # Documenter Agent Workflow
@@ -9,6 +9,12 @@ description: Documenter Agent wrapper workflow for version closeout
 > `/docu`는 version closeout 진입점입니다. 같은 버전 작업이 계속되는 중이면 `day_wrap_up`을 사용하고, 리뷰와 배포가 끝났을 때만 `version_closeout`을 실행합니다.
 >
 > canonical checklist는 `.agents/skills/version_closeout/SKILL.md`입니다.
+
+## Self-Hosting Template Repo Notes
+- 이 workflow는 `repo_harness_template` 저장소 자체를 운영하는 live 문서입니다.
+- downstream 기본 동작을 바꾸면 대응하는 배포용 source도 `templates/project/*`와 필요 시 `templates/version_reset/artifacts/*`에서 같은 턴에 갱신합니다.
+- self-hosting only 변경은 root live 문서/스크립트에만 남기고 template source로 되밀지 않습니다.
+- downstream 프로젝트 반영은 root live 문서 복사가 아니라 `.agents/scripts/sync_template_docs.ps1`를 사용합니다.
 
 ## Explicit User Order Handling
 - 읽기, 상태 확인, 당연한 사전 검토는 사용자에게 확인 질문 없이 진행합니다.
@@ -43,6 +49,7 @@ description: Documenter Agent wrapper workflow for version closeout
 ### Step 4: Closeout 시 추가 작업
 - version closeout이면 `CURRENT_STATE.md`와 `HANDOFF_ARCHIVE.md`까지 archive 대상으로 포함합니다.
 - `powershell -ExecutionPolicy Bypass -File ".agents/scripts/reset_version_artifacts.ps1"`를 실행해 reset 대상 7개 문서를 canonical template에서 복원합니다.
+- 이 self-hosting 템플릿 저장소에서 canonical reset source는 `templates/version_reset/artifacts/`입니다.
 - reset 직후에는 새 버전 starter content만 최소 범위로 채웁니다.
   - `CURRENT_STATE.md`: `Snapshot`, `Next Recommended Agent`, `Must Read Next`, `Active Scope`, `Task Pointers`, `Open Decisions / Blockers`, `Latest Handoff Summary`, `Recent History Summary`
   - `TASK_LIST.md`: `Current Release Target`, carry-over backlog, `## Active Locks`, 초기 `## Handoff Log`

@@ -1,5 +1,5 @@
 ---
-description: 리뷰어 및 보안 검증(Reviewer) 에이전트 워크플로우
+description: self-hosting template repo용 리뷰어 및 보안 검증(Reviewer) 에이전트 워크플로우
 ---
 
 # Reviewer Agent Workflow
@@ -7,6 +7,12 @@ description: 리뷰어 및 보안 검증(Reviewer) 에이전트 워크플로우
 당신은 **Reviewer Agent(아키텍처/보안 관제 책임자)**입니다. 테스트가 끝난 결과물을 구조, 보안, 품질, 릴리즈 리스크 기준으로 심사합니다.
 
 > 사용자가 코드 수정까지 요청하지 않는 한 직접 코드를 수정하지 않습니다. 문제는 문서와 handoff로 명확히 되돌립니다.
+
+## Self-Hosting Template Repo Notes
+- 이 workflow는 `repo_harness_template` 저장소 자체를 운영하는 live 문서입니다.
+- downstream 기본 동작을 바꾸면 대응하는 배포용 source도 `templates/project/*`와 필요 시 `templates/version_reset/artifacts/*`에서 같은 턴에 갱신합니다.
+- self-hosting only 변경은 root live 문서/스크립트에만 남기고 template source로 되밀지 않습니다.
+- downstream 프로젝트 반영은 root live 문서 복사가 아니라 `.agents/scripts/sync_template_docs.ps1`를 사용합니다.
 
 ## Explicit User Order Handling
 - 읽기, 상태 확인, 당연한 사전 검토는 사용자에게 확인 질문 없이 진행합니다.

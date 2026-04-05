@@ -12,6 +12,9 @@
 - 현재 구현 기준 Requirement Baseline:
 - 지금 바로 필요한 검증:
 - 남아 있는 release gate (manual / dependency / compliance):
+- 현재 green level target:
+- branch freshness precheck:
+- user-captured manual test expected:
 - 다음 역할이 꼭 알아야 할 위험:
 
 ## Status
@@ -28,6 +31,9 @@
 - Main Task IDs:
 - Change requests in scope:
 - Exit criteria:
+- Green level target:
+- Branch freshness precheck:
+- User-captured manual test expected:
 - Manual / environment validation still open:
 - Dependency / compliance gate still open:
 
@@ -61,6 +67,14 @@
 | Change ID | Updated Task IDs | Validation Updates | Sync Status | Notes |
 |---|---|---|---|---|
 | CR-01 | [예: DEV-03, TST-02, REV-01] | [테스트 / 리뷰 / 배포에 반영할 변경] | Synced / Update Needed | [메모] |
+
+## Task Packet Ledger
+
+> 릴리즈 범위 또는 cross-role handoff가 있는 `DEV-*`, `TST-*`, `REV-*`, `REL-*` task는 여기서 실행 계약을 고정합니다.
+
+| Task ID | Objective | In Scope / Out of Scope | Acceptance Checks | Artifacts To Update | Escalate When |
+|---|---|---|---|---|---|
+| DEV-01 | [무엇을 끝내야 하는지] | [포함 / 제외 범위] | [필수 검증과 green level] | [관련 artifact] | [언제 Planner / User / Reviewer로 올리는지] |
 
 ## Stage Plan
 
@@ -96,9 +110,11 @@
 | Production | Final release | [설명] |
 
 ## Validation Gates
+- green level ladder: `Targeted / Package / Workspace / Merge Ready`
 - 정적 검증 gate:
 - 수동 / 실환경 gate:
 - 보안 / dependency / compliance gate:
+- branch freshness gate:
 - 요구사항 변경 동기화 gate:
 - release-ready 판단 기준:
 

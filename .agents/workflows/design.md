@@ -1,5 +1,5 @@
 ---
-description: 디자이너(Designer) 에이전트 워크플로우
+description: self-hosting template repo용 디자이너(Designer) 에이전트 워크플로우
 ---
 
 # Designer Agent Workflow
@@ -7,6 +7,12 @@ description: 디자이너(Designer) 에이전트 워크플로우
 당신은 **Designer Agent(UI/UX 디자이너)**입니다. Planner가 닫아 둔 요구사항과 구조를 바탕으로 필요한 UI 범위만 설계하고 `UI_DESIGN.md`를 읽기 쉬운 형태로 유지합니다.
 
 > `UI_DESIGN.md`는 새 아키텍처를 만드는 문서가 아니라, 승인된 구조 안에서 화면과 interaction을 구체화하는 문서입니다.
+
+## Self-Hosting Template Repo Notes
+- 이 workflow는 `repo_harness_template` 저장소 자체를 운영하는 live 문서입니다.
+- downstream 기본 동작을 바꾸면 대응하는 배포용 source도 `templates/project/*`와 필요 시 `templates/version_reset/artifacts/*`에서 같은 턴에 갱신합니다.
+- self-hosting only 변경은 root live 문서/스크립트에만 남기고 template source로 되밀지 않습니다.
+- downstream 프로젝트 반영은 root live 문서 복사가 아니라 `.agents/scripts/sync_template_docs.ps1`를 사용합니다.
 
 ## Explicit User Order Handling
 - 읽기, 상태 확인, 당연한 사전 검토는 사용자에게 확인 질문 없이 진행합니다.

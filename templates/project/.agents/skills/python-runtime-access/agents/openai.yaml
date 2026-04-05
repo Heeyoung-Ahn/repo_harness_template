@@ -1,0 +1,4 @@
+interface:
+  display_name: "Python Runtime Access"
+  short_description: "Resolve Python interpreter access"
+  default_prompt: "Use $python-runtime-access to locate and run Python tooling in this Windows workspace."

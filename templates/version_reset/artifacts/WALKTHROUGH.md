@@ -7,8 +7,10 @@
 - 이번에 검증한 Task ID:
 - 이번에 확인한 요구사항:
 - 검증 기준 Requirement Baseline:
+- 현재 green level과 branch freshness:
 - 실패 시 가장 큰 원인:
 - 남아 있는 release gate와 빌드 / 실행물 판단:
+- user-reported manual test status:
 - 다음 역할이 확인해야 할 포인트:
 
 ## Latest Result
@@ -19,6 +21,9 @@
 - Manual / Environment Pass: Yes / No / Pending
 - Requirement Baseline Tested:
 - Requirements Sync Check: Pass / Fail / Planner Update Needed
+- Green Level Achieved: None / Targeted / Package / Workspace / Merge Ready
+- Branch Freshness at Test Time: Fresh / Behind / Diverged / Not Checked
+- User-Captured Manual Test Status: Not Needed / Waiting for User Results / Under Review / Finalized
 - Recommended Next Agent:
 - Last Updated At: [YYYY-MM-DD HH:MM]
 
@@ -52,6 +57,19 @@
 - New build / package required: Yes / No / N/A
 - Basis:
 
+## Branch Freshness
+- Status: Fresh / Behind / Diverged / Not Checked
+- Base branch:
+- Checked at:
+- Action taken:
+
+## Failure Classification and Recovery
+- Category: Requirement / Architecture / Branch / Build / Test / Review / Manual / Dependency / Deploy / External
+- Impact: Iteration / Release / Docs Only
+- Observed symptom:
+- Attempted recovery:
+- Next escalation:
+
 ## Commands Executed
 ```bash
 # 실행한 검증 명령 기록
@@ -63,9 +81,16 @@
 
 ## Manual Test Checklist
 
-| Check Item | Result | Notes |
-|---|---|---|
-| [항목] | Pass / Fail | [메모] |
+| Check Item | Expected Result | Reporter | Actual Result | Tester Assessment | Notes |
+|---|---|---|---|---|---|
+| [항목] | [기대 결과] | User / Tester | [실제 결과] | Pass / Fail / Pending | [메모] |
+
+## User-Captured Manual Test Report
+- Checklist prepared by:
+- Test reporter: User / Tester / Pair
+- Analysis status: Waiting for User Results / Under Review / Finalized
+- Raw report source:
+- Tester synthesis:
 
 ## Session Notes Template
 실기기 / 브라우저 / 운영 환경처럼 환경 의존 검증이 중요할 때는 아래 형식으로 최신 세션을 추가합니다.
@@ -73,7 +98,9 @@
 ### [YYYY-MM-DD HH:MM] [Tester Update Title]
 - Preconditions:
 - Commands run:
+- User raw notes:
 - Results:
+- Tester interpretation:
 - Remaining manual / environment checks:
 - Assessment:
 

@@ -1,5 +1,5 @@
 ---
-description: 개발자(Developer) 에이전트 워크플로우
+description: self-hosting template repo용 개발자(Developer) 에이전트 워크플로우
 ---
 
 # Developer Agent Workflow
@@ -7,6 +7,12 @@ description: 개발자(Developer) 에이전트 워크플로우
 당신은 **Developer Agent(소프트웨어 엔지니어)**입니다. Planner와 Designer가 닫아 둔 문서를 기준으로 필요한 범위만 읽고, 지정된 Scope 안에서 구현합니다.
 
 > `ARCHITECTURE_GUIDE.md`는 구속력 있는 계약서입니다. 구조 변경이 필요하면 코딩을 멈추고 Planner 경로로 되돌립니다.
+
+## Self-Hosting Template Repo Notes
+- 이 workflow는 `repo_harness_template` 저장소 자체를 운영하는 live 문서입니다.
+- downstream 기본 동작을 바꾸면 대응하는 배포용 source도 `templates/project/*`와 필요 시 `templates/version_reset/artifacts/*`에서 같은 턴에 갱신합니다.
+- self-hosting only 변경은 root live 문서/스크립트에만 남기고 template source로 되밀지 않습니다.
+- downstream 프로젝트 반영은 root live 문서 복사가 아니라 `.agents/scripts/sync_template_docs.ps1`를 사용합니다.
 
 ## Explicit User Order Handling
 - 읽기, 상태 확인, 당연한 사전 검토는 사용자에게 확인 질문 없이 진행합니다.

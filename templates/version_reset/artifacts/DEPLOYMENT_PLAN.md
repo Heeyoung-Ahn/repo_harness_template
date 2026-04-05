@@ -13,6 +13,7 @@
 - 이번 배포 대상:
 - 현재 배포 상태:
 - 배포 기준 Requirement Baseline / sync gate:
+- current green level / branch freshness:
 - 배포 전 꼭 확인할 것:
 - 남아 있는 release gate (manual / dependency / compliance):
 - 실패 시 롤백 핵심 경로:
@@ -27,6 +28,8 @@
 - Reviewer Gate: Open / Closed
 - Manual / Environment Gate: Open / Closed
 - Dependency / Compliance Gate: Open / Closed
+- Current Green Level:
+- Branch Freshness for Release:
 - Last Updated At: [YYYY-MM-DD HH:MM]
 
 ## Rollback Snapshot
@@ -62,9 +65,12 @@
 ## Preflight Checklist
 - [ ] `REVIEW_REPORT.md` 승인 완료
 - [ ] 최신 Requirement Baseline과 test / review 기준선 일치 확인
+- [ ] current green level이 release target에 도달했는지 확인
+- [ ] branch freshness check를 완료하고 stale / diverged 상태를 해소
 - [ ] 대상 버전과 커밋 범위 확인
 - [ ] 환경 변수 / 비밀값 설정 확인
 - [ ] 수동 / 실환경 검증 상태 확인
+- [ ] 사용자 실기기 / 브라우저 raw report와 Tester 최종 판정이 서로 모순되지 않음
 - [ ] dependency / compliance triage 확인
 - [ ] 롤백 경로 확인
 - [ ] 릴리즈 노트 준비
@@ -86,7 +92,9 @@
 
 ## Validation Gate Notes
 - 요구사항 변경 반영 상태:
+- branch freshness 판단:
 - 수동 / 실환경 재검증 계획:
+- 사용자 수동 테스트 / raw report 처리 상태:
 - 운영 직후 확인할 항목:
 - release-ready 차단 요소:
 

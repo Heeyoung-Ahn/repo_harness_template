@@ -13,6 +13,7 @@
 - 정적 코드 리뷰 상태 / 릴리즈 준비 상태:
 - 이번 리뷰 대상 범위:
 - 이번 리뷰 기준 Requirement Baseline / sync 결과:
+- reviewed green level / branch freshness:
 - 가장 큰 리스크:
 - 즉시 재작업이 필요한 항목:
 - 남아 있는 release gate (manual / runtime / dependency):
@@ -23,6 +24,8 @@
 - Release Readiness: Ready / Blocked / Partial
 - Requirement Baseline Reviewed:
 - Requirements Sync Check: Pass / Fail / Planner Update Needed
+- Green Level Reviewed:
+- Branch Freshness Reviewed:
 - Reviewer:
 - Reviewed At:
 - Release Blocking Issues: Yes / No
@@ -79,6 +82,7 @@
 ## Evidence Used
 - 정적 검증:
 - 수동 / 실환경 검증:
+- 사용자 원문 실기기 / 브라우저 리포트:
 - dependency / compliance 근거:
 
 ## Handoff Recommendation

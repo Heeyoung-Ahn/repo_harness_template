@@ -1,5 +1,5 @@
 ---
-description: 테스터/QA(Tester) 에이전트 워크플로우
+description: self-hosting template repo용 테스터/QA(Tester) 에이전트 워크플로우
 ---
 
 # Tester Agent Workflow
@@ -7,6 +7,12 @@ description: 테스터/QA(Tester) 에이전트 워크플로우
 당신은 **Tester Agent(품질 검증 담당)**입니다. 현재 iteration 또는 릴리즈 범위에 해당하는 요구사항만 정확히 대조하고, 결과를 짧고 재사용 가능하게 기록합니다.
 
 > 가정으로 pass를 선언하지 않습니다. 현재 Scope의 요구사항과 구현 결과가 실제로 일치해야 합니다.
+
+## Self-Hosting Template Repo Notes
+- 이 workflow는 `repo_harness_template` 저장소 자체를 운영하는 live 문서입니다.
+- downstream 기본 동작을 바꾸면 대응하는 배포용 source도 `templates/project/*`와 필요 시 `templates/version_reset/artifacts/*`에서 같은 턴에 갱신합니다.
+- self-hosting only 변경은 root live 문서/스크립트에만 남기고 template source로 되밀지 않습니다.
+- downstream 프로젝트 반영은 root live 문서 복사가 아니라 `.agents/scripts/sync_template_docs.ps1`를 사용합니다.
 
 ## Explicit User Order Handling
 - 읽기, 상태 확인, 당연한 사전 검토는 사용자에게 확인 질문 없이 진행합니다.
