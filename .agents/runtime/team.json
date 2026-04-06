@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "active_profile": "solo",
+  "members": [
+    {
+      "id": "user",
+      "display_name": "User",
+      "kind": "human",
+      "primary_role": "Product Owner",
+      "ownership_scopes": [
+        "requirements",
+        "approval",
+        "release-direction"
+      ],
+      "handoff_targets": [
+        "codex"
+      ],
+      "approval_authority": [
+        "scope",
+        "requirements",
+        "release-gates"
+      ]
+    },
+    {
+      "id": "codex",
+      "display_name": "Codex",
+      "kind": "ai",
+      "primary_role": "Developer",
+      "ownership_scopes": [
+        "implementation",
+        "testing",
+        "artifact-maintenance"
+      ],
+      "handoff_targets": [
+        "user"
+      ],
+      "default_model": "gpt-5"
+    }
+  ]
+}

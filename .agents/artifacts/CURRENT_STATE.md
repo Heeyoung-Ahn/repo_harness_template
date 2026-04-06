@@ -20,53 +20,47 @@
 - `Last Updated By / At`는 실제 마지막 갱신 주체와 시각으로 즉시 덮어씁니다.
 
 ## Snapshot
-- Version / Milestone: Template Repo Separation
-- Current Stage: Documentation and Closeout
-- Current Focus: 공통 테스트 프로세스에 상세 사용자 피드백 수집과 Developer handoff 기준을 표준화했다
-- Current Release Goal: self-hosting 운영 문서와 starter/reset template를 혼동 없이 유지하면서 공통 테스트 피드백 절차를 운영 프로젝트까지 안전하게 rollout한다
-- Requirements Status: Draft
-- Requirement Baseline:
-- Requirements Sync Check: In Sync / Downstream Update Required / Needs Re-Approval
-- Architecture Status: Draft
-- Plan Status: Draft
+- Version / Milestone: Scalable Governance Profiles
+- Current Stage: Development and Test Loop
+- Current Focus: `Project Monitor Web` Phase 1 contract/구현과 회귀 검증을 닫았고 다음은 future hook reservation, health snapshot contract, self-hosting/downstream promotion boundary를 정리한다
+- Current Release Goal: 장기 비용이 큰 운영 계약을 먼저 고정한 뒤 self-hosting 별도 웹앱으로 프로젝트 모니터링을 구현한다
+- Requirements Status: Approved
+- Requirement Baseline: Scalable Governance Profiles v0.2
+- Requirements Sync Check: In Sync
+- Architecture Status: Approved
+- Plan Status: Ready for Execution
 - Review Gate: Pending
 - Manual / Environment Gate: Pending
 - Dependency / Compliance Gate: Pending
-- Last Synced From Task / Handoff: 2026-04-06 DEV-10 completed
+- Last Synced From Task / Handoff: 2026-04-06 DEV-11 + DEV-12 + TST-03 + TST-04 completed
 - Sync Checked At: 2026-04-06
 - Task List Sync Check: In Sync
-- Document Health: root validator 통과, mojibake 없음, active operating projects rollout 완료
-- Last Updated By / At: Developer Agent / 2026-04-06
+- Document Health: `v0.2` planning artifact sync 유지, monitor parser/unit/http smoke 통과, root validator 통과, mojibake 없음
+- Last Updated By / At: Developer Agent / 2026-04-06 19:05
 
 ## Next Recommended Agent
-- Recommended role: Tester or Developer
-- Reason: 이후 실제 수동 테스트에서는 `Expected User Outcome`, `Feedback Capture Plan`, `Developer Feedback Handoff` 구조를 그대로 쓰면 된다.
-- Trigger to switch: 실제 manual test 실행, 사용자 feedback handoff 기반 후속 구현, 공통 테스트 절차 추가 개정
+- Recommended role: Developer
+- Reason: `DEV-11`, `DEV-12`, `TST-03`, `TST-04`가 닫혔고 다음 묶음은 future hook reservation과 promotion boundary 정리다.
+- Trigger to switch: `DEV-13`, `DEV-14`, `REV-03` 착수, self-hosting only 승격 규칙과 reserved hook contract 문서화
 
 ## Must Read Next
-- 1. `TASK_LIST.md > Current Release Target + 관련 Task row`
-- 2. 실제 manual test 전이면 `.agents/workflows/test.md`, `.agents/artifacts/WALKTHROUGH.md`
-- 3. 공통 테스트 절차 변경이면 `.agents/rules/template_repo.md`, `templates_starter/.agents/workflows/test.md`, `templates/version_reset/artifacts/WALKTHROUGH.md`
-- Optional follow-up: `.agents/scripts/sync_template_docs.ps1`, `.agents/runtime/downstream_target_presets.psd1`, `templates_starter/templates/version_reset/artifacts/*`
-- Do not read by default: `README.md`, `templates_starter/PROJECT_WORKFLOW_MANUAL.md`, `HANDOFF_ARCHIVE.md`
+- 1. `TASK_LIST.md > Current Release Target + Iteration 3 task row`
+- 2. `.agents/artifacts/IMPLEMENTATION_PLAN.md > Current Iteration`, `.agents/rules/template_repo.md`
+- 3. `.agents/scripts/check_harness_docs.ps1`
 
 ## Required Skills
-- Tester Agent: [필요할 때만 작성]
-- Reviewer Agent: [필요할 때만 작성]
-- DevOps / release gate: [필요할 때만 작성]
 - Rules / workflows / artifact edits: `korean-artifact-utf8-guard`
 
 ## Active Scope
 - Active Task IDs: none
-- Relevant paths / modules: `.agents/workflows/test.md`, `.agents/skills/expo_real_device_test/*`, `.agents/artifacts/WALKTHROUGH.md`, `templates_starter/.agents/workflows/test.md`, `templates_starter/.agents/skills/expo_real_device_test/*`, `templates_starter/.agents/artifacts/WALKTHROUGH.md`, `templates/version_reset/artifacts/WALKTHROUGH.md`, `templates_starter/PROJECT_WORKFLOW_MANUAL.md`
+- Relevant paths / modules: `.agents/runtime/team.json`, `templates_starter/.agents/runtime/team.json`, `tools/project-monitor-web/*`, `.agents/artifacts/IMPLEMENTATION_PLAN.md`, `.agents/artifacts/CURRENT_STATE.md`, `.agents/artifacts/TASK_LIST.md`
 - Current locks to respect: none
-- Worktree recommendation: 공통 테스트 절차 변경은 workflow + walkthrough + shared skill + starter manual을 같이 본다
+- Worktree recommendation: `Project Monitor Web`은 root self-hosting worktree에서 구현하고 starter/downstream source sync 작업과 섞지 않는다
 
 ## Task Pointers
-- DEV-10: 공통 manual test에 `Expected User Outcome`, `Feedback Capture Plan`, 비압축 `Developer Feedback Handoff`를 추가했다.
-- DEV-09: self-hosting 운영 규칙과 workflow 비의존 원칙 정리 완료.
-- DEV-08/07: `expo_real_device_test` shared skill과 reference source 정비 완료.
-- REL-01~03/TST-02: downstream safe rollout과 dry-run 구조 완료.
+- DEV-11 / DEV-12: `.agents/runtime/team.json`, starter defaults, parser/projection, `Project Monitor Web` Phase 1 MVP, read-only HTTP 경계를 구현 완료했다.
+- TST-03 / TST-04: parser/team registry/read-only regression과 로컬 HTTP smoke를 통과했다.
+- DEV-13 / DEV-14 / REV-03: 다음 묶음은 future hook, health snapshot, promotion boundary, source-of-truth review다.
 
 ## Open Decisions / Blockers
 - Release blocker: none
@@ -74,19 +68,17 @@
 - Dependency / compliance gate: none
 - 사용자 답변 / 확인 대기: none
 - 기술 블로커: none
-- Document / harness maintenance: starter assembled root와 root reset canonical source는 항상 함께 맞춘다
+- Document / harness maintenance: `Project Monitor Web`은 downstream 공통 기능으로 승격되기 전까지 root self-hosting 도구로 유지한다
 - Stale lock watch: none
 - Needs User Decision: none
 
 ## Latest Handoff Summary
-- Handoff source: Developer Agent / 2026-04-06
-- Completed: 공통 테스트 workflow, `WALKTHROUGH.md` templates, `expo_real_device_test`, starter manual에 상세 사용자 feedback 수집과 비압축 Developer handoff 기준을 추가하고 active operating projects 3곳에 rollout했다.
-- Next: 실제 manual test에서는 `Expected User Outcome`, `Feedback Capture Plan`, `Developer Feedback Handoff` 구조를 채워 Developer loop로 넘긴다.
-- Notes: Daily English Spark의 수동 테스트 artifact 흐름을 일반화해 모든 앱 제작 범위에 적용했다.
+- Handoff source: Developer Agent / 2026-04-06 18:55
+- Completed: `.agents/runtime/team.json`과 starter 기본값, mandatory source parser/projection, `Project Monitor Web` Phase 1 MVP, read-only HTTP 경계, 회귀 테스트를 구현했다.
+- Next: `DEV-13`, `DEV-14`, `REV-03`에서 reserved hook contract, health snapshot, self-hosting/downstream promotion boundary, source-of-truth 리뷰를 진행한다.
+- Notes: monitor는 여전히 read-only 정적 뷰어이며, owner filtering은 `team.json` member id 기준으로 정규화된다.
 
 ## Recent History Summary
-- 2026-04-05: root live 문서와 deployable template source 분리, safe downstream rollout 구조를 정리했다.
-- 2026-04-06: starter root를 `templates_starter/*`로 재편하고 root `templates/*`를 canonical reset source로 유지했다.
-- 2026-04-06: `expo_real_device_test` shared skill과 `adb_quickstart` reference를 root/starter/downstream에 정비했다.
-- 2026-04-06: self-hosting `AGENTS.md`와 `workspace.md`에 표준 템플릿 운영 지침을 추가했다.
-- 2026-04-06: 공통 manual test에 상세 사용자 feedback 수집과 비압축 Developer handoff 절차를 표준화했다.
+- 2026-04-06: `Scalable Governance Profiles v0.1` planning baseline을 작성하고 `solo/team/large` 프로필과 read-only dashboard MVP 로드맵을 정의했다.
+- 2026-04-06: `Scalable Governance Profiles v0.2` 승인본으로 `Project Monitor Web`, `team.json`, parser contract, UI 설계를 고정했다.
+- 2026-04-06: `DEV-11`, `DEV-12`, `TST-03`, `TST-04`를 완료하고 `Project Monitor Web` Phase 1 MVP, team registry, parser contract, read-only server/test 경계를 구현했다.

@@ -4,6 +4,9 @@
 > 이 문서는 task / lock truth이며, `CURRENT_STATE.md`는 resume router, `## Handoff Log`는 최신 delta, `HANDOFF_ARCHIVE.md`는 오래된 원문 보관용입니다.
 
 ## Changelog
+- [2026-04-06] Developer: `DEV-11`, `DEV-12`, `TST-03`, `TST-04`를 완료했고 `.agents/runtime/team.json`, starter team defaults, mandatory source parser, `Project Monitor Web` Phase 1 MVP, read-only HTTP 경계, 회귀 테스트를 구현했다.
+- [2026-04-06] Planner: `Scalable Governance Profiles v0.2` 승인본을 반영해 `Project Monitor Web`, `.agents/runtime/team.json`, parser contract, UI 설계를 planning artifact에 동기화했다.
+- [2026-04-06] Planner: `Scalable Governance Profiles v0.1` 초안을 작성하고 `solo/team/large` 프로필, read-only governance dashboard MVP, event history 후속 단계를 planning artifact에 반영했다.
 - [2026-04-06] Developer: 공통 테스트 프로세스에 `Expected User Outcome`, `Feedback Capture Plan`, 비압축 `Developer Feedback Handoff` 기준을 추가하고 active operating projects에 rollout했다.
 - [2026-04-06] Developer: self-hosting `AGENTS.md`와 `workspace.md`에 표준 템플릿 운영 지침과 workflow 비의존 원칙을 명문화했다.
 - [2026-04-06] Developer: `expo_real_device_test` 최신본을 3개 운영 프로젝트에 재롤아웃했고, root 전용 `operating-common-rollout` 운영 스킬을 추가했다.
@@ -38,13 +41,14 @@
 - artifact harness debt는 release blocker와 분리해 별도 maintenance task 또는 blocker note로 관리합니다.
 
 ## Current Release Target
-- Version / Milestone: Template Repo Separation
-- Current Stage: Documentation and Closeout
-- Current Focus: 공통 테스트 프로세스에 상세 사용자 피드백 수집과 Developer handoff 기준을 표준화했다
-- Current Release Goal: self-hosting 운영 문서와 starter/reset template를 혼동 없이 유지하면서 공통 테스트 피드백 절차를 운영 프로젝트까지 안전하게 rollout한다
+- Version / Milestone: Scalable Governance Profiles
+- Current Stage: Development and Test Loop
+- Current Focus: `Project Monitor Web` Phase 1 contract/구현과 회귀 검증을 닫았고 다음은 future hook reservation, health snapshot contract, self-hosting/downstream promotion boundary를 정리한다
+- Current Release Goal: 장기 비용이 큰 운영 계약을 먼저 고정한 뒤 self-hosting 별도 웹앱으로 프로젝트 모니터링을 구현한다
 
 ## Next Version Backlog
 - [ ] BACKLOG-01 downstream rollout dry-run/reporting 강화 — Scope: `.agents/scripts/sync_template_docs.ps1`, preset-aware rollout evidence
+- [ ] BACKLOG-02 Git/PR/CI adapter optional integration 설계 — Scope: future integration adapters, governed profile observability
 
 ## Active Locks
 
@@ -56,10 +60,15 @@
 - [x] PLN-02 live/root vs deployable/template 경계 확정 — Scope: `.agents/rules/workspace.md`, `.agents/rules/template_repo.md`
 - [x] PLN-03 source tree / sync path 구조 정리 — Scope: starter source, `templates/version_reset/artifacts/*`, `.agents/scripts/*`
 - [x] PLN-04 작업 목록과 운영 경로 정리 — Scope: `TASK_LIST.md`, `CURRENT_STATE.md`
+- [x] PLN-05 `solo/team/large` 운영 프로필 요구사항 초안 작성 — Scope: `REQUIREMENTS.md`, research synthesis, governance core schema
+- [x] PLN-06 core/profile/observability/integration 경계 초안 작성 — Scope: `ARCHITECTURE_GUIDE.md`, `.agents/rules/template_repo.md`
+- [x] PLN-07 dashboard MVP와 event history 후속 단계를 포함한 구현 로드맵 작성 — Scope: `IMPLEMENTATION_PLAN.md`, `CURRENT_STATE.md`, `TASK_LIST.md`
+- [x] PLN-08 `v0.2` 승인본에 맞춰 product boundary, `team.json`, parser contract, UI design baseline 고정 — Scope: `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`, `UI_DESIGN.md`, `CURRENT_STATE.md`, `TASK_LIST.md`
 
 ## Workflow Stage: Design Gate
 - [x] DSG-01 이 작업이 비UI governance scope임을 확정 — Scope: `UI_DESIGN.md` 필요성 판정
 - [x] DSG-04 `UI_DESIGN.md not required for this scope` 유지 — Scope: `CURRENT_STATE.md`
+- [x] DSG-05 `Project Monitor Web` single-screen dashboard와 detail drawer UI 범위 확정 — Scope: `UI_DESIGN.md`, board / blocker queue / recent activity / health / team directory
 
 ## Workflow Stage: Development and Test Loop
 
@@ -79,9 +88,18 @@
 - [x] DEV-10 공통 수동 테스트에서 상세 사용자 피드백 수집과 Developer handoff 표준화 — Scope: `.agents/workflows/test.md`, `.agents/skills/expo_real_device_test/*`, `WALKTHROUGH.md` templates, `templates_starter/PROJECT_WORKFLOW_MANUAL.md`, active operating projects rollout
 - [x] TST-02 sample downstream repo dry-run 및 예외 처리 검증 — Scope: template rollout workflow
 
+### Iteration 3
+- [x] DEV-11 profile schema, `.agents/runtime/team.json`, parser contract, template defaults 정규화 — Scope: `.agents/artifacts/*`, `.agents/rules/*`, `.agents/runtime/team.json`, future profile overlay structure
+- [x] DEV-12 `tools/project-monitor-web` Phase 1 MVP 구현 — Scope: self-hosting web app, local Node backend, shared parser/projection, dashboard panels
+- [ ] DEV-13 future hook point와 health snapshot contract 예약 — Scope: future integration adapters, reserved hook schema, non-realtime extension path
+- [ ] DEV-14 self-hosting only 도구와 downstream optional promotion 전략 정리 — Scope: `templates_starter/*`, `templates/version_reset/*`, monitor promotion boundary
+- [x] TST-03 profile / team registry / parser contract regression 검증 — Scope: validators, fixtures, mandatory source parsing, profile-mode correctness
+- [x] TST-04 `Project Monitor Web` Phase 1 read-only regression 검증 — Scope: dashboard panels, manual refresh, blocker queue, health panel, source artifact link-out
+
 ## Workflow Stage: Review Gate
 - [ ] REV-01 self-hosting / deployable source 경계 리뷰 — Scope: root live docs, `templates_starter/*`, `templates/version_reset/artifacts/*`, sync/validator script
 - [ ] REV-02 리뷰 반영 확인 — Scope: `REV-01` findings
+- [ ] REV-03 scalable governance profile와 `Project Monitor Web` source-of-truth 경계 리뷰 — Scope: profile schema, team registry, parser contract, monitor MVP, promotion strategy
 
 ## Workflow Stage: Deployment
 - [x] REL-01 downstream rollout 대상/범위 점검 — Scope: target repos, `templates_starter/*`, `templates/version_reset/artifacts/*`, sync path
@@ -98,8 +116,8 @@
 - none
 
 ## Handoff Log
+- [2026-04-06] DEV-11, DEV-12, TST-03, TST-04 completed. `.agents/runtime/team.json`과 `templates_starter/.agents/runtime/team.json` 기본값을 추가했고 `tools/project-monitor-web`에 parser/projection, 로컬 Node HTTP 서버, single-screen dashboard, detail drawer, source artifact link-out, owner normalization, read-only 경계 테스트를 구현했다. `node --test`와 로컬 HTTP smoke test 통과.
+- [2026-04-06] PLN-08 completed. 사용자 승인에 따라 `Scalable Governance Profiles v0.2`를 확정했고 `Project Monitor Web`, `.agents/runtime/team.json`, parser contract, single-screen dashboard UI 범위를 planning artifact에 동기화했다.
+- [2026-04-06] PLN-07 draft completed. `Scalable Governance Profiles v0.1` planning baseline을 작성했고 `solo/team/large` 운영 프로필, read-only governance dashboard MVP, append-only event history 후속 단계를 `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`에 반영했다.
 - [2026-04-06] DEV-10 completed. 공통 테스트 workflow, `WALKTHROUGH.md` templates, `expo_real_device_test`, starter manual에 `Expected User Outcome`, `Feedback Capture Plan`, 비압축 `Developer Feedback Handoff`를 추가했고 active operating projects 3곳에 rollout했다.
 - [2026-04-06] DEV-09 completed. self-hosting `AGENTS.md`와 `.agents/rules/workspace.md`에 표준 템플릿 운영 기준, workflow 비의존 원칙, 공통 변경 rollout 기본 절차를 명문화했다.
-- [2026-04-06] DEV-08 completed. `expo_real_device_test` 최신본을 active operating projects 3곳에 재롤아웃했고, root `.agents/skills/operating-common-rollout/`를 추가했다. 새 운영 스킬은 template/downstream에 넣지 않았다.
-- [2026-04-06] DEV-07 completed. `expo_real_device_test` 스킬 폴더에 일반형 `references/adb_quickstart.md`를 추가했고, root/starter `SKILL.md`가 필요 시 이 문서를 읽도록 연결했다.
-- [2026-04-06] DEV-05 completed. Daily English Spark에서 확장한 `expo_real_device_test`를 root/template source에 반영했고, WATV Auto Login과 AI Video Creator에 rollout했다. root validator는 통과했고 downstream validator는 warning-only였다.
