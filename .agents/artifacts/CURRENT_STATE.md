@@ -22,8 +22,8 @@
 ## Snapshot
 - Version / Milestone: Template Repo Separation
 - Current Stage: Documentation and Closeout
-- Current Focus: self-hosting `AGENTS.md`와 `workspace.md`에 표준 템플릿 운영 지침을 명문화했다
-- Current Release Goal: self-hosting 운영 문서와 starter/reset template를 혼동 없이 유지하고 운영 프로젝트에 rollout한다
+- Current Focus: 공통 테스트 프로세스에 상세 사용자 피드백 수집과 Developer handoff 기준을 표준화했다
+- Current Release Goal: self-hosting 운영 문서와 starter/reset template를 혼동 없이 유지하면서 공통 테스트 피드백 절차를 운영 프로젝트까지 안전하게 rollout한다
 - Requirements Status: Draft
 - Requirement Baseline:
 - Requirements Sync Check: In Sync / Downstream Update Required / Needs Re-Approval
@@ -32,21 +32,21 @@
 - Review Gate: Pending
 - Manual / Environment Gate: Pending
 - Dependency / Compliance Gate: Pending
-- Last Synced From Task / Handoff: 2026-04-06 DEV-09 completed
+- Last Synced From Task / Handoff: 2026-04-06 DEV-10 completed
 - Sync Checked At: 2026-04-06
 - Task List Sync Check: In Sync
-- Document Health: root validator 통과, mojibake 없음, downstream validator는 warning-only
+- Document Health: root validator 통과, mojibake 없음, active operating projects rollout 완료
 - Last Updated By / At: Developer Agent / 2026-04-06
 
 ## Next Recommended Agent
-- Recommended role: Planner or Developer
-- Reason: 다음 유지보수는 live/source/reset 중 어느 층인지 먼저 분류하면 된다.
-- Trigger to switch: downstream 기본 동작 변경, self-hosting 운영 규칙 변경, template rollout 요청
+- Recommended role: Tester or Developer
+- Reason: 이후 실제 수동 테스트에서는 `Expected User Outcome`, `Feedback Capture Plan`, `Developer Feedback Handoff` 구조를 그대로 쓰면 된다.
+- Trigger to switch: 실제 manual test 실행, 사용자 feedback handoff 기반 후속 구현, 공통 테스트 절차 추가 개정
 
 ## Must Read Next
-- 1. `TASK_LIST.md > ## Active Locks + 관련 Task ID row`
-- 2. `.agents/rules/template_repo.md`
-- 3. downstream 기본 동작 변경이면 `templates_starter/AGENTS.md`, `templates_starter/.agents/rules/workspace.md`, `templates_starter/.agents/workflows/*`, `templates/version_reset/artifacts/*`
+- 1. `TASK_LIST.md > Current Release Target + 관련 Task row`
+- 2. 실제 manual test 전이면 `.agents/workflows/test.md`, `.agents/artifacts/WALKTHROUGH.md`
+- 3. 공통 테스트 절차 변경이면 `.agents/rules/template_repo.md`, `templates_starter/.agents/workflows/test.md`, `templates/version_reset/artifacts/WALKTHROUGH.md`
 - Optional follow-up: `.agents/scripts/sync_template_docs.ps1`, `.agents/runtime/downstream_target_presets.psd1`, `templates_starter/templates/version_reset/artifacts/*`
 - Do not read by default: `README.md`, `templates_starter/PROJECT_WORKFLOW_MANUAL.md`, `HANDOFF_ARCHIVE.md`
 
@@ -58,17 +58,15 @@
 
 ## Active Scope
 - Active Task IDs: none
-- Relevant paths / modules: `AGENTS.md`, `.agents/rules/workspace.md`, `.agents/rules/template_repo.md`, `.agents/skills/operating-common-rollout/*`
+- Relevant paths / modules: `.agents/workflows/test.md`, `.agents/skills/expo_real_device_test/*`, `.agents/artifacts/WALKTHROUGH.md`, `templates_starter/.agents/workflows/test.md`, `templates_starter/.agents/skills/expo_real_device_test/*`, `templates_starter/.agents/artifacts/WALKTHROUGH.md`, `templates/version_reset/artifacts/WALKTHROUGH.md`, `templates_starter/PROJECT_WORKFLOW_MANUAL.md`
 - Current locks to respect: none
-- Worktree recommendation: self-hosting entry/rules 문서와 template source 규칙을 함께 유지한다
+- Worktree recommendation: 공통 테스트 절차 변경은 workflow + walkthrough + shared skill + starter manual을 같이 본다
 
 ## Task Pointers
-- PLN-01~PLN-04: self-hosting vs deployable source 분리 기준 정리 완료
-- DEV-01~DEV-03: starter/reset/live source 분리와 validator/sync script 정비 완료
-- DEV-04: rollout target preset을 script hard-code 대신 `.agents/runtime/downstream_target_presets.psd1`로 분리
-- DOC-03~DOC-04: root `README.md`를 self-hosting/starter/reset 구조 기준으로 갱신했고, starter manual은 `templates_starter/PROJECT_WORKFLOW_MANUAL.md`에만 둔다
-- TST-01~TST-02: root/starter/downstream 검증과 dry-run, mojibake 점검 완료
-- REL-01~REL-03: WATV Auto Login, AI Video Creator, Daily English Spark에 safe rollout 완료
+- DEV-10: 공통 manual test에 `Expected User Outcome`, `Feedback Capture Plan`, 비압축 `Developer Feedback Handoff`를 추가했다.
+- DEV-09: self-hosting 운영 규칙과 workflow 비의존 원칙 정리 완료.
+- DEV-08/07: `expo_real_device_test` shared skill과 reference source 정비 완료.
+- REL-01~03/TST-02: downstream safe rollout과 dry-run 구조 완료.
 
 ## Open Decisions / Blockers
 - Release blocker: none
@@ -82,19 +80,13 @@
 
 ## Latest Handoff Summary
 - Handoff source: Developer Agent / 2026-04-06
-- Completed: self-hosting `AGENTS.md`와 `.agents/rules/workspace.md`에 표준 템플릿 운영 기준, workflow 비의존 원칙, 공통 변경 rollout 기본 절차를 명문화했다.
-- Next: 이후 self-hosting 표준 템플릿 관리는 AGENTS/workspace/template_repo/artifacts와 root `operating-common-rollout` 기준으로 진행한다.
-- Notes: workflow 문서는 선택 참고이며, 필수 입력 문서가 아니다.
+- Completed: 공통 테스트 workflow, `WALKTHROUGH.md` templates, `expo_real_device_test`, starter manual에 상세 사용자 feedback 수집과 비압축 Developer handoff 기준을 추가하고 active operating projects 3곳에 rollout했다.
+- Next: 실제 manual test에서는 `Expected User Outcome`, `Feedback Capture Plan`, `Developer Feedback Handoff` 구조를 채워 Developer loop로 넘긴다.
+- Notes: Daily English Spark의 수동 테스트 artifact 흐름을 일반화해 모든 앱 제작 범위에 적용했다.
 
 ## Recent History Summary
-- 2026-04-04: 명시적 사용자 오더 준수 규칙을 표준 템플릿과 운영 프로젝트에 반영했다.
-- 2026-04-05: root live 문서와 deployable template source가 섞여 보이는 문제를 구조적으로 분리하기로 결정했다.
-- 2026-04-05: starter/reset source tree와 self-hosting live 문서/validator/sync script를 분리 정리했다.
-- 2026-04-05: `sync_template_docs.ps1`를 기존 운영 프로젝트 safe rollout용으로 보강하고, 세 운영 프로젝트에 `templates/version_reset` 포함 구조를 반영했다.
-- 2026-04-05: 운영 프로젝트 집합 변동에 대비해 rollout target preset을 `.agents/runtime/downstream_target_presets.psd1`로 분리했다.
-- 2026-04-06: starter root를 `templates_starter/*`로 재편했고 root `templates/*`는 canonical reset source로 유지했다.
-- 2026-04-06: empty `docs/`와 `tools/`를 삭제하고, 3개 운영 프로젝트에 새 구조를 rollout했다.
-- 2026-04-06: Daily English Spark에서 확장한 `expo_real_device_test`를 표준 source와 두 운영 프로젝트에 rollout했다.
-- 2026-04-06: `expo_real_device_test` 스킬 폴더에 일반형 `adb_quickstart` reference 문서를 추가했다.
-- 2026-04-06: `expo_real_device_test` 최신본을 운영 프로젝트 3곳에 재롤아웃했고 root 전용 `operating-common-rollout` 운영 스킬을 추가했다.
-- 2026-04-06: self-hosting `AGENTS.md`와 `workspace.md`에 표준 템플릿 운영 지침과 workflow 비의존 원칙을 추가했다.
+- 2026-04-05: root live 문서와 deployable template source 분리, safe downstream rollout 구조를 정리했다.
+- 2026-04-06: starter root를 `templates_starter/*`로 재편하고 root `templates/*`를 canonical reset source로 유지했다.
+- 2026-04-06: `expo_real_device_test` shared skill과 `adb_quickstart` reference를 root/starter/downstream에 정비했다.
+- 2026-04-06: self-hosting `AGENTS.md`와 `workspace.md`에 표준 템플릿 운영 지침을 추가했다.
+- 2026-04-06: 공통 manual test에 상세 사용자 feedback 수집과 비압축 Developer handoff 절차를 표준화했다.

@@ -7,8 +7,10 @@
 - 이번에 검증한 Task ID:
 - 이번에 확인한 요구사항:
 - 검증 기준 Requirement Baseline:
+- 문서/디자인 기준 사용자 기대 결과:
 - 실패 시 가장 큰 원인:
 - 남아 있는 release gate와 빌드 / 실행물 판단:
+- 사용자 상세 feedback handoff status:
 - 다음 역할이 확인해야 할 포인트:
 
 ## Latest Result
@@ -19,6 +21,7 @@
 - Manual / Environment Pass: Yes / No / Pending
 - Requirement Baseline Tested:
 - Requirements Sync Check: Pass / Fail / Planner Update Needed
+- User Feedback Handoff Status: Pending / Ready / Sent / N/A
 - Recommended Next Agent:
 - Last Updated At: [YYYY-MM-DD HH:MM]
 
@@ -27,6 +30,7 @@
 - Task IDs under test:
 - Related requirements:
 - Change requests covered:
+- Expected user-visible outcome:
 
 ## User Report Alignment
 사용자가 실기기 / 브라우저 / 운영 환경 테스트 결과를 긴 자유서술로 보내면, 바로 수정 지시나 blocker로 확정하지 말고 먼저 아래 형식으로 이해를 맞춥니다.
@@ -37,6 +41,12 @@
 - Needs Clarification (불명확 / 확인 필요):
 - Confirmation asked: `Please confirm whether my understanding is correct. (내 이해가 맞는지 확인해 달라)`
 - Proceed without confirmation basis:
+
+## Feedback Capture Plan
+- Expected user-visible outcome from docs / design:
+- Feedback prompts for user:
+- Priority reactions to probe: first impression / confusion / trust / copy / visual polish / missing expectation
+- Raw feedback preservation plan:
 
 ## Changelog
 - [YYYY-MM-DD] Tester: initial draft
@@ -67,13 +77,25 @@
 |---|---|---|
 | [항목] | Pass / Fail | [메모] |
 
+## Developer Feedback Handoff
+- Handoff status: Pending / Ready / Sent
+- Raw feedback source:
+- Detailed feedback by screen / flow:
+- Confirmed mismatches / bugs:
+- Improvement ideas from user:
+- Open product questions:
+- Compression warning: 사용자 피드백은 한 줄 요약으로 축약하지 않고 관련 원문과 상세 메모를 함께 넘긴다.
+
 ## Session Notes Template
 실기기 / 브라우저 / 운영 환경처럼 환경 의존 검증이 중요할 때는 아래 형식으로 최신 세션을 추가합니다.
 
 ### [YYYY-MM-DD HH:MM] [Tester Update Title]
 - Preconditions:
 - Commands run:
+- Expected user outcome reviewed:
+- User raw notes (do not compress):
 - Results:
+- Feedback themes for Developer handoff:
 - Remaining manual / environment checks:
 - Assessment:
 

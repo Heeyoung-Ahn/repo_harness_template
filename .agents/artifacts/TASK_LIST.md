@@ -4,6 +4,7 @@
 > 이 문서는 task / lock truth이며, `CURRENT_STATE.md`는 resume router, `## Handoff Log`는 최신 delta, `HANDOFF_ARCHIVE.md`는 오래된 원문 보관용입니다.
 
 ## Changelog
+- [2026-04-06] Developer: 공통 테스트 프로세스에 `Expected User Outcome`, `Feedback Capture Plan`, 비압축 `Developer Feedback Handoff` 기준을 추가하고 active operating projects에 rollout했다.
 - [2026-04-06] Developer: self-hosting `AGENTS.md`와 `workspace.md`에 표준 템플릿 운영 지침과 workflow 비의존 원칙을 명문화했다.
 - [2026-04-06] Developer: `expo_real_device_test` 최신본을 3개 운영 프로젝트에 재롤아웃했고, root 전용 `operating-common-rollout` 운영 스킬을 추가했다.
 - [2026-04-06] Developer: `expo_real_device_test` 스킬에 일반형 `adb_quickstart` reference 문서를 추가하고 root/starter `SKILL.md`에서 참조 연결했다.
@@ -39,8 +40,8 @@
 ## Current Release Target
 - Version / Milestone: Template Repo Separation
 - Current Stage: Documentation and Closeout
-- Current Focus: self-hosting `AGENTS.md`와 `workspace.md`에 표준 템플릿 운영 지침을 명문화했다
-- Current Release Goal: self-hosting 운영 문서와 starter/reset template를 혼동 없이 유지하고 기존 운영 프로젝트에도 안전하게 rollout한다
+- Current Focus: 공통 테스트 프로세스에 상세 사용자 피드백 수집과 Developer handoff 기준을 표준화했다
+- Current Release Goal: self-hosting 운영 문서와 starter/reset template를 혼동 없이 유지하면서 공통 테스트 피드백 절차를 운영 프로젝트까지 안전하게 rollout한다
 
 ## Next Version Backlog
 - [ ] BACKLOG-01 downstream rollout dry-run/reporting 강화 — Scope: `.agents/scripts/sync_template_docs.ps1`, preset-aware rollout evidence
@@ -75,6 +76,7 @@
 - [x] DEV-07 `expo_real_device_test` reference 문서 추가 — Scope: `.agents/skills/expo_real_device_test/*`, `templates_starter/.agents/skills/expo_real_device_test/*`
 - [x] DEV-08 shared skill rollout 재정비 및 self-hosting 운영 스킬 추가 — Scope: `.agents/skills/*`, `templates_starter/.agents/skills/expo_real_device_test/*`, active operating projects
 - [x] DEV-09 self-hosting 표준 템플릿 운영 지침 정리 — Scope: `AGENTS.md`, `.agents/rules/workspace.md`
+- [x] DEV-10 공통 수동 테스트에서 상세 사용자 피드백 수집과 Developer handoff 표준화 — Scope: `.agents/workflows/test.md`, `.agents/skills/expo_real_device_test/*`, `WALKTHROUGH.md` templates, `templates_starter/PROJECT_WORKFLOW_MANUAL.md`, active operating projects rollout
 - [x] TST-02 sample downstream repo dry-run 및 예외 처리 검증 — Scope: template rollout workflow
 
 ## Workflow Stage: Review Gate
@@ -96,11 +98,8 @@
 - none
 
 ## Handoff Log
+- [2026-04-06] DEV-10 completed. 공통 테스트 workflow, `WALKTHROUGH.md` templates, `expo_real_device_test`, starter manual에 `Expected User Outcome`, `Feedback Capture Plan`, 비압축 `Developer Feedback Handoff`를 추가했고 active operating projects 3곳에 rollout했다.
 - [2026-04-06] DEV-09 completed. self-hosting `AGENTS.md`와 `.agents/rules/workspace.md`에 표준 템플릿 운영 기준, workflow 비의존 원칙, 공통 변경 rollout 기본 절차를 명문화했다.
 - [2026-04-06] DEV-08 completed. `expo_real_device_test` 최신본을 active operating projects 3곳에 재롤아웃했고, root `.agents/skills/operating-common-rollout/`를 추가했다. 새 운영 스킬은 template/downstream에 넣지 않았다.
 - [2026-04-06] DEV-07 completed. `expo_real_device_test` 스킬 폴더에 일반형 `references/adb_quickstart.md`를 추가했고, root/starter `SKILL.md`가 필요 시 이 문서를 읽도록 연결했다.
 - [2026-04-06] DEV-05 completed. Daily English Spark에서 확장한 `expo_real_device_test`를 root/template source에 반영했고, WATV Auto Login과 AI Video Creator에 rollout했다. root validator는 통과했고 downstream validator는 warning-only였다.
-- [2026-04-06] DEV-06 completed. self-hosting repo의 starter root를 `templates_starter`로 재편하고 root `templates/version_reset/*`를 canonical reset source로 유지했으며, empty `docs/`와 `tools/`를 삭제한 뒤 3개 운영 프로젝트에 rollout했다.
-- [2026-04-05] DEV-02/TST-01 completed. root live 문서와 deployable template source가 분리되었고, downstream rollout은 `.agents/scripts/sync_template_docs.ps1` 기준으로 수행한다.
-- [2026-04-05] REL-01~REL-03/TST-02 completed. `sync_template_docs.ps1`는 기존 운영 프로젝트의 live `.agents/artifacts/*`를 보존하도록 보강되었고, 3개 운영 프로젝트에 `templates/version_reset` 포함 구조를 반영했다.
-- [2026-04-05] DEV-04 completed. rollout target group은 script hard-code 대신 `.agents/runtime/downstream_target_presets.psd1` preset으로 관리하도록 전환했다.

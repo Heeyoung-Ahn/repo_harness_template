@@ -38,6 +38,8 @@ description: 테스터/QA(Tester) 에이전트 워크플로우
 - 사용자가 확인하거나 정정하기 전에는 코드 수정 요청 확정, blocker severity 확정, release gate 변경, Developer handoff TODO 확정을 하지 않습니다.
 - 확인 요청을 보냈는데 답변이 아직 없으면 상태를 `Needs Clarification`으로 유지하고, 다음 구현/배포 단계로 넘기지 않습니다.
 - 사용자가 명시적으로 `확인 없이 진행`을 지시한 경우에만 그 문장을 근거로 다음 단계로 진행합니다.
+- 테스트 전에는 `REQUIREMENTS.md`, `UI_DESIGN.md`, 최신 handoff를 바탕으로 사용자가 실제 결과물에서 확인해야 할 `Expected User Outcome`를 먼저 정리합니다.
+- pass/fail만 묻지 말고 `무엇이 기대와 달랐는지`, `어디서 이해가 막혔는지`, `어떤 개선이 제품 완성도를 높일지`를 묻는 feedback prompts를 함께 준비합니다.
 
 ### Step 3: 테스트 수행 및 요구사항 교차 검증
 - Expo / React Native + native/config footprint가 걸리면 `expo_real_device_test`의 빌드 판단과 체크리스트 형식을 먼저 따릅니다.
@@ -45,7 +47,8 @@ description: 테스터/QA(Tester) 에이전트 워크플로우
 - 테스트를 시작하기 전에 최신 승인 `Requirement Baseline`과 `Requirements Sync Status`를 확인합니다. 기준선이 비었거나 sync 상태가 `In Sync`가 아니면 Planner로 되돌립니다.
 - 광범위 실패, 오래 열린 브랜치, 병렬 작업 범위면 `WALKTHROUGH.md > Branch Freshness`를 먼저 채우고 stale / diverged 상태를 해소했는지 확인합니다.
 - packaged app, mobile app, browser integration, 외부 시스템 연동처럼 환경 의존 검증이 있으면 `정적 / 자동 검증`과 `수동 / 실환경 검증`을 분리해 기록합니다.
-- 사용자가 실기기 테스트를 직접 수행하는 경우에는 Tester가 먼저 `WALKTHROUGH.md > Manual Test Checklist`에 항목과 기대 결과를 적고, 사용자는 그 항목별 실제 결과를 남기며, Tester가 그 원문을 `User Report Alignment`와 `User-Captured Manual Test Report`를 거쳐 최종 판정으로 정리합니다.
+- 사용자가 실기기 테스트를 직접 수행하는 경우에는 Tester가 먼저 `WALKTHROUGH.md > Manual Test Checklist`와 `Feedback Capture Plan`에 항목, 기대 결과, 확인할 사용자 기대 결과를 적고, 사용자는 그 항목별 실제 결과와 상세 피드백을 남기며, Tester가 그 원문을 `User Report Alignment`, `User-Captured Manual Test Report`, `Developer Feedback Handoff`를 거쳐 최종 판정으로 정리합니다.
+- 사용자 raw feedback는 `WALKTHROUGH.md`에 원문 위치와 상세 메모 형태로 먼저 보존하고, 그 다음에만 Tester 해석과 판정을 덧붙입니다.
 - 관련 요구사항 표를 펼쳐야 할 만큼 정보가 부족할 때만 `REQUIREMENTS.md` 상세 섹션을 읽습니다.
 - 모든 실행 환경, 명령, 실패 원인, 요구사항 불일치, `Requirement Baseline Tested`, `Requirements Sync Check`, `Green Level Achieved`, `Branch Freshness at Test Time`를 `WALKTHROUGH.md`에 기록합니다.
 
@@ -62,6 +65,7 @@ description: 테스터/QA(Tester) 에이전트 워크플로우
 - 기록 직전에 `CURRENT_STATE.md`, `TASK_LIST.md`, `WALKTHROUGH.md`에 대해 `pre-write refresh`를 수행합니다.
 - `TASK_LIST.md` 상태를 업데이트합니다.
 - `CURRENT_STATE.md`의 `Snapshot`, `Next Recommended Agent`, `Must Read Next`, `Required Skills`, `Active Scope`, `Task Pointers`, `Open Decisions / Blockers`, `Latest Handoff Summary`, `Recent History Summary`를 갱신합니다.
+- Developer handoff에는 `WALKTHROUGH.md`의 raw report source, detailed feedback, Tester synthesis, confirmed mismatch, 사용자 개선 요청을 함께 남기고 한 줄 압축 요약만 전달하지 않습니다.
 - archive 전에 미해결 불일치, 릴리즈 차단 요소, 남아 있는 수동 / 실환경 검증, failure category, attempted recovery, 다음 Agent가 꼭 알아야 할 제약을 `TASK_LIST.md > ## Blockers`와 `CURRENT_STATE.md > Open Decisions / Blockers`로 승격합니다.
 - low-risk harness maintenance와 read-only validation은 사용자 승인 없이 바로 적용하고 결과만 요약합니다.
 - If a short user choice is needed for device checks, browser approval, or preview smoke resume, record the gate in artifacts first and keep it as a local user decision in the active session.

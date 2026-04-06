@@ -547,26 +547,43 @@ handoff는 길게 쓰는 것이 목적이 아닙니다.
 - Test reporter: User
 - Analysis status: Under Review
 - Raw report source: Codex chat 2026-04-05
+- Raw feedback preserved: Yes
+- Detailed feedback location: `WALKTHROUGH.md > Developer Feedback Handoff`
 - Tester synthesis: 저장 버튼 반응은 정상으로 보이나, 재진입 후 유지 여부는 사용자 답변 대기
+
+## Developer Feedback Handoff
+- Handoff status: Ready
+- Raw feedback source: Codex chat 2026-04-05 + `WALKTHROUGH.md > User-Captured Manual Test Report`
+- Detailed feedback by screen / flow: 저장 직후 반응은 괜찮지만, 재진입 시 유지 여부와 저장 성공 피드백의 명확성은 사용자 상세 답변을 그대로 첨부해 개발자가 읽어야 함
+- Confirmed mismatches / bugs: 아직 없음
+- Improvement ideas from user: 저장 성공 피드백이 더 분명하면 좋다는 의견을 받을 수 있음
+- Open product questions: 재진입 후 유지 표시는 어느 수준으로 강조할지
 ```
 
 #### 6.11.5 사용자가 남기는 실기기 결과 예시
-사용자에게는 아래처럼 간단히 적어 달라고 안내하면 충분합니다.
+사용자에게는 pass/fail만 아니라 기대와 실제 차이, 거칠게 느껴진 지점, 완성도를 높일 개선점까지 함께 적어 달라고 안내합니다.
 
 ```markdown
 ## User Test Results
 - Check Item: 홈 화면에서 오늘의 표현 저장
   - Actual result: 저장 버튼을 누르자 바로 Saved 상태가 보였다.
   - Pass / Fail guess: Pass
-  - Notes: 애니메이션은 약간 느렸지만 저장은 됐다.
+  - Notes: 애니메이션은 약간 느렸지만 저장은 됐다. 저장 완료가 좀 더 분명하게 느껴지면 안심될 것 같다.
 
 - Check Item: 앱 종료 후 재진입
   - Actual result: 다시 열었을 때 Saved 표시가 유지됐다.
   - Pass / Fail guess: Pass
-  - Notes: 두 번 반복해도 같았다.
+  - Notes: 두 번 반복해도 같았다. 다만 처음 저장 직후에는 정말 저장됐는지 확신이 약해서 문구나 모션이 더 분명하면 좋겠다.
+
+## Detailed User Feedback
+- Screen / Flow: 홈 화면 저장
+  - What matched expectations: 저장 자체는 바로 됐다.
+  - What felt confusing or rough: 저장 완료가 충분히 강하게 느껴지지 않았다.
+  - What should change to feel complete: 저장 성공 피드백을 더 분명하게 보여주면 좋겠다.
+  - Additional notes: 재진입 후 유지되는 건 좋았다.
 ```
 
-이 원문을 그대로 최종 판정으로 쓰지 않고, Tester가 먼저 `User Report Alignment`로 정리한 뒤 `Manual Test Checklist`와 `Latest Result`에 반영합니다.
+이 원문을 그대로 최종 판정으로 쓰지 않고, Tester가 먼저 `User Report Alignment`로 정리한 뒤 `Manual Test Checklist`, `User-Captured Manual Test Report`, `Developer Feedback Handoff`, `Latest Result`에 반영합니다. 핵심은 사용자 상세 피드백을 한 줄 요약으로 압축하지 않고 개발 handoff까지 보존하는 것입니다.
 
 #### 6.11.6 `REVIEW_REPORT.md` 예시
 ```markdown
@@ -607,6 +624,7 @@ handoff는 길게 쓰는 것이 목적이 아닙니다.
 #### 6.11.8 초보자가 특히 기억할 것
 - `Targeted` green은 “현재 범위는 좋아 보임”이지 “곧바로 배포 가능”이 아닙니다.
 - 사용자 실기기 테스트 원문은 증거이지 최종 판정 문장이 아닙니다.
+- 사용자 수동 테스트의 핵심은 pass/fail 체크만이 아니라, 문서/대화로 합의한 기대 결과와 실제 제품의 차이를 자세히 수집해 다음 개발 loop로 돌려보내는 것입니다.
 - stale branch는 제품 결함과 다른 종류 문제입니다.
 - handoff에는 긴 회고보다 `First Action`이 더 중요합니다.
 
