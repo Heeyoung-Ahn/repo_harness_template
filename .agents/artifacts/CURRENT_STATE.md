@@ -22,7 +22,7 @@
 ## Snapshot
 - Version / Milestone: Template Repo Separation
 - Current Stage: Documentation and Closeout
-- Current Focus: `templates_starter/*` starter와 root `templates/version_reset/*` canonical reset source 분리를 완료했고 rollout도 반영했다
+- Current Focus: self-hosting `AGENTS.md`와 `workspace.md`에 표준 템플릿 운영 지침을 명문화했다
 - Current Release Goal: self-hosting 운영 문서와 starter/reset template를 혼동 없이 유지하고 운영 프로젝트에 rollout한다
 - Requirements Status: Draft
 - Requirement Baseline:
@@ -32,15 +32,15 @@
 - Review Gate: Pending
 - Manual / Environment Gate: Pending
 - Dependency / Compliance Gate: Pending
-- Last Synced From Task / Handoff: 2026-04-06 DEV-06 completed
+- Last Synced From Task / Handoff: 2026-04-06 DEV-09 completed
 - Sync Checked At: 2026-04-06
 - Task List Sync Check: In Sync
-- Document Health: local validator 통과, mojibake 없음, 3개 downstream repo rollout 후 validator는 warning-only
+- Document Health: root validator 통과, mojibake 없음, downstream validator는 warning-only
 - Last Updated By / At: Developer Agent / 2026-04-06
 
 ## Next Recommended Agent
 - Recommended role: Planner or Developer
-- Reason: 다음 유지보수는 self-hosting live docs, `templates_starter/*`, root `templates/version_reset/*` 중 어느 층인지 먼저 분류하면 됩니다.
+- Reason: 다음 유지보수는 live/source/reset 중 어느 층인지 먼저 분류하면 된다.
 - Trigger to switch: downstream 기본 동작 변경, self-hosting 운영 규칙 변경, template rollout 요청
 
 ## Must Read Next
@@ -58,9 +58,9 @@
 
 ## Active Scope
 - Active Task IDs: none
-- Relevant paths / modules: `AGENTS.md`, `.agents/rules/*`, `.agents/workflows/*`, `.agents/scripts/*`, `templates_starter/*`, `templates/version_reset/artifacts/*`
+- Relevant paths / modules: `AGENTS.md`, `.agents/rules/workspace.md`, `.agents/rules/template_repo.md`, `.agents/skills/operating-common-rollout/*`
 - Current locks to respect: none
-- Worktree recommendation: root live docs와 template source를 같은 턴에 만질 때는 대응 경로를 쌍으로 확인
+- Worktree recommendation: self-hosting entry/rules 문서와 template source 규칙을 함께 유지한다
 
 ## Task Pointers
 - PLN-01~PLN-04: self-hosting vs deployable source 분리 기준 정리 완료
@@ -82,9 +82,9 @@
 
 ## Latest Handoff Summary
 - Handoff source: Developer Agent / 2026-04-06
-- Completed: `templates_starter/*` assembled starter 재편, root `templates/version_reset/*` mirror 재동기화, empty `docs/`와 `tools/` 삭제, 3개 운영 프로젝트 rollout과 downstream validator 확인까지 마쳤다.
-- Next: 이후 변경은 self-hosting live docs, `templates_starter/*`, root `templates/version_reset/*` 중 어느 층인지 먼저 분류하고 수정한다.
-- Notes: downstream repo의 실제 구조는 `.agents/`, `templates/`, `AGENTS.md`, `PROJECT_WORKFLOW_MANUAL.md`이고, self-hosting repo에서만 starter root 이름이 `templates_starter`다.
+- Completed: self-hosting `AGENTS.md`와 `.agents/rules/workspace.md`에 표준 템플릿 운영 기준, workflow 비의존 원칙, 공통 변경 rollout 기본 절차를 명문화했다.
+- Next: 이후 self-hosting 표준 템플릿 관리는 AGENTS/workspace/template_repo/artifacts와 root `operating-common-rollout` 기준으로 진행한다.
+- Notes: workflow 문서는 선택 참고이며, 필수 입력 문서가 아니다.
 
 ## Recent History Summary
 - 2026-04-04: 명시적 사용자 오더 준수 규칙을 표준 템플릿과 운영 프로젝트에 반영했다.
@@ -92,6 +92,9 @@
 - 2026-04-05: starter/reset source tree와 self-hosting live 문서/validator/sync script를 분리 정리했다.
 - 2026-04-05: `sync_template_docs.ps1`를 기존 운영 프로젝트 safe rollout용으로 보강하고, 세 운영 프로젝트에 `templates/version_reset` 포함 구조를 반영했다.
 - 2026-04-05: 운영 프로젝트 집합 변동에 대비해 rollout target preset을 `.agents/runtime/downstream_target_presets.psd1`로 분리했다.
-- 2026-04-05: root `README.md`는 self-hosting 저장소 설명으로 갱신했고, root `PROJECT_WORKFLOW_MANUAL.md`는 제거하여 starter manual만 starter source 안에 남겼다.
 - 2026-04-06: starter root를 `templates_starter/*`로 재편했고 root `templates/*`는 canonical reset source로 유지했다.
 - 2026-04-06: empty `docs/`와 `tools/`를 삭제하고, 3개 운영 프로젝트에 새 구조를 rollout했다.
+- 2026-04-06: Daily English Spark에서 확장한 `expo_real_device_test`를 표준 source와 두 운영 프로젝트에 rollout했다.
+- 2026-04-06: `expo_real_device_test` 스킬 폴더에 일반형 `adb_quickstart` reference 문서를 추가했다.
+- 2026-04-06: `expo_real_device_test` 최신본을 운영 프로젝트 3곳에 재롤아웃했고 root 전용 `operating-common-rollout` 운영 스킬을 추가했다.
+- 2026-04-06: self-hosting `AGENTS.md`와 `workspace.md`에 표준 템플릿 운영 지침과 workflow 비의존 원칙을 추가했다.

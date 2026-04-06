@@ -12,6 +12,10 @@
 - downstream 프로젝트용 assembled starter source는 `templates_starter`에 따로 있습니다.
 - downstream repo의 version closeout reset source는 root `templates/version_reset/artifacts`에 canonical하게 관리합니다.
 - downstream 기본 동작을 바꾸는 작업이면 [`.agents/rules/template_repo.md`](.agents/rules/template_repo.md)를 추가로 읽고, 같은 턴에 대응하는 `templates_starter/*`와 필요 시 `templates/version_reset/artifacts/*`를 함께 갱신합니다.
+- self-hosting 표준 템플릿 운영의 기본 입력 문서는 `AGENTS.md`, `.agents/rules/workspace.md`, `.agents/rules/template_repo.md`, `.agents/artifacts/CURRENT_STATE.md`, `.agents/artifacts/TASK_LIST.md`입니다.
+- `.agents/workflows/*.md`는 선택 참고 자료이며, self-hosting 표준 템플릿 운영의 필수 입력 문서는 아닙니다. workflow 문서와 rules / artifacts가 충돌하면 rules / artifacts가 우선합니다.
+- 운영 프로젝트에서 검증된 공통 변경을 표준 템플릿과 다른 운영 프로젝트로 가져올 때는 root [`.agents/skills/operating-common-rollout`](.agents/skills/operating-common-rollout) 기준으로 `변경 층 분류 -> project-specific 값 일반화 -> canonical source 갱신 -> rollout -> validator` 순서로 처리합니다.
+- shared skill은 `SKILL.md` 한 파일이 아니라 스킬 폴더 전체(`references/`, `scripts/`, `assets/` 포함)를 기준으로 취급합니다.
 - 읽기, 상태 확인, 당연한 사전 검토는 사용자에게 확인 질문 없이 진행합니다.
 - 사용자가 명시적으로 오더한 실행은 범위, 대상, 실행 여부를 임의로 바꾸지 말고 그대로 수행합니다.
 - 코드/문서 수정, 롤백, 빌드/배포, 백그라운드 프로세스 시작, 장시간 검증처럼 상태를 바꾸는 작업은 사용자 오더 기준의 짧은 실행 계획을 먼저 보여준 뒤 바로 수행합니다.

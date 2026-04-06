@@ -116,3 +116,15 @@ powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1
 - self-hosting 전용 규칙, validator, handoff, 운영 메모는 root에만 남기고 template source로 되밀지 않습니다.
 - downstream 공통 동작 중 starter 문서/workflow/skill/script는 `templates_starter/*` source에서, version close reset template는 root `templates/version_reset/*`에서 canonical하게 관리합니다.
 - artifact schema나 starter content를 바꾸면 `templates/version_reset/artifacts/*`, `templates_starter/.agents/artifacts/*`, `templates_starter/templates/version_reset/artifacts/*`, 관련 reset/validator/sync 경로와 필요한 downstream sync 절차를 함께 갱신합니다.
+
+## 12. Self-Hosting Standard Template Operations
+- self-hosting 표준 템플릿 운영은 기본적으로 `AGENTS.md`, `workspace.md`, `template_repo.md`, `CURRENT_STATE.md`, `TASK_LIST.md`만으로 재현 가능해야 합니다.
+- `.agents/workflows/*.md`는 선택 참고 자료이며, 이 저장소 운영의 필수 입력 문서로 가정하지 않습니다.
+- workflow 문서가 없거나 오래되었더라도, rules / artifacts / canonical source 기준만으로 작업을 계속 진행할 수 있어야 합니다.
+- 운영 프로젝트에서 가져온 공통 변경은 먼저 `self-hosting only`, `shared starter-bound source`, `shared skill mirrored in root and starter`, `live project artifact only` 중 하나로 분류합니다.
+- 분류가 끝나기 전에는 복사나 rollout을 시작하지 않습니다. 모호하면 사용자에게 확인받습니다.
+- project-specific 값(앱 이름, package name, task ID, provider 이름, 화면명, 계정/URL/secret)은 canonical source 반영 전에 일반화합니다.
+- shared skill은 `SKILL.md` 한 파일이 아니라 스킬 폴더 전체 단위로 취급합니다. 새 `references/`, `scripts/`, `assets/`가 생겼으면 함께 반영합니다.
+- 운영 프로젝트에서 검증된 공통 변경을 표준 템플릿과 sibling 운영 프로젝트로 가져올 때는 root `.agents/skills/operating-common-rollout/*` 절차를 기본값으로 사용합니다.
+- 표준 순서는 `source project 검증 확인 -> root canonical source 갱신 -> starter 대응 source 갱신 -> sync_template_docs.ps1 rollout -> root/target validator 및 diff 확인`입니다.
+- self-hosting 전용 운영 스킬, validator, 메모는 root에만 두고 `templates_starter`나 downstream 운영 프로젝트로 복사하지 않습니다.
