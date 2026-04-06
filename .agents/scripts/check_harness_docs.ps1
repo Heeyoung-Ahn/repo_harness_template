@@ -208,20 +208,20 @@ $pathMap = @{
 }
 
 $templateRuntimeMap = @{
-    TemplateAgents        = Join-Path $repoRoot 'templates\project\AGENTS.md'
-    TemplateManual        = Join-Path $repoRoot 'templates\project\PROJECT_WORKFLOW_MANUAL.md'
-    TemplateWorkspace     = Join-Path $repoRoot 'templates\project\.agents\rules\workspace.md'
-    TemplateDesignFlow    = Join-Path $repoRoot 'templates\project\.agents\workflows\design.md'
-    TemplatePlanFlow      = Join-Path $repoRoot 'templates\project\.agents\workflows\plan.md'
-    TemplateDevFlow       = Join-Path $repoRoot 'templates\project\.agents\workflows\dev.md'
-    TemplateTestFlow      = Join-Path $repoRoot 'templates\project\.agents\workflows\test.md'
-    TemplateReviewFlow    = Join-Path $repoRoot 'templates\project\.agents\workflows\review.md'
-    TemplateDeployFlow    = Join-Path $repoRoot 'templates\project\.agents\workflows\deploy.md'
-    TemplateDocuFlow      = Join-Path $repoRoot 'templates\project\.agents\workflows\docu.md'
-    TemplateHandoffFlow   = Join-Path $repoRoot 'templates\project\.agents\workflows\handoff.md'
-    TemplateExpoPublish   = Join-Path $repoRoot 'templates\project\.agents\skills\expo_production_publish\SKILL.md'
-    TemplateCheckScript   = Join-Path $repoRoot 'templates\project\.agents\scripts\check_harness_docs.ps1'
-    TemplateResetScript   = Join-Path $repoRoot 'templates\project\.agents\scripts\reset_version_artifacts.ps1'
+    TemplateAgents        = Join-Path $repoRoot 'templates_starter\AGENTS.md'
+    TemplateManual        = Join-Path $repoRoot 'templates_starter\PROJECT_WORKFLOW_MANUAL.md'
+    TemplateWorkspace     = Join-Path $repoRoot 'templates_starter\.agents\rules\workspace.md'
+    TemplateDesignFlow    = Join-Path $repoRoot 'templates_starter\.agents\workflows\design.md'
+    TemplatePlanFlow      = Join-Path $repoRoot 'templates_starter\.agents\workflows\plan.md'
+    TemplateDevFlow       = Join-Path $repoRoot 'templates_starter\.agents\workflows\dev.md'
+    TemplateTestFlow      = Join-Path $repoRoot 'templates_starter\.agents\workflows\test.md'
+    TemplateReviewFlow    = Join-Path $repoRoot 'templates_starter\.agents\workflows\review.md'
+    TemplateDeployFlow    = Join-Path $repoRoot 'templates_starter\.agents\workflows\deploy.md'
+    TemplateDocuFlow      = Join-Path $repoRoot 'templates_starter\.agents\workflows\docu.md'
+    TemplateHandoffFlow   = Join-Path $repoRoot 'templates_starter\.agents\workflows\handoff.md'
+    TemplateExpoPublish   = Join-Path $repoRoot 'templates_starter\.agents\skills\expo_production_publish\SKILL.md'
+    TemplateCheckScript   = Join-Path $repoRoot 'templates_starter\.agents\scripts\check_harness_docs.ps1'
+    TemplateResetScript   = Join-Path $repoRoot 'templates_starter\.agents\scripts\reset_version_artifacts.ps1'
 }
 
 $templateArtifactMap = @{
@@ -235,13 +235,13 @@ $templateArtifactMap = @{
 }
 
 $starterResetArtifactMap = @{
-    CurrentState       = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\CURRENT_STATE.md'
-    HandOffArchive     = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\HANDOFF_ARCHIVE.md'
-    TaskList           = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\TASK_LIST.md'
-    ImplementationPlan = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\IMPLEMENTATION_PLAN.md'
-    Walkthrough        = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\WALKTHROUGH.md'
-    ReviewReport       = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\REVIEW_REPORT.md'
-    DeploymentPlan     = Join-Path $repoRoot 'templates\project\templates\version_reset\artifacts\DEPLOYMENT_PLAN.md'
+    CurrentState       = Join-Path $repoRoot 'templates_starter\templates\version_reset\artifacts\CURRENT_STATE.md'
+    HandOffArchive     = Join-Path $repoRoot 'templates_starter\templates\version_reset\artifacts\HANDOFF_ARCHIVE.md'
+    TaskList           = Join-Path $repoRoot 'templates_starter\templates\version_reset\artifacts\TASK_LIST.md'
+    ImplementationPlan = Join-Path $repoRoot 'templates_starter\templates\version_reset\artifacts\IMPLEMENTATION_PLAN.md'
+    Walkthrough        = Join-Path $repoRoot 'templates_starter\templates\version_reset\artifacts\WALKTHROUGH.md'
+    ReviewReport       = Join-Path $repoRoot 'templates_starter\templates\version_reset\artifacts\REVIEW_REPORT.md'
+    DeploymentPlan     = Join-Path $repoRoot 'templates_starter\templates\version_reset\artifacts\DEPLOYMENT_PLAN.md'
 }
 
 foreach ($entry in $pathMap.GetEnumerator()) {
@@ -258,8 +258,12 @@ foreach ($entry in $templateArtifactMap.GetEnumerator()) {
 
 foreach ($entry in $starterResetArtifactMap.GetEnumerator()) {
     if (-not (Test-Path -LiteralPath $entry.Value)) {
-        Add-Finding -Severity 'ERROR' -Path $entry.Value -Message 'Missing required starter reset template artifact mirror.'
+        Add-Finding -Severity 'ERROR' -Path $entry.Value -Message 'Missing required starter reset template mirror.'
     }
+}
+
+if (Test-Path -LiteralPath (Join-Path $repoRoot 'templates\project')) {
+    Add-Finding -Severity 'ERROR' -Path 'templates/project' -Message 'Deprecated starter path should not exist. Use templates_starter.'
 }
 
 foreach ($entry in $templateRuntimeMap.GetEnumerator()) {
@@ -297,6 +301,7 @@ $reviewWorkflowText = [System.IO.File]::ReadAllText($pathMap.ReviewWorkflow, $ut
 $testWorkflowText = [System.IO.File]::ReadAllText($pathMap.TestWorkflow, $utf8)
 $handoffWorkflowText = [System.IO.File]::ReadAllText($pathMap.HandoffWorkflow, $utf8)
 $expoDeviceSkillText = [System.IO.File]::ReadAllText($pathMap.ExpoDeviceSkill, $utf8)
+$syncTemplateDocsText = [System.IO.File]::ReadAllText($pathMap.SyncTemplateDocs, $utf8)
 $templateCurrentStateText = [System.IO.File]::ReadAllText($templateArtifactMap.CurrentState, $utf8)
 $templateHandoffArchiveText = [System.IO.File]::ReadAllText($templateArtifactMap.HandOffArchive, $utf8)
 $templateTaskListText = [System.IO.File]::ReadAllText($templateArtifactMap.TaskList, $utf8)
@@ -304,6 +309,14 @@ $templateImplementationPlanText = [System.IO.File]::ReadAllText($templateArtifac
 $templateWalkthroughText = [System.IO.File]::ReadAllText($templateArtifactMap.Walkthrough, $utf8)
 $templateReviewReportText = [System.IO.File]::ReadAllText($templateArtifactMap.ReviewReport, $utf8)
 $templateDeploymentPlanText = [System.IO.File]::ReadAllText($templateArtifactMap.DeploymentPlan, $utf8)
+
+foreach ($artifactKey in $templateArtifactMap.Keys) {
+    $canonicalText = [System.IO.File]::ReadAllText($templateArtifactMap[$artifactKey], $utf8)
+    $starterMirrorText = [System.IO.File]::ReadAllText($starterResetArtifactMap[$artifactKey], $utf8)
+    if ($canonicalText -ne $starterMirrorText) {
+        Add-Finding -Severity 'ERROR' -Path $starterResetArtifactMap[$artifactKey] -Message ('Starter reset mirror is out of sync with canonical root template: {0}' -f $artifactKey)
+    }
+}
 
 $wordCount = ([regex]::Matches($currentStateText, '\S+')).Count
 if ($currentStateLines.Count -gt 120) {
@@ -781,11 +794,19 @@ if (-not $workspaceText.Contains('replace-in-place snapshot')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the replace-in-place snapshot rule.'
 }
 
-if (-not $workspaceText.Contains('templates/project') -or -not $workspaceText.Contains('templates/version_reset/artifacts')) {
-    Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md should mention the split between root live docs, templates/project, and templates/version_reset/artifacts.'
+if (-not $syncTemplateDocsText.Contains('templates\version_reset')) {
+    Add-Finding -Severity 'ERROR' -Path '.agents/scripts/sync_template_docs.ps1' -Message 'sync_template_docs.ps1 must sync root templates/version_reset into downstream repos.'
 }
 
-if (-not $liveAgentsText.Contains('templates/project') -or -not $liveAgentsText.Contains('templates/version_reset/artifacts')) {
+if (-not $syncTemplateDocsText.Contains('templates_starter')) {
+    Add-Finding -Severity 'ERROR' -Path '.agents/scripts/sync_template_docs.ps1' -Message 'sync_template_docs.ps1 must sync templates_starter into downstream repos.'
+}
+
+if (-not $workspaceText.Contains('templates_starter') -or -not $workspaceText.Contains('templates/version_reset/artifacts')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md should mention the split between root live docs, templates_starter, and templates/version_reset/artifacts.'
+}
+
+if (-not $liveAgentsText.Contains('templates_starter') -or -not $liveAgentsText.Contains('templates/version_reset/artifacts')) {
     Add-Finding -Severity 'WARNING' -Path 'AGENTS.md' -Message 'AGENTS.md should mention the project starter template and version reset template trees.'
 }
 if (-not $workspaceText.Contains('check_harness_docs.ps1')) {
@@ -855,7 +876,7 @@ if (
         (-not $deployWorkflowText.Contains('Requirement Baseline for Release'))
     ) -and
     (
-        (-not $deployWorkflowText.Contains('templates/project')) -or
+        (-not $deployWorkflowText.Contains('templates_starter')) -or
         (-not $deployWorkflowText.Contains('sync_template_docs.ps1'))
     )
 ) {

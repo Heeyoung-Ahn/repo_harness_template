@@ -31,6 +31,27 @@
 
 ---
 
+## 이 파일이 프로젝트에 들어오는 방식
+이 매뉴얼은 보통 self-hosting 템플릿 저장소인 `repo_harness_template`의 `templates_starter/`에서 프로젝트 root로 복사되어 들어옵니다.
+
+대표적인 사용 순서는 아래와 같습니다.
+
+1. 템플릿 저장소를 받아둘 workspace를 만들고, 보통 이름을 `repo_harness_template`로 둡니다.
+2. 그 폴더에 템플릿 저장소를 clone 또는 pull합니다.
+3. 완전히 새 프로젝트를 시작할 때는 `templates_starter/` 하위 내용을 새 프로젝트 root에 그대로 복사합니다.
+4. 기존 운영 프로젝트에 표준 템플릿을 적용할 때는 `repo_harness_template` 저장소를 Codex에서 열고 대상 프로젝트 경로를 알려 준 뒤 표준 템플릿 적용을 요청합니다.
+
+빠른 구분:
+- self-hosting 템플릿 저장소 root: `.agents/`, `backup/`, `templates/`, `templates_starter/`, `AGENTS.md`, `README.md`
+- 실제 운영 프로젝트 root: `.agents/`, `templates/`, `AGENTS.md`, `PROJECT_WORKFLOW_MANUAL.md` 등 starter 내용이 직접 놓인 구조
+
+주의:
+- `.agents`는 점이 포함된 실제 폴더명입니다.
+- `templates_starter/`는 self-hosting 템플릿 저장소 안에서만 쓰는 assembled starter root 이름입니다.
+- 실제 운영 프로젝트로 복사된 뒤에는 `templates_starter/` 폴더가 남는 것이 아니라, 그 내부 내용이 프로젝트 root로 들어갑니다.
+
+---
+
 ## 1. AI 개발이란 무엇인가
 많은 초보자는 “AI 개발”을 “AI가 알아서 코드를 다 만들어 주는 일”이라고 생각합니다.  
 하지만 이 템플릿에서 말하는 AI 개발은 조금 다릅니다.

@@ -11,11 +11,15 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = (Resolve-Path -LiteralPath (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))).Path
-$templateRoot = Join-Path $repoRoot 'templates\project'
+$templateRoot = Join-Path $repoRoot 'templates_starter'
+$versionResetRoot = Join-Path $repoRoot 'templates\version_reset'
 $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 
 if (-not (Test-Path -LiteralPath $templateRoot)) {
-    throw "Missing project template root: $templateRoot"
+    throw "Missing starter template root: $templateRoot"
+}
+if (-not (Test-Path -LiteralPath $versionResetRoot)) {
+    throw "Missing version reset template root: $versionResetRoot"
 }
 
 if ([string]::IsNullOrWhiteSpace($PresetFile)) {
@@ -69,6 +73,53 @@ function Get-PresetTargets {
     }
 
     return $targets
+}
+
+function Sync-SourceTree {
+    param(
+        [Parameter(Mandatory = $true)][string]$SourceRoot,
+        [Parameter(Mandatory = $true)][string]$DestinationRoot,
+        [switch]$PreserveLiveArtifacts,
+        [string[]]$SkipRelativePrefix
+    )
+
+    $files = Get-ChildItem -LiteralPath $SourceRoot -Recurse -File
+    foreach ($file in $files) {
+        $relative = $file.FullName.Substring($SourceRoot.Length).TrimStart('\')
+        $normalizedRelative = $relative -replace '/', '\'
+        $destinationPath = Join-Path $DestinationRoot $relative
+        $parentDir = Split-Path -Parent $destinationPath
+
+        $skipByPrefix = $false
+        foreach ($prefix in @($SkipRelativePrefix)) {
+            if (-not [string]::IsNullOrWhiteSpace($prefix) -and $normalizedRelative.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+                Write-Output ("SKIP: {0} (managed by separate source tree)" -f $destinationPath)
+                $skipByPrefix = $true
+                break
+            }
+        }
+        if ($skipByPrefix) {
+            continue
+        }
+
+        if ($PreserveLiveArtifacts -and $normalizedRelative.StartsWith('.agents\artifacts\', [System.StringComparison]::OrdinalIgnoreCase)) {
+            Write-Output ("SKIP: {0} (preserve target live artifacts)" -f $destinationPath)
+            continue
+        }
+
+        if (-not (Test-Path -LiteralPath $parentDir)) {
+            New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
+        }
+
+        if ($PSCmdlet.ShouldProcess($destinationPath, "Copy template source from $($file.FullName)")) {
+            [System.IO.File]::WriteAllText(
+                $destinationPath,
+                [System.IO.File]::ReadAllText($file.FullName, [System.Text.Encoding]::UTF8),
+                $utf8NoBom
+            )
+            Write-Output ("SYNC: {0}" -f $destinationPath)
+        }
+    }
 }
 
 $presetConfig = $null
@@ -129,29 +180,6 @@ foreach ($targetRoot in $dedupedTargets) {
         throw 'Refusing to sync project template onto the self-hosting repo root. Pass -AllowSelf only if you intentionally want to overwrite live docs.'
     }
 
-    $files = Get-ChildItem -LiteralPath $templateRoot -Recurse -File
-    foreach ($file in $files) {
-        $relative = $file.FullName.Substring($templateRoot.Length).TrimStart('\')
-        $normalizedRelative = $relative -replace '/', '\'
-        $destinationPath = Join-Path $targetRoot $relative
-        $parentDir = Split-Path -Parent $destinationPath
-
-        if ((-not $IncludeLiveArtifacts) -and $normalizedRelative.StartsWith('.agents\artifacts\', [System.StringComparison]::OrdinalIgnoreCase)) {
-            Write-Output ("SKIP: {0} (preserve target live artifacts)" -f $destinationPath)
-            continue
-        }
-
-        if (-not (Test-Path -LiteralPath $parentDir)) {
-            New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
-        }
-
-        if ($PSCmdlet.ShouldProcess($destinationPath, "Copy template source from $($file.FullName)")) {
-            [System.IO.File]::WriteAllText(
-                $destinationPath,
-                [System.IO.File]::ReadAllText($file.FullName, [System.Text.Encoding]::UTF8),
-                $utf8NoBom
-            )
-            Write-Output ("SYNC: {0}" -f $destinationPath)
-        }
-    }
+    Sync-SourceTree -SourceRoot $templateRoot -DestinationRoot $targetRoot -PreserveLiveArtifacts:(-not $IncludeLiveArtifacts) -SkipRelativePrefix @('templates\version_reset\')
+    Sync-SourceTree -SourceRoot $versionResetRoot -DestinationRoot (Join-Path $targetRoot 'templates\version_reset')
 }

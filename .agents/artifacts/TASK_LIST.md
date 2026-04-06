@@ -6,7 +6,8 @@
 ## Changelog
 - [2026-04-05] Developer: self-hosting live docs와 deployable template source 분리 작업을 완료했다.
 - [2026-04-05] Developer: safe downstream rollout과 `templates/version_reset` 반영까지 3개 운영 프로젝트에 완료했다.
-- [2026-04-05] Developer: root README를 새 구조 기준으로 갱신했고, root PROJECT_WORKFLOW_MANUAL은 삭제해 starter manual만 `templates/project/PROJECT_WORKFLOW_MANUAL.md`에 남겼다.
+- [2026-04-05] Developer: root README를 새 구조 기준으로 갱신했고, root PROJECT_WORKFLOW_MANUAL은 삭제해 starter manual만 starter source 안에 남겼다.
+- [2026-04-06] Developer: starter root를 `templates_starter`로 재편했고, empty `docs/`와 `tools/`를 삭제한 뒤 3개 운영 프로젝트에 rollout했다.
 
 ## Usage Rules
 - 상태는 `[ ]`, `[-]`, `[x]`, `[!]`만 사용합니다.
@@ -34,7 +35,7 @@
 ## Current Release Target
 - Version / Milestone: Template Repo Separation
 - Current Stage: Documentation and Closeout
-- Current Focus: root live docs와 `templates/project/*`, `templates/version_reset/artifacts/*`를 분리 유지하고 downstream rollout은 live artifact 보존 sync로 수행
+- Current Focus: `templates_starter/*` assembled starter와 root `templates/version_reset/*` canonical reset source 분리를 유지하고 downstream rollout 기준으로 관리한다
 - Current Release Goal: self-hosting 운영 문서와 starter/reset template를 혼동 없이 유지하고 기존 운영 프로젝트에도 안전하게 rollout한다
 
 ## Next Version Backlog
@@ -46,9 +47,9 @@
 |---|---|---|---|---|---|
 
 ## Workflow Stage: Planning and Architecture
-- [x] PLN-01 self-hosting repo와 deployable template source 분리 요구사항 정리 — Scope: `AGENTS.md`, `.agents/rules/*`, `templates/project/*`, `templates/version_reset/artifacts/*`
+- [x] PLN-01 self-hosting repo와 deployable template source 분리 요구사항 정리 — Scope: `AGENTS.md`, `.agents/rules/*`, starter source, `templates/version_reset/artifacts/*`
 - [x] PLN-02 live/root vs deployable/template 경계 확정 — Scope: `.agents/rules/workspace.md`, `.agents/rules/template_repo.md`
-- [x] PLN-03 source tree / sync path 구조 정리 — Scope: `templates/project/*`, `templates/version_reset/artifacts/*`, `.agents/scripts/*`
+- [x] PLN-03 source tree / sync path 구조 정리 — Scope: starter source, `templates/version_reset/artifacts/*`, `.agents/scripts/*`
 - [x] PLN-04 작업 목록과 운영 경로 정리 — Scope: `TASK_LIST.md`, `CURRENT_STATE.md`
 
 ## Workflow Stage: Design Gate
@@ -58,22 +59,23 @@
 ## Workflow Stage: Development and Test Loop
 
 ### Iteration 1
-- [x] DEV-01 deployable template source tree 분리 — Scope: `templates/project/*`, `templates/version_reset/artifacts/*`
+- [x] DEV-01 deployable template source tree 분리 — Scope: starter source, `templates/version_reset/artifacts/*`
 - [x] DEV-02 root live 문서 self-hosting 전환 — Scope: `AGENTS.md`, `.agents/rules/*`, `.agents/workflows/*`, `.agents/artifacts/*`
-- [x] TST-01 validator / mojibake / source split 검증 — Scope: `.agents/scripts/check_harness_docs.ps1`, `.agents/scripts/sync_template_docs.ps1`, `templates/project/*`, `templates/version_reset/artifacts/*`
+- [x] TST-01 validator / mojibake / source split 검증 — Scope: `.agents/scripts/check_harness_docs.ps1`, `.agents/scripts/sync_template_docs.ps1`, starter source, `templates/version_reset/artifacts/*`
 
 ### Iteration 2
 - [x] DEV-03 downstream rollout automation 확장 — Scope: `.agents/scripts/sync_template_docs.ps1`, rollout evidence
 - [x] DEV-04 rollout target preset 분리 — Scope: `.agents/scripts/sync_template_docs.ps1`, `.agents/runtime/downstream_target_presets.psd1`, live rollout docs
-- [ ] DEV-05 template skill/source split 추가 확장 여부 검토 — Scope: `templates/project/.agents/skills/*`, `.agents/skills/*`
+- [ ] DEV-05 template skill/source split 추가 확장 여부 검토 — Scope: `templates_starter/.agents/skills/*`, `.agents/skills/*`
+- [x] DEV-06 starter root를 `templates_starter`로 재편 — Scope: `.agents/scripts/*`, `.agents/rules/*`, `.agents/workflows/*`, `templates_starter/*`, `templates/version_reset/*`
 - [x] TST-02 sample downstream repo dry-run 및 예외 처리 검증 — Scope: template rollout workflow
 
 ## Workflow Stage: Review Gate
-- [ ] REV-01 self-hosting / deployable source 경계 리뷰 — Scope: root live docs, `templates/project/*`, `templates/version_reset/artifacts/*`, sync/validator script
+- [ ] REV-01 self-hosting / deployable source 경계 리뷰 — Scope: root live docs, `templates_starter/*`, `templates/version_reset/artifacts/*`, sync/validator script
 - [ ] REV-02 리뷰 반영 확인 — Scope: `REV-01` findings
 
 ## Workflow Stage: Deployment
-- [x] REL-01 downstream rollout 대상/범위 점검 — Scope: target repos, `templates/project/*`, `templates/version_reset/artifacts/*`, sync path
+- [x] REL-01 downstream rollout 대상/범위 점검 — Scope: target repos, `templates_starter/*`, `templates/version_reset/artifacts/*`, sync path
 - [x] REL-02 template source downstream rollout — Scope: `.agents/scripts/sync_template_docs.ps1`
 - [x] REL-03 rollout 결과 기록 — Scope: `DEPLOYMENT_PLAN.md`, `CURRENT_STATE.md`
 
@@ -87,8 +89,9 @@
 - none
 
 ## Handoff Log
+- [2026-04-06] DEV-06 completed. self-hosting repo의 starter root를 `templates_starter`로 재편하고 root `templates/version_reset/*`를 canonical reset source로 유지했으며, empty `docs/`와 `tools/`를 삭제한 뒤 3개 운영 프로젝트에 rollout했다.
 - [2026-04-05] DEV-02/TST-01 completed. root live 문서와 deployable template source가 분리되었고, downstream rollout은 `.agents/scripts/sync_template_docs.ps1` 기준으로 수행한다.
 - [2026-04-05] REL-01~REL-03/TST-02 completed. `sync_template_docs.ps1`는 기존 운영 프로젝트의 live `.agents/artifacts/*`를 보존하도록 보강되었고, 3개 운영 프로젝트에 `templates/version_reset` 포함 구조를 반영했다.
 - [2026-04-05] DEV-04 completed. rollout target group은 script hard-code 대신 `.agents/runtime/downstream_target_presets.psd1` preset으로 관리하도록 전환했다.
 - [2026-04-05] DOC-03 completed. root README는 self-hosting/starter/reset 구조를 설명하도록 갱신했다.
-- [2026-04-05] DOC-04 completed. root `PROJECT_WORKFLOW_MANUAL.md`는 삭제했고, 관련 안내는 `templates/project/PROJECT_WORKFLOW_MANUAL.md` 기준으로 정리했다.
+- [2026-04-05] DOC-04 completed. root `PROJECT_WORKFLOW_MANUAL.md`는 삭제했고, 관련 안내는 starter manual 기준으로 정리했다.

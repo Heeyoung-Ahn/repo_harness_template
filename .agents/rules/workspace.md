@@ -14,8 +14,8 @@ trigger: always_on
 
 추가 규칙:
 - 이 저장소는 원본 `repo-level governance harness` 템플릿입니다.
-- `README.md`와 `templates/project/PROJECT_WORKFLOW_MANUAL.md`는 사람용 설명 문서이며 운영 프로세스 입력 문서가 아닙니다.
-- `README.md`, `templates/project/PROJECT_WORKFLOW_MANUAL.md`, `HANDOFF_ARCHIVE.md`는 기본 진입 문서가 아닙니다.
+- `README.md`와 `templates_starter/PROJECT_WORKFLOW_MANUAL.md`는 사람용 설명 문서이며 운영 프로세스 입력 문서가 아닙니다.
+- `README.md`, `templates_starter/PROJECT_WORKFLOW_MANUAL.md`, `HANDOFF_ARCHIVE.md`는 기본 진입 문서가 아닙니다.
 - `CURRENT_STATE.md`는 replace-in-place snapshot이며, 실제 상태와 점유는 `TASK_LIST.md`가 우선합니다.
 - 요약층과 상세 문서가 충돌하면 상세 문서가 우선이며, 즉시 `CURRENT_STATE.md`를 정정합니다.
 - tracked 파일 수정, lock 변경, handoff 기록 전에는 `CURRENT_STATE.md`, `TASK_LIST.md`, 수정 대상 파일을 다시 확인합니다.
@@ -23,13 +23,13 @@ trigger: always_on
 ## 2. Runtime Priorities
 - 운영 규칙의 최상위 정본은 이 `workspace.md`입니다.
 - 이 root 경로의 문서와 스크립트는 `repo_harness_template` 저장소 자체를 운영하는 live 기준입니다.
-- downstream 프로젝트에 배포되는 표준 source는 `templates/project/*`와 `templates/version_reset/artifacts/*`에서 따로 관리합니다.
+- downstream 프로젝트에 배포되는 표준 source는 `templates_starter/*`와 root `templates/version_reset/artifacts/*`에서 따로 관리합니다.
 - 이 저장소는 repo 안의 요구사항, 구조, 계획, 상태, review/deploy gate를 문서와 validator로 관리하는 `repo-level governance harness`의 self-hosting 원본입니다.
 - 실제 프로젝트 상태의 단일 진실 공급원은 `.agents/artifacts/` 아래 문서입니다.
 - `CURRENT_STATE.md`는 day-start용 resume router, `TASK_LIST.md`는 task / lock truth, `TASK_LIST.md > ## Handoff Log`는 최신 delta, `HANDOFF_ARCHIVE.md`는 오래된 원문 보관입니다.
 - 역할 문서는 기본적으로 `Quick Read`, `Current Iteration`, `Latest Result`, `Approval Status`, `Must Read Next`에 적힌 범위만 읽습니다.
-- `README.md`와 `templates/project/PROJECT_WORKFLOW_MANUAL.md`는 설명용 문서이며, 운영 규칙과 live state 문서의 정본이 아닙니다.
-- downstream 기본 동작을 바꾸는 변경이면 대응하는 `templates/project/*` source와 필요 시 `templates/version_reset/artifacts/*`를 같은 턴에 갱신하고, root live 문서를 그대로 downstream으로 복사하지 않습니다.
+- `README.md`와 `templates_starter/PROJECT_WORKFLOW_MANUAL.md`는 설명용 문서이며, 운영 규칙과 live state 문서의 정본이 아닙니다.
+- downstream 기본 동작을 바꾸는 변경이면 대응하는 `templates_starter/*` source와 필요 시 `templates/version_reset/artifacts/*`를 같은 턴에 갱신하고, root live 문서를 그대로 downstream으로 복사하지 않습니다.
 - downstream 프로젝트 반영은 `.agents/scripts/sync_template_docs.ps1`를 통해 수행하고, 기본 동작은 대상 repo의 live `.agents/artifacts/*` 보존입니다.
 
 ## 3. Context Budget
@@ -78,7 +78,7 @@ repo-tracked 파일을 수정하기 직전 아래를 다시 확인합니다.
 - `CURRENT_STATE.md > Snapshot`의 `Current Stage`, `Current Focus`, `Current Release Goal`과 `TASK_LIST.md > Current Release Target`은 항상 같은 값으로 유지합니다.
 - `version_closeout`으로 새 버전을 시작할 때는 자유서술 새 Draft 문서를 쓰지 말고 `powershell -ExecutionPolicy Bypass -File ".agents/scripts/reset_version_artifacts.ps1"`로 reset 대상 문서를 복원한 뒤 starter content만 채웁니다.
 - artifact harness 오류는 별도 정비 작업으로 분리하고, release blocker인지 아닌지를 명시합니다.
-- downstream 템플릿 source를 바꿨다면 `templates/project/*`, `templates/version_reset/artifacts/*`, `.agents/scripts/sync_template_docs.ps1` 기준도 함께 확인합니다.
+- downstream 템플릿 source를 바꿨다면 `templates_starter/*`, `templates/version_reset/artifacts/*`, `.agents/scripts/sync_template_docs.ps1` 기준도 함께 확인합니다.
 - `AGENTS.md`, `.agents/rules/*.md`, `.agents/workflows/*.md`, `.agents/artifacts/*.md`를 수정했다면 handoff 전에 아래 validator를 실행합니다.
 
 ```powershell
@@ -112,7 +112,7 @@ powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1
 - secret, token, destructive action, 장문 논의가 필요한 항목은 명시적 사용자 응답 전까지 blocker로 유지합니다.
 
 ## 11. Template Source Split
-- root live 문서/스크립트와 `templates/project/*`, `templates/version_reset/artifacts/*` deployable source는 목적이 다르므로 같은 파일로 취급하지 않습니다.
+- root live 문서/스크립트와 `templates_starter/*`, `templates/version_reset/artifacts/*` deployable source는 목적이 다르므로 같은 파일로 취급하지 않습니다.
 - self-hosting 전용 규칙, validator, handoff, 운영 메모는 root에만 남기고 template source로 되밀지 않습니다.
-- downstream 공통 동작, starter content, 배포용 workflow/skill/script 변경은 반드시 `templates/project/*` source에서 canonical하게 관리합니다.
-- artifact schema나 starter content를 바꾸면 `templates/version_reset/artifacts/*`, `templates/project/.agents/artifacts/*`, `templates/project/templates/version_reset/artifacts/*`, 관련 reset/validator 경로, 필요한 downstream sync 절차를 함께 갱신합니다.
+- downstream 공통 동작 중 starter 문서/workflow/skill/script는 `templates_starter/*` source에서, version close reset template는 root `templates/version_reset/*`에서 canonical하게 관리합니다.
+- artifact schema나 starter content를 바꾸면 `templates/version_reset/artifacts/*`, `templates_starter/.agents/artifacts/*`, `templates_starter/templates/version_reset/artifacts/*`, 관련 reset/validator/sync 경로와 필요한 downstream sync 절차를 함께 갱신합니다.

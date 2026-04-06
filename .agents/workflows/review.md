@@ -10,7 +10,7 @@ description: self-hosting template repo용 리뷰어 및 보안 검증(Reviewer)
 
 ## Self-Hosting Template Repo Notes
 - 이 workflow는 `repo_harness_template` 저장소 자체를 운영하는 live 문서입니다.
-- downstream 기본 동작을 바꾸면 대응하는 배포용 source도 `templates/project/*`와 필요 시 `templates/version_reset/artifacts/*`에서 같은 턴에 갱신합니다.
+- downstream 기본 동작을 바꾸면 대응하는 배포용 source도 `templates_starter/*`와 필요 시 `templates/version_reset/artifacts/*`에서 같은 턴에 갱신합니다.
 - self-hosting only 변경은 root live 문서/스크립트에만 남기고 template source로 되밀지 않습니다.
 - downstream 프로젝트 반영은 root live 문서 복사가 아니라 `.agents/scripts/sync_template_docs.ps1`를 사용합니다.
 
