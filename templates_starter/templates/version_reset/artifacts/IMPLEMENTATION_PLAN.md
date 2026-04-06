@@ -12,6 +12,7 @@
 - 현재 구현 기준 Requirement Baseline:
 - 지금 바로 필요한 검증:
 - 남아 있는 release gate (manual / dependency / compliance):
+- optional self-hosting tool boundary check:
 - 현재 green level target:
 - branch freshness precheck:
 - user-captured manual test expected:
@@ -114,6 +115,7 @@
 - 정적 검증 gate:
 - 수동 / 실환경 gate:
 - 보안 / dependency / compliance gate:
+- optional self-hosting tool / starter boundary gate:
 - branch freshness gate:
 - 요구사항 변경 동기화 gate:
 - release-ready 판단 기준:

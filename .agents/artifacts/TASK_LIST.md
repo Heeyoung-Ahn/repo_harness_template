@@ -4,6 +4,15 @@
 > 이 문서는 task / lock truth이며, `CURRENT_STATE.md`는 resume router, `## Handoff Log`는 최신 delta, `HANDOFF_ARCHIVE.md`는 오래된 원문 보관용입니다.
 
 ## Changelog
+- [2026-04-06] DevOps: `REL-06`을 완료했고 `Project Monitor Web`의 `package-lock.json`, npm dependency/compliance audit evidence, loopback default bind hardening, deployment-prep artifact sync를 반영했다.
+- [2026-04-06] DevOps: `REL-05`를 완료했고 `active_operating_projects` 3개 repo에 deploy workflow/skill hardening 변경을 rollout한 뒤 target validator를 확인했다.
+- [2026-04-06] DevOps: `REL-05`를 시작했고 `active_operating_projects` preset 대상으로 deploy workflow/skill hardening 변경을 rollout 중이다.
+- [2026-04-06] DevOps: `REL-04`를 완료했고 starter deploy workflow, shared deploy skills, `DEPLOYMENT_PLAN` template에 GitHub 선행 배포 게이트와 provider별 skill/fallback 규칙을 반영했다.
+- [2026-04-06] Reviewer: `REV-04`를 완료했고 `DEV-15`가 `REV-03-01`, `REV-03-02`를 닫았음을 확인했다. review gate는 reviewed scope 기준 승인으로 전환됐다.
+- [2026-04-06] Developer: `DEV-15`를 완료했고 parser required section sync, reset source mirror sync, 회귀 테스트 추가를 반영한 뒤 Reviewer에게 delta 확인을 넘겼다.
+- [2026-04-06] Developer: `DEV-15`를 시작했고 `REV-03-01`, `REV-03-02`를 함께 닫기 위해 parser contract 정합성과 reset source mirror sync를 재작업 중이다.
+- [2026-04-06] Reviewer: `REV-03`를 완료했고 parser contract drift 1건, reset source drift 1건을 기록했다. review gate는 재작업 전까지 닫지 않는다.
+- [2026-04-06] Developer: `DEV-13`, `DEV-14`를 완료했고 reserved future hook contract, optional `health_snapshot.json`, self-hosting/downstream promotion boundary, starter generic boundary template를 반영했다.
 - [2026-04-06] Developer: `DEV-11`, `DEV-12`, `TST-03`, `TST-04`를 완료했고 `.agents/runtime/team.json`, starter team defaults, mandatory source parser, `Project Monitor Web` Phase 1 MVP, read-only HTTP 경계, 회귀 테스트를 구현했다.
 - [2026-04-06] Planner: `Scalable Governance Profiles v0.2` 승인본을 반영해 `Project Monitor Web`, `.agents/runtime/team.json`, parser contract, UI 설계를 planning artifact에 동기화했다.
 - [2026-04-06] Planner: `Scalable Governance Profiles v0.1` 초안을 작성하고 `solo/team/large` 프로필, read-only governance dashboard MVP, event history 후속 단계를 planning artifact에 반영했다.
@@ -42,8 +51,8 @@
 
 ## Current Release Target
 - Version / Milestone: Scalable Governance Profiles
-- Current Stage: Development and Test Loop
-- Current Focus: `Project Monitor Web` Phase 1 contract/구현과 회귀 검증을 닫았고 다음은 future hook reservation, health snapshot contract, self-hosting/downstream promotion boundary를 정리한다
+- Current Stage: Deployment
+- Current Focus: `REL-06`을 완료했고 dependency/compliance gate를 닫았다. 다음은 첫 self-hosting target을 정하고 preview bring-up을 준비하는 것이다
 - Current Release Goal: 장기 비용이 큰 운영 계약을 먼저 고정한 뒤 self-hosting 별도 웹앱으로 프로젝트 모니터링을 구현한다
 
 ## Next Version Backlog
@@ -91,20 +100,25 @@
 ### Iteration 3
 - [x] DEV-11 profile schema, `.agents/runtime/team.json`, parser contract, template defaults 정규화 — Scope: `.agents/artifacts/*`, `.agents/rules/*`, `.agents/runtime/team.json`, future profile overlay structure
 - [x] DEV-12 `tools/project-monitor-web` Phase 1 MVP 구현 — Scope: self-hosting web app, local Node backend, shared parser/projection, dashboard panels
-- [ ] DEV-13 future hook point와 health snapshot contract 예약 — Scope: future integration adapters, reserved hook schema, non-realtime extension path
-- [ ] DEV-14 self-hosting only 도구와 downstream optional promotion 전략 정리 — Scope: `templates_starter/*`, `templates/version_reset/*`, monitor promotion boundary
+- [x] DEV-13 future hook point와 health snapshot contract 예약 — Scope: future integration adapters, reserved hook schema, non-realtime extension path
+- [x] DEV-14 self-hosting only 도구와 downstream optional promotion 전략 정리 — Scope: `templates_starter/*`, `templates/version_reset/*`, monitor promotion boundary
+- [x] DEV-15 `REV-03` finding 재작업: parser contract와 reset source mirror sync 수정 — Scope: `.agents/artifacts/ARCHITECTURE_GUIDE.md`, `tools/project-monitor-web/src/application/parse-architecture-guide.js`, `tools/project-monitor-web/test/dashboard-snapshot.test.js`, `templates/version_reset/artifacts/IMPLEMENTATION_PLAN.md`, `templates_starter/templates/version_reset/artifacts/IMPLEMENTATION_PLAN.md`
 - [x] TST-03 profile / team registry / parser contract regression 검증 — Scope: validators, fixtures, mandatory source parsing, profile-mode correctness
 - [x] TST-04 `Project Monitor Web` Phase 1 read-only regression 검증 — Scope: dashboard panels, manual refresh, blocker queue, health panel, source artifact link-out
 
 ## Workflow Stage: Review Gate
 - [ ] REV-01 self-hosting / deployable source 경계 리뷰 — Scope: root live docs, `templates_starter/*`, `templates/version_reset/artifacts/*`, sync/validator script
 - [ ] REV-02 리뷰 반영 확인 — Scope: `REV-01` findings
-- [ ] REV-03 scalable governance profile와 `Project Monitor Web` source-of-truth 경계 리뷰 — Scope: profile schema, team registry, parser contract, monitor MVP, promotion strategy
+- [x] REV-03 scalable governance profile와 `Project Monitor Web` source-of-truth 경계 리뷰 — Scope: profile schema, team registry, parser contract, monitor MVP, promotion strategy
+- [x] REV-04 `DEV-15` delta review 및 finding closure 확인 — Scope: parser contract required section sync, reset source mirror sync, regression evidence
 
 ## Workflow Stage: Deployment
 - [x] REL-01 downstream rollout 대상/범위 점검 — Scope: target repos, `templates_starter/*`, `templates/version_reset/artifacts/*`, sync path
 - [x] REL-02 template source downstream rollout — Scope: `.agents/scripts/sync_template_docs.ps1`
 - [x] REL-03 rollout 결과 기록 — Scope: `DEPLOYMENT_PLAN.md`, `CURRENT_STATE.md`
+- [x] REL-04 starter deploy workflow와 공용 배포 스킬 hardening — Scope: `templates_starter/.agents/workflows/deploy.md`, `templates_starter/.agents/skills/{github_deploy,expo_production_publish,expo_test_publish,general_publish}/*`, mirrored root shared skills, `templates_starter/.agents/artifacts/DEPLOYMENT_PLAN.md`, `templates/version_reset/artifacts/DEPLOYMENT_PLAN.md`, `templates_starter/templates/version_reset/artifacts/DEPLOYMENT_PLAN.md`
+- [x] REL-05 active operating projects rollout — Scope: `active_operating_projects` preset, downstream `.agents/workflows/deploy.md`, `.agents/skills/{github_deploy,expo_production_publish,expo_test_publish,general_publish}/*`, `templates/version_reset/artifacts/DEPLOYMENT_PLAN.md`
+- [x] REL-06 dependency/compliance gate와 local server surface review — Scope: `tools/project-monitor-web/package.json`, `tools/project-monitor-web/package-lock.json`, `tools/project-monitor-web/server.js`, `.agents/artifacts/{DEPLOYMENT_PLAN.md,IMPLEMENTATION_PLAN.md,CURRENT_STATE.md,TASK_LIST.md}`
 
 ## Workflow Stage: Documentation and Closeout
 - [x] DOC-01 self-hosting 현재 상태와 template source 경계 정리 — Scope: `CURRENT_STATE.md`, `TASK_LIST.md`, `.agents/rules/template_repo.md`
@@ -113,11 +127,12 @@
 - [x] DOC-04 root manual 삭제 및 참조 정리 — Scope: `AGENTS.md`, `.agents/rules/workspace.md`, `README.md`, `PROJECT_WORKFLOW_MANUAL.md`
 
 ## Blockers
-- none
+- `DEP-GATE-01`: 첫 self-hosting target 선택과 preview bring-up evidence가 아직 남아 있다.
 
 ## Handoff Log
-- [2026-04-06] DEV-11, DEV-12, TST-03, TST-04 completed. `.agents/runtime/team.json`과 `templates_starter/.agents/runtime/team.json` 기본값을 추가했고 `tools/project-monitor-web`에 parser/projection, 로컬 Node HTTP 서버, single-screen dashboard, detail drawer, source artifact link-out, owner normalization, read-only 경계 테스트를 구현했다. `node --test`와 로컬 HTTP smoke test 통과.
-- [2026-04-06] PLN-08 completed. 사용자 승인에 따라 `Scalable Governance Profiles v0.2`를 확정했고 `Project Monitor Web`, `.agents/runtime/team.json`, parser contract, single-screen dashboard UI 범위를 planning artifact에 동기화했다.
-- [2026-04-06] PLN-07 draft completed. `Scalable Governance Profiles v0.1` planning baseline을 작성했고 `solo/team/large` 운영 프로필, read-only governance dashboard MVP, append-only event history 후속 단계를 `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`에 반영했다.
-- [2026-04-06] DEV-10 completed. 공통 테스트 workflow, `WALKTHROUGH.md` templates, `expo_real_device_test`, starter manual에 `Expected User Outcome`, `Feedback Capture Plan`, 비압축 `Developer Feedback Handoff`를 추가했고 active operating projects 3곳에 rollout했다.
-- [2026-04-06] DEV-09 completed. self-hosting `AGENTS.md`와 `.agents/rules/workspace.md`에 표준 템플릿 운영 기준, workflow 비의존 원칙, 공통 변경 rollout 기본 절차를 명문화했다.
+- [2026-04-06] REL-06 completed. `Project Monitor Web`에 `package-lock.json`을 추가해 dependency audit 근거를 고정했고, `npm ls --depth=0` empty, `npm audit --json` 0 vulnerabilities, `node --test` 6 pass를 확인했다. `server.js`는 기본 bind host를 `127.0.0.1`로 제한하도록 하드닝했다. 다음 agent는 DevOps이며 첫 preview deployment target 선택과 bring-up evidence를 이어간다.
+- [2026-04-06] REL-05 completed. `active_operating_projects` preset으로 WATV Auto Login, AI Video Creator, Daily English Spark에 deploy workflow/skill hardening과 reset `DEPLOYMENT_PLAN` template를 rollout했다. target validator는 Daily English Spark pass, WATV/AI Video Creator는 기존 live artifact migration debt 19 warning만 남았고 errors는 없었다. 핵심 rollout 파일 hash는 3개 repo 모두 template와 일치한다.
+- [2026-04-06] REL-04 completed. starter deploy workflow에 GitHub release gate 선행 규칙과 Expo/provider skill routing을 추가했고, shared deploy skill mirror 4종과 `DEPLOYMENT_PLAN` template 3곳에 GitHub release path, provider/skill, fallback 필드를 반영했다. `check_harness_docs.ps1` pass, mojibake scanner pass. 다음 agent는 DevOps이며 dependency/compliance gate와 deployment preflight를 이어간다.
+- [2026-04-06] REV-04 completed. `DEV-15` delta에서 parser contract required section sync와 reset source mirror sync가 모두 반영된 것을 확인했고, `REV-03-01`, `REV-03-02`를 닫았다. `node --test` 6 pass, validator pass. 다음 agent는 DevOps이며 dependency/compliance gate와 deployment preflight를 진행한다.
+- [2026-04-06] DEV-15 completed. `ARCHITECTURE_GUIDE.md` parser contract row와 `parse-architecture-guide.js` required section을 같은 계약으로 맞췄고, `templates/version_reset/*` reset source 2곳에도 optional boundary prompt를 동기화했다. `node --test` 6 pass, `check_harness_docs.ps1` pass, mojibake 없음. 다음 agent는 Reviewer이며 `REV-04`로 delta만 재확인하면 된다.
+- [2026-04-06] REV-03 completed with findings. reviewed scope에서 read-only/self-hosting boundary 자체는 유지됐지만, parser contract drift 1건과 reset source drift 1건을 확인했다. 다음 agent는 developer이며 `REVIEW_REPORT.md` 기준 재작업 후 validator/test를 다시 실행해야 한다.

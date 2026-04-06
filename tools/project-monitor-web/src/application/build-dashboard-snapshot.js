@@ -4,10 +4,14 @@ import path from "node:path";
 import {
   ALLOWED_SOURCE_PATHS,
   HEALTH_PANEL_FIELDS,
+  HEALTH_SNAPSHOT_PATH,
   MANDATORY_SOURCE_PATHS,
   OPTIONAL_SOURCE_PATHS,
-  PROFILE_REQUIREMENTS
+  PROFILE_REQUIREMENTS,
+  PROMOTION_BOUNDARY,
+  RESERVED_EVENT_HOOKS
 } from "../domain/contracts.js";
+import { loadHealthSnapshot } from "./load-health-snapshot.js";
 import { parseArchitectureGuide } from "./parse-architecture-guide.js";
 import { parseCurrentState } from "./parse-current-state.js";
 import { parseImplementationPlan } from "./parse-implementation-plan.js";
@@ -91,7 +95,7 @@ function buildSummary(tasks, locks, blockers) {
   };
 }
 
-function buildDocumentHealth(currentState, implementationPlan) {
+function buildDocumentHealth(currentState, implementationPlan, healthSnapshot) {
   const items = HEALTH_PANEL_FIELDS.map((key) => ({
     key,
     label:
@@ -103,7 +107,16 @@ function buildDocumentHealth(currentState, implementationPlan) {
   return {
     summary: currentState.snapshot.document_health || "unknown",
     items,
-    validationGates: implementationPlan.validationGates
+    validationGates: implementationPlan.validationGates,
+    healthSnapshot: {
+      path: healthSnapshot.path,
+      present: healthSnapshot.present,
+      schemaVersion: healthSnapshot.schemaVersion,
+      generatedAt: healthSnapshot.generatedAt,
+      producer: healthSnapshot.producer,
+      summary: healthSnapshot.summary,
+      checks: healthSnapshot.checks
+    }
   };
 }
 
@@ -128,6 +141,7 @@ export async function buildDashboardSnapshot(repoRoot) {
     architectureText,
     implementationText,
     teamRegistry,
+    healthSnapshot,
     optionalSources
   ] = await Promise.all([
     readTextFile(repoRoot, MANDATORY_SOURCE_PATHS[0]),
@@ -136,6 +150,7 @@ export async function buildDashboardSnapshot(repoRoot) {
     readTextFile(repoRoot, MANDATORY_SOURCE_PATHS[3]),
     readTextFile(repoRoot, MANDATORY_SOURCE_PATHS[4]),
     loadTeamRegistry(repoRoot),
+    loadHealthSnapshot(repoRoot),
     readOptionalSourceStatus(repoRoot)
   ]);
 
@@ -162,7 +177,8 @@ export async function buildDashboardSnapshot(repoRoot) {
     ...requirements.warnings,
     ...architecture.warnings,
     ...implementationPlan.warnings,
-    ...teamRegistry.warnings
+    ...teamRegistry.warnings,
+    ...healthSnapshot.warnings
   ];
 
   return {
@@ -182,11 +198,22 @@ export async function buildDashboardSnapshot(repoRoot) {
     activeLocks: ownershipProjection.activeLocks,
     blockers,
     recentActivity: taskList.handoffLog.slice(0, 8),
-    documentHealth: buildDocumentHealth(currentState, implementationPlan),
+    documentHealth: buildDocumentHealth(
+      currentState,
+      implementationPlan,
+      healthSnapshot
+    ),
     teamDirectory: teamRegistry.members,
     operationalProfiles: requirements.operationalProfiles,
     profileRequirements: PROFILE_REQUIREMENTS,
     parserContract: architecture.parserContract,
+    futureContracts: {
+      healthSnapshotPath: HEALTH_SNAPSHOT_PATH,
+      eventHooks: RESERVED_EVENT_HOOKS,
+      promotionBoundary: PROMOTION_BOUNDARY,
+      architectureHookContract: architecture.futureHookContract,
+      architecturePromotionBoundary: architecture.promotionBoundary
+    },
     optionalSources,
     sourceFiles: ALLOWED_SOURCE_PATHS,
     warnings

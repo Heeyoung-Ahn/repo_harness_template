@@ -21,31 +21,31 @@
 
 ## Snapshot
 - Version / Milestone: Scalable Governance Profiles
-- Current Stage: Development and Test Loop
-- Current Focus: `Project Monitor Web` Phase 1 contract/구현과 회귀 검증을 닫았고 다음은 future hook reservation, health snapshot contract, self-hosting/downstream promotion boundary를 정리한다
+- Current Stage: Deployment
+- Current Focus: `REL-06`을 완료했고 dependency/compliance gate를 닫았다. 다음은 첫 self-hosting target을 정하고 preview bring-up을 준비하는 것이다
 - Current Release Goal: 장기 비용이 큰 운영 계약을 먼저 고정한 뒤 self-hosting 별도 웹앱으로 프로젝트 모니터링을 구현한다
 - Requirements Status: Approved
 - Requirement Baseline: Scalable Governance Profiles v0.2
 - Requirements Sync Check: In Sync
 - Architecture Status: Approved
-- Plan Status: Ready for Execution
-- Review Gate: Pending
+- Plan Status: Ready for Deployment Decision
+- Review Gate: Approved for Reviewed Scope
 - Manual / Environment Gate: Pending
-- Dependency / Compliance Gate: Pending
-- Last Synced From Task / Handoff: 2026-04-06 DEV-11 + DEV-12 + TST-03 + TST-04 completed
+- Dependency / Compliance Gate: Closed
+- Last Synced From Task / Handoff: 2026-04-06 REL-06 completed
 - Sync Checked At: 2026-04-06
 - Task List Sync Check: In Sync
-- Document Health: `v0.2` planning artifact sync 유지, monitor parser/unit/http smoke 통과, root validator 통과, mojibake 없음
-- Last Updated By / At: Developer Agent / 2026-04-06 19:05
+- Document Health: `v0.2` planning artifact sync 유지, `node --test` 6 pass, `npm audit --json` 0 vulnerabilities, root validator 통과, deployment prep sync 완료, mojibake 없음
+- Last Updated By / At: Codex / 2026-04-06 23:49
 
 ## Next Recommended Agent
-- Recommended role: Developer
-- Reason: `DEV-11`, `DEV-12`, `TST-03`, `TST-04`가 닫혔고 다음 묶음은 future hook reservation과 promotion boundary 정리다.
-- Trigger to switch: `DEV-13`, `DEV-14`, `REV-03` 착수, self-hosting only 승격 규칙과 reserved hook contract 문서화
+- Recommended role: DevOps
+- Reason: dependency/compliance gate는 닫혔고 다음 남은 일은 concrete self-hosting target 선택과 preview bring-up이다.
+- Trigger to switch: 첫 internal host 또는 preview target이 정해졌을 때
 
 ## Must Read Next
-- 1. `TASK_LIST.md > Current Release Target + Iteration 3 task row`
-- 2. `.agents/artifacts/IMPLEMENTATION_PLAN.md > Current Iteration`, `.agents/rules/template_repo.md`
+- 1. `.agents/artifacts/IMPLEMENTATION_PLAN.md > Current Iteration + Validation Gates`
+- 2. `.agents/artifacts/REVIEW_REPORT.md > Approval Status + Residual Release Risks`
 - 3. `.agents/scripts/check_harness_docs.ps1`
 
 ## Required Skills
@@ -53,32 +53,32 @@
 
 ## Active Scope
 - Active Task IDs: none
-- Relevant paths / modules: `.agents/runtime/team.json`, `templates_starter/.agents/runtime/team.json`, `tools/project-monitor-web/*`, `.agents/artifacts/IMPLEMENTATION_PLAN.md`, `.agents/artifacts/CURRENT_STATE.md`, `.agents/artifacts/TASK_LIST.md`
+- Relevant paths / modules: `.agents/artifacts/{DEPLOYMENT_PLAN.md,IMPLEMENTATION_PLAN.md,CURRENT_STATE.md,TASK_LIST.md}`, `tools/project-monitor-web/{package.json,package-lock.json,server.js}`
 - Current locks to respect: none
-- Worktree recommendation: `Project Monitor Web`은 root self-hosting worktree에서 구현하고 starter/downstream source sync 작업과 섞지 않는다
+- Worktree recommendation: `Project Monitor Web` 구현과 starter/downstream source sync는 분리한다
 
 ## Task Pointers
-- DEV-11 / DEV-12: `.agents/runtime/team.json`, starter defaults, parser/projection, `Project Monitor Web` Phase 1 MVP, read-only HTTP 경계를 구현 완료했다.
-- TST-03 / TST-04: parser/team registry/read-only regression과 로컬 HTTP smoke를 통과했다.
-- DEV-13 / DEV-14 / REV-03: 다음 묶음은 future hook, health snapshot, promotion boundary, source-of-truth review다.
+- DEV-11~15 / TST-03~04 / REV-04: profile schema, parser contract, `Project Monitor Web` Phase 1, future hook reservation, reset/source sync, review closure까지 완료했다.
+- REL-04: starter deploy workflow, shared deploy skill mirror, `DEPLOYMENT_PLAN` template를 GitHub release gate와 provider fallback 기준으로 보강했다.
+- REL-05: `active_operating_projects` preset 대상 3개 운영 프로젝트에 동일 변경을 rollout했고 downstream validator와 file hash를 확인했다.
+- REL-06: `package-lock.json`, empty npm dependency set, `npm audit --json` 0 vulnerabilities, `node --test` 6 pass, loopback default bind hardening까지 완료했다.
 
 ## Open Decisions / Blockers
-- Release blocker: none
-- Manual / environment-specific blocker: none
-- Dependency / compliance gate: none
-- 사용자 답변 / 확인 대기: none
+- Release blocker: 첫 self-hosting target 선택과 preview bring-up evidence가 남아 있다
+- Manual / environment-specific blocker: developer PC / internal VM / NAS 중 첫 preview host가 아직 고정되지 않았다
+- Dependency / compliance gate: closed. `package-lock.json`, empty npm dependency set, audit 0 vulnerabilities, loopback default bind를 확인했다
+- 사용자 답변 / 확인 대기: 첫 preview deployment target 선택
 - 기술 블로커: none
-- Document / harness maintenance: `Project Monitor Web`은 downstream 공통 기능으로 승격되기 전까지 root self-hosting 도구로 유지한다
+- Document / harness maintenance: Vercel/Supabase/Oracle Cloud 전용 스킬은 실제 배포 구조 검증 전까지 만들지 않고, 그 전에는 `general_publish` fallback 계약만 유지한다
 - Stale lock watch: none
-- Needs User Decision: none
+- Needs User Decision: first preview deployment target (`developer PC`, `internal VM`, `NAS` 등)
 
 ## Latest Handoff Summary
-- Handoff source: Developer Agent / 2026-04-06 18:55
-- Completed: `.agents/runtime/team.json`과 starter 기본값, mandatory source parser/projection, `Project Monitor Web` Phase 1 MVP, read-only HTTP 경계, 회귀 테스트를 구현했다.
-- Next: `DEV-13`, `DEV-14`, `REV-03`에서 reserved hook contract, health snapshot, self-hosting/downstream promotion boundary, source-of-truth 리뷰를 진행한다.
-- Notes: monitor는 여전히 read-only 정적 뷰어이며, owner filtering은 `team.json` member id 기준으로 정규화된다.
+- Handoff source: Codex / 2026-04-06 23:49
+- Completed: `REL-06`에서 `package-lock.json`, empty npm dependency set, audit 0 vulnerabilities, test pass, loopback default bind hardening, deployment-prep artifact sync를 완료했다.
+- Next: DevOps가 첫 self-hosting target을 정하고 preview bring-up evidence를 쌓는다.
+- Notes: dependency/compliance gate는 닫혔지만 실제 deployment target 결정 전까지 `Ready to Deploy`는 열지 않는다.
 
 ## Recent History Summary
-- 2026-04-06: `Scalable Governance Profiles v0.1` planning baseline을 작성하고 `solo/team/large` 프로필과 read-only dashboard MVP 로드맵을 정의했다.
-- 2026-04-06: `Scalable Governance Profiles v0.2` 승인본으로 `Project Monitor Web`, `team.json`, parser contract, UI 설계를 고정했다.
-- 2026-04-06: `DEV-11`, `DEV-12`, `TST-03`, `TST-04`를 완료하고 `Project Monitor Web` Phase 1 MVP, team registry, parser contract, read-only server/test 경계를 구현했다.
+- 2026-04-06: `Scalable Governance Profiles v0.2` 승인본으로 profile/schema/parser/UI baseline과 `Project Monitor Web` Phase 1을 고정했다.
+- 2026-04-06: 이후 review closure, deploy workflow hardening, downstream rollout, dependency/compliance gate closure(`REL-06`)까지 진행했다.

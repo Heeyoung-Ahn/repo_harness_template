@@ -10,7 +10,7 @@
 - 이번 범위에서 건드리는 폴더/모듈: `.agents/artifacts/*`, `.agents/rules/*`, `.agents/runtime/team.json`, `tools/project-monitor-web/*`, starter profile/schema source
 - 상태와 데이터의 주인: artifact와 `team.json`이 truth를 유지하고, monitor는 파생 projection만 가진다.
 - 다음 역할이 꼭 지켜야 할 구조 규칙: web app은 read-only이며 Phase 1에서 validator 실행기나 write surface를 갖지 않는다.
-- 이번 문서의 리뷰 포인트: parser contract의 안정성, product boundary, starter 반영 범위, 장기 비용을 줄이는 upfront contract
+- 이번 문서의 리뷰 포인트: parser contract의 안정성, reserved hook name, optional health snapshot contract, product boundary, starter 반영 범위
 
 ## Status
 - Document Status: Approved
@@ -18,7 +18,7 @@
 - Requirement Baseline: Scalable Governance Profiles v0.2
 - Change Sync Check: Synced
 - Last Requirement Sync At: 2026-04-06 18:06
-- Last Updated At: 2026-04-06 18:06
+- Last Updated At: 2026-04-06 22:44
 - Last Approved By: User
 - Last Approved At: 2026-04-06 18:06
 
@@ -50,6 +50,7 @@
   self-hosting 전용 tool을 starter/downstream 기본 동작으로 몰래 확장하는 구조
 
 ## Changelog
+- [2026-04-06] Developer: reserved future hook contract, optional `health_snapshot.json` contract, self-hosting/downstream promotion boundary를 아키텍처 정본에 추가했다.
 - [2026-04-06] Planner: `Scalable Governance Profiles v0.1` 기준으로 core/profile/observability/integration 경계를 초안 작성
 - [2026-04-06] Planner: `v0.2` 승인에 따라 `team.json`, parser contract, `Project Monitor Web` product boundary를 아키텍처 정본으로 고정
 
@@ -85,6 +86,7 @@
   rules/
   runtime/
     team.json
+    health_snapshot.json (optional)
 tools/
   project-monitor-web/
     src/
@@ -122,7 +124,7 @@ templates_starter/
 | `CURRENT_STATE.md` | Mandatory | `Snapshot`, `Open Decisions / Blockers`, `Latest Handoff Summary` | health/status와 blocker source |
 | `TASK_LIST.md` | Mandatory | `Current Release Target`, `Active Locks`, workflow task rows, `Handoff Log` | board / activity / lock source |
 | `REQUIREMENTS.md` | Mandatory | `Status`, `Operational Profiles`, `Functional Requirements`, `Non-Functional Requirements` | profile contract source |
-| `ARCHITECTURE_GUIDE.md` | Mandatory | `Status`, `Domain Map`, `Artifact Parser Contract`, `Team Registry Contract` | architecture and parser contract reference |
+| `ARCHITECTURE_GUIDE.md` | Mandatory | `Status`, `Domain Map`, `Artifact Parser Contract`, `Team Registry Contract`, `Future Hook Contract`, `Promotion Boundary` | architecture and parser contract reference |
 | `IMPLEMENTATION_PLAN.md` | Mandatory | `Status`, `Current Iteration`, `Requirement Trace`, `Iteration Plan`, `Validation Gates` | execution context source |
 | `REVIEW_REPORT.md` | Optional | review gate summary | release-stage optional source |
 | `DEPLOYMENT_PLAN.md` | Optional | deployment gate summary | release-stage optional source |
@@ -140,6 +142,31 @@ templates_starter/
 | `default_model` | optional | 기본 AI 모델 메타데이터 |
 | `approval_authority` | optional | 승인 권한 범위 |
 
+## Optional Runtime Contract
+
+| File | Required In | Meaning | Phase 1 Behavior |
+|---|---|---|---|
+| `health_snapshot.json` | optional in root/starter runtime | validator, adapter, CI가 남기는 read-only health summary | placeholder 허용, monitor는 읽을 수 있지만 truth를 대체하지 않는다 |
+
+## Future Hook Contract
+
+| Event | Reserved Emit Point | Phase | Notes |
+|---|---|---|---|
+| `task.claimed` | task 상태가 `[-]`와 lock 생성으로 전환될 때 | Phase 2+ | claim/lock transition만 예약한다 |
+| `task.blocked` | blocker 또는 manual/environment gate가 기록될 때 | Phase 2+ | realtime transport는 추가하지 않는다 |
+| `handoff.recorded` | `TASK_LIST.md > Handoff Log` append 시점 | Phase 2+ | handoff 원문은 계속 artifact가 truth다 |
+| `gate.awaiting_human` | 사용자 승인 / manual gate / environment gate 대기 진입 시점 | Phase 2+ | human decision 자체는 artifact와 로컬 대화가 truth다 |
+| `task.completed` | task가 `[x]`로 닫히는 시점 | Phase 2+ | completion event 저장소는 optional adapter로만 확장한다 |
+
+## Promotion Boundary
+
+| Capability | Default Home | Starter Default | Promotion Rule | Notes |
+|---|---|---|---|---|
+| `Project Monitor Web` runtime | root self-hosting only | No | `REV-03` 이후 optional package로 추출 검토 가능 | starter 기본 동작으로 넣지 않는다 |
+| `team.json` contract | root + starter | Yes | 이미 shared schema로 유지 | runtime watcher를 암시하지 않는다 |
+| `health_snapshot.json` contract | root + starter | Optional | validator/adapter/CI가 실제 snapshot을 emit할 때 사용 | placeholder file만 허용한다 |
+| event hook transport | root experiment 또는 adapter package | No | event producer shape가 안정화된 뒤 별도 설계 | Phase 1은 이름 예약만 수행한다 |
+
 ## State and Data Ownership
 - 전역 상태: `.agents/artifacts/*.md`와 `.agents/rules/*`가 운영 truth를 가진다.
 - 팀 구성 상태: `.agents/runtime/team.json`이 team/large 프로필의 team truth를 가진다.
@@ -150,7 +177,8 @@ templates_starter/
 ## Integration Boundaries
 - 외부 API/서비스: 선택적 GitHub/CI/PM adapter, future enterprise system adapter
 - 인증 경계: Phase 1은 로컬 self-hosting 사용을 전제로 하며 특정 auth provider를 강제하지 않는다.
-- 파일/스토리지 경계: Phase 1 web app은 artifact와 `team.json`을 읽고, optional health snapshot을 읽을 수 있지만 validator나 write action은 실행하지 않는다.
+- 파일/스토리지 경계: Phase 1 web app은 artifact와 `team.json`, optional `health_snapshot.json`을 읽을 수 있지만 validator나 write action은 실행하지 않는다.
+- 이벤트 경계: Phase 1은 reserved hook name만 고정하고, queue/websocket/registry/presence transport는 추가하지 않는다.
 
 ## Naming Conventions
 - 폴더: `core`, `profiles`, `projection`, `adapters`, `presentation`처럼 책임이 드러나는 이름 사용

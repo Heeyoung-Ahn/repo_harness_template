@@ -1,8 +1,10 @@
 .agents/runtime/*
 !.agents/runtime/downstream_target_presets.psd1
 !.agents/runtime/team.json
+!.agents/runtime/health_snapshot.json
 templates_starter/.agents/runtime/*
 !templates_starter/.agents/runtime/team.json
+!templates_starter/.agents/runtime/health_snapshot.json
 tools/project-monitor-web/node_modules/
 tools/harness_admin/.venv/
 tools/harness_admin/build/

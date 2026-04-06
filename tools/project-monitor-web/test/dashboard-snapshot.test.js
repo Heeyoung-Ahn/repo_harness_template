@@ -7,6 +7,7 @@ import {
   buildDashboardSnapshot,
   mergeTaskOwnership
 } from "../src/application/build-dashboard-snapshot.js";
+import { parseArchitectureGuide } from "../src/application/parse-architecture-guide.js";
 import { createProjectMonitorServer } from "../src/infrastructure/http-server.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -22,6 +23,10 @@ test("dashboard snapshot exposes the approved Phase 1 panels", async () => {
   assert.ok(Array.isArray(snapshot.recentActivity));
   assert.ok(Array.isArray(snapshot.teamDirectory));
   assert.ok(snapshot.documentHealth.summary);
+  assert.equal(
+    snapshot.documentHealth.healthSnapshot.path,
+    ".agents/runtime/health_snapshot.json"
+  );
 });
 
 test("team registry includes the current live members", async () => {
@@ -67,6 +72,9 @@ test("http server is read-only and blocks arbitrary file traversal", async (cont
   const teamFileResponse = await fetch(
     `${baseUrl}/api/file?path=${encodeURIComponent(".agents/runtime/team.json")}`
   );
+  const healthSnapshotResponse = await fetch(
+    `${baseUrl}/api/file?path=${encodeURIComponent(".agents/runtime/health_snapshot.json")}`
+  );
   const blockedFileResponse = await fetch(
     `${baseUrl}/api/file?path=${encodeURIComponent("../package.json")}`
   );
@@ -74,6 +82,53 @@ test("http server is read-only and blocks arbitrary file traversal", async (cont
 
   assert.equal(snapshotResponse.status, 200);
   assert.equal(teamFileResponse.status, 200);
+  assert.equal(healthSnapshotResponse.status, 200);
   assert.equal(blockedFileResponse.status, 400);
   assert.equal(traversalResponse.status, 404);
+});
+
+test("future hook and promotion boundary contracts are exposed in the snapshot", async () => {
+  const snapshot = await buildDashboardSnapshot(repoRoot);
+
+  assert.ok(Array.isArray(snapshot.futureContracts.eventHooks));
+  assert.ok(
+    snapshot.futureContracts.eventHooks.some((item) => item.event === "task.claimed")
+  );
+  assert.ok(Array.isArray(snapshot.futureContracts.promotionBoundary));
+  assert.ok(
+    snapshot.futureContracts.promotionBoundary.some(
+      (item) => item.capability === "Project Monitor Web runtime"
+    )
+  );
+});
+
+test("architecture guide parser warns when a required contract section is missing", () => {
+  const parsed = parseArchitectureGuide(`
+## Status
+- Document Status: Approved
+
+## Artifact Parser Contract
+| File | Phase 1 Role | Required Sections / Fields | Notes |
+|---|---|---|---|
+| \`ARCHITECTURE_GUIDE.md\` | Mandatory | sample | sample |
+
+## Team Registry Contract
+| Field | Required In | Meaning |
+|---|---|---|
+| \`id\` | all rows | stable owner identifier |
+
+## Future Hook Contract
+| Event | Reserved Emit Point | Phase | Notes |
+|---|---|---|---|
+| \`task.claimed\` | sample | Phase 2+ | sample |
+
+## Promotion Boundary
+| Capability | Default Home | Starter Default | Promotion Rule | Notes |
+|---|---|---|---|---|
+| sample | root | No | sample | sample |
+`);
+
+  assert.ok(
+    parsed.warnings.includes('ARCHITECTURE_GUIDE.md: missing section "Domain Map"')
+  );
 });

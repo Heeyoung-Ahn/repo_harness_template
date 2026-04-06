@@ -13,7 +13,9 @@
 - 이번 배포 대상:
 - 현재 배포 상태:
 - 배포 기준 Requirement Baseline / sync gate:
-- current green level / branch freshness:
+- current green level / branch freshness / GitHub release gate:
+- GitHub release path / source -> target:
+- deployment provider / selected skill:
 - 배포 전 꼭 확인할 것:
 - 남아 있는 release gate (manual / dependency / compliance):
 - 실패 시 롤백 핵심 경로:
@@ -26,10 +28,15 @@
 - Requirement Baseline for Release:
 - Requirements Sync Gate: Open / Closed
 - Reviewer Gate: Open / Closed
+- GitHub Release Gate: Open / Closed
 - Manual / Environment Gate: Open / Closed
 - Dependency / Compliance Gate: Open / Closed
 - Current Green Level:
 - Branch Freshness for Release:
+- Source Branch for Release:
+- Target Branch for Release:
+- Deployment Provider:
+- Selected Deployment Skill:
 - Last Updated At: [YYYY-MM-DD HH:MM]
 
 ## Rollback Snapshot
@@ -45,9 +52,19 @@
 - Target date:
 - Release owner:
 
+## GitHub Release Plan
+- GitHub Release Path: Version branch -> target branch merge -> source branch delete / Main direct push
+- Source Branch for Release:
+- Target Branch for Release:
+- Post-Merge Cleanup:
+- GitHub Release Gate Owner:
+
 ## Deployment Strategy
 - Release type: Preview / Staging / Production
 - Deployment target:
+- Deployment provider:
+- Preferred deployment skill:
+- Fallback When No Dedicated Skill:
 - Rollout strategy:
 
 ## Build Artifact Decision
@@ -67,6 +84,9 @@
 - [ ] 최신 Requirement Baseline과 test / review 기준선 일치 확인
 - [ ] current green level이 release target에 도달했는지 확인
 - [ ] branch freshness check를 완료하고 stale / diverged 상태를 해소
+- [ ] `github_deploy`를 완료하고 GitHub Release Gate를 `Closed`로 기록
+- [ ] 버전 브랜치 release라면 source branch merge / target push / branch cleanup 완료
+- [ ] deployment provider와 selected deployment skill 또는 fallback 경로를 확정
 - [ ] 대상 버전과 커밋 범위 확인
 - [ ] 환경 변수 / 비밀값 설정 확인
 - [ ] 수동 / 실환경 검증 상태 확인
@@ -77,7 +97,9 @@
 
 ## Build and Deploy Commands
 ```bash
-# 프로젝트 승인 배포 명령 기록
+# GitHub release finalization commands
+
+# target deployment commands
 ```
 
 ## Secrets / Config Notes
@@ -93,6 +115,8 @@
 ## Validation Gate Notes
 - 요구사항 변경 반영 상태:
 - branch freshness 판단:
+- GitHub release path 확인 결과:
+- deployment provider / skill routing 판단:
 - 수동 / 실환경 재검증 계획:
 - 사용자 수동 테스트 / raw report 처리 상태:
 - 운영 직후 확인할 항목:

@@ -1,4 +1,5 @@
 export const TEAM_REGISTRY_PATH = ".agents/runtime/team.json";
+export const HEALTH_SNAPSHOT_PATH = ".agents/runtime/health_snapshot.json";
 
 export const MANDATORY_SOURCE_PATHS = [
   ".agents/artifacts/CURRENT_STATE.md",
@@ -16,7 +17,8 @@ export const OPTIONAL_SOURCE_PATHS = [
 export const ALLOWED_SOURCE_PATHS = [
   ...MANDATORY_SOURCE_PATHS,
   ...OPTIONAL_SOURCE_PATHS,
-  TEAM_REGISTRY_PATH
+  TEAM_REGISTRY_PATH,
+  HEALTH_SNAPSHOT_PATH
 ];
 
 export const TEAM_MEMBER_REQUIRED_FIELDS = [
@@ -49,4 +51,68 @@ export const HEALTH_PANEL_FIELDS = [
   "manual_environment_gate",
   "dependency_compliance_gate",
   "document_health"
+];
+
+export const RESERVED_EVENT_HOOKS = [
+  {
+    event: "task.claimed",
+    emitter: "task lifecycle",
+    phase: "Phase 2+",
+    note: "claim/lock transition only; no realtime transport in Phase 1"
+  },
+  {
+    event: "task.blocked",
+    emitter: "task lifecycle",
+    phase: "Phase 2+",
+    note: "blocked and manual gate transitions only"
+  },
+  {
+    event: "handoff.recorded",
+    emitter: "handoff log",
+    phase: "Phase 2+",
+    note: "handoff append point only"
+  },
+  {
+    event: "gate.awaiting_human",
+    emitter: "approval/manual gate",
+    phase: "Phase 2+",
+    note: "human/manual/environment gate transitions only"
+  },
+  {
+    event: "task.completed",
+    emitter: "task lifecycle",
+    phase: "Phase 2+",
+    note: "completion transition only"
+  }
+];
+
+export const PROMOTION_BOUNDARY = [
+  {
+    capability: "Project Monitor Web runtime",
+    default_home: "root self-hosting only",
+    starter_default: "no",
+    promotion_trigger: "reviewed optional package extraction after REV-03",
+    note: "never ship as starter default behavior"
+  },
+  {
+    capability: "Team registry contract",
+    default_home: "root + starter",
+    starter_default: "yes",
+    promotion_trigger: "already shared schema",
+    note: "shared contract, no runtime watcher implied"
+  },
+  {
+    capability: "Health snapshot contract",
+    default_home: "root + starter",
+    starter_default: "optional",
+    promotion_trigger: "when adapters or validators emit snapshot data",
+    note: "placeholder file allowed; no polling or push"
+  },
+  {
+    capability: "Event hook transport",
+    default_home: "root experiment or adapter package",
+    starter_default: "no",
+    promotion_trigger: "after event producer shape is stable",
+    note: "Phase 1 reserves names only"
+  }
 ];

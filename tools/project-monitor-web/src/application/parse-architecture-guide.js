@@ -9,8 +9,11 @@ export function parseArchitectureGuide(markdown) {
   const warnings = collectSectionWarnings(
     [
       ["Status", "Status"],
+      ["Domain Map", "Domain Map"],
       ["Artifact Parser Contract", "Artifact Parser Contract"],
-      ["Team Registry Contract", "Team Registry Contract"]
+      ["Team Registry Contract", "Team Registry Contract"],
+      ["Future Hook Contract", "Future Hook Contract"],
+      ["Promotion Boundary", "Promotion Boundary"]
     ],
     "ARCHITECTURE_GUIDE.md",
     markdown
@@ -31,6 +34,12 @@ export function parseArchitectureGuide(markdown) {
     ),
     teamRegistryContract: parseMarkdownTable(
       extractSection(markdown, "Team Registry Contract")
+    ),
+    futureHookContract: parseMarkdownTable(
+      extractSection(markdown, "Future Hook Contract")
+    ),
+    promotionBoundary: parseMarkdownTable(
+      extractSection(markdown, "Promotion Boundary")
     ),
     warnings
   };

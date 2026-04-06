@@ -26,6 +26,7 @@
 - 도메인 경계:
 - 계층 책임 경계:
 - 승인된 예외:
+- optional self-hosting tool / starter 공통 계약 경계:
 
 ## Forbidden Changes
 - 승인 없이 추가하면 안 되는 폴더/레이어:
@@ -86,10 +87,29 @@ src/
 - 영속 저장소:
 - 캐시 전략:
 
+## Optional Runtime Contracts
+
+| File | Required In | Meaning | Phase Behavior |
+|---|---|---|---|
+| [예: `.agents/runtime/health_snapshot.json`] | optional / team / large | [validator 또는 adapter가 남기는 read-only summary] | [placeholder only / emitted by adapter / not used] |
+
 ## Integration Boundaries
 - 외부 API/서비스:
 - 인증 경계:
 - 파일/스토리지 경계:
+- optional observability / monitor contract:
+
+## Future Hook Contract
+
+| Event | Reserved Emit Point | Phase | Notes |
+|---|---|---|---|
+| [예: `task.claimed`] | [emit point] | [Phase 2+] | [예약만 / transport 제외] |
+
+## Promotion Boundary
+
+| Capability | Default Home | Starter Default | Promotion Rule | Notes |
+|---|---|---|---|---|
+| [예: local monitor runtime] | [root self-hosting only / adapter package / starter] | [Yes / No / Optional] | [언제 승격 가능한지] | [메모] |
 
 ## Naming Conventions
 - 폴더:

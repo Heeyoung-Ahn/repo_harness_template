@@ -298,12 +298,22 @@ function renderActivity(snapshot) {
 }
 
 function renderHealth(snapshot) {
+  const healthSnapshot = snapshot.documentHealth.healthSnapshot;
+
   elements.health.innerHTML = `
     <div class="health-grid">
       <div class="health-summary">
         <p class="eyebrow">Snapshot Health</p>
         <h2>${escapeHtml(snapshot.documentHealth.summary)}</h2>
         <p class="subtle">${escapeHtml(snapshot.release.goal || "goal unavailable")}</p>
+      </div>
+      <div class="health-item">
+        <span>Health Snapshot</span>
+        <span class="mono">${escapeHtml(healthSnapshot.generatedAt || healthSnapshot.summary || "unknown")}</span>
+      </div>
+      <div class="health-item">
+        <span>Health Snapshot Source</span>
+        <span>${buildSourceLink(healthSnapshot.path)}</span>
       </div>
       ${snapshot.documentHealth.items
         .map(
