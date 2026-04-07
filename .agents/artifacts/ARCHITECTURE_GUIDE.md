@@ -5,20 +5,20 @@
 
 ## Quick Read
 - 현재 아키텍처 스타일: document-centric governance core + optional enterprise-governed pack + separate `Project Monitor Web` + optional OMX sidecar compatibility
-- 현재 반영된 Requirement Baseline / 변경 영향: `Hybrid Harness Completion v0.1` draft에 맞춰 root self-hosting runtime reference, governed fixture baseline, monitor hybrid visibility, rollout defer gate를 completion scope로 추가한다.
-- 핵심 도메인 경계: Governance Core / Profile Contract / Enterprise Governance Pack / Hybrid Runtime Reference / Parser & Projection / Project Monitor Web / Integration Adapters
-- 이번 범위에서 건드리는 폴더/모듈: `.agents/artifacts/*`, `.agents/rules/*`, `.agents/runtime/{team.json,governance_controls.json}`, `.omx/*`, `tools/project-monitor-web/*`, starter/reset governed source, rollout dry-run/reporting path
+- 현재 반영된 Requirement Baseline / 변경 영향: `Hybrid Harness Completion v0.1` draft에 맞춰 root self-hosting runtime reference / HUD / runbook, governed fixture + validator baseline, monitor hybrid visibility, `preview revalidation + review closure + dry-run/reporting` completion evidence, mandatory planner deep-interview skill, `PROJECT_HISTORY.md` artifact를 completion scope에 추가한다.
+- 핵심 도메인 경계: Governance Core / Profile Contract / Enterprise Governance Pack / Planner Discovery Skill / Hybrid Runtime Reference / Parser & Projection / Project Monitor Web / Integration Adapters
+- 이번 범위에서 건드리는 폴더/모듈: `.agents/artifacts/*`, `.agents/rules/*`, `.agents/runtime/{team.json,governance_controls.json}`, `.agents/skills/requirements_deep_interview/*`, `.omx/*`, `tools/project-monitor-web/*`, starter/reset governed source, rollout dry-run/reporting path
 - 상태와 데이터의 주인: artifact와 runtime contract가 truth를 유지하고, monitor와 `.omx/*`는 파생 projection 또는 보조 상태만 가진다.
-- 다음 역할이 꼭 지켜야 할 구조 규칙: starter는 OMX나 sandbox runtime에 의존하지 않으며, actual rollout은 completion gate가 닫히기 전까지 실행하지 않는다.
-- 이번 문서의 리뷰 포인트: runtime reference/HUD boundary, pack activation rule, governed fixture path, `.omx` truth boundary, monitor hybrid visibility, rollout defer gate
+- 다음 역할이 꼭 지켜야 할 구조 규칙: starter는 OMX나 sandbox runtime에 의존하지 않으며, actual rollout은 completion gate가 닫히기 전까지 실행하지 않는다. Planner discovery skill은 shared process이지만 truth가 아니고, PMW delta는 mockup 승인 전 implementation으로 직행하지 않는다.
+- 이번 문서의 리뷰 포인트: runtime reference/HUD boundary, pack activation rule, governed fixture + validator path, planner discovery boundary, `.omx` truth boundary, monitor hybrid visibility, completion evidence contract, rollout defer gate
 
 ## Status
 - Document Status: Draft
 - Owner: Planner
 - Requirement Baseline: Hybrid Harness Completion v0.1
 - Change Sync Check: Synced
-- Last Requirement Sync At: 2026-04-07 14:53
-- Last Updated At: 2026-04-07 14:53
+- Last Requirement Sync At: 2026-04-07 21:54
+- Last Updated At: 2026-04-07 21:54
 - Last Approved By: User (`v0.3` baseline)
 - Last Approved At: 2026-04-07 10:33
 
@@ -27,20 +27,22 @@
   Governance Core는 artifact truth와 운영 규칙을 담당한다.
   Profile Contract는 `solo`, `team`, `large/governed` required field와 `team.json` contract를 담당한다.
   Enterprise Governance Pack은 `enterprise_governed` overlay, protected path/HITL/critical-domain 문서를 담당한다.
+  Hybrid Runtime Reference는 root self-hosting runtime/HUD/runbook과 preview revalidation / rollout defer evidence 기준을 담당한다.
   Parser & Projection은 artifact와 runtime contract를 읽어 read model을 만든다.
-  Project Monitor Web은 parser/projection 결과를 웹 UI로 보여주는 self-hosting only 도구다.
+  Project Monitor Web은 parser/projection 결과와 runtime/HUD readiness summary를 운영자에게 read-only로 보여주는 self-hosting only 도구다.
   Integration Adapters는 future Git/PR/CI/health snapshot/event hook/OMX sidecar를 optional로 연결한다.
 - 계층 책임 경계:
   Governance Core가 task/lock/gate/handoff truth를 소유한다.
   `team.json`은 profile/pack activation truth를 소유한다.
   `governance_controls.json`은 protected path, human gate, critical domain 선언 truth를 소유한다.
+  Hybrid Runtime Reference는 root self-hosting operator visibility surface를 제공할 수 있지만 truth를 소유하지 않는다.
   Parser & Projection은 truth를 읽어 파생 state만 계산한다.
   Project Monitor Web과 `.omx/*`는 read-only projection 또는 보조 상태만 가진다.
 - 승인된 예외:
   `Project Monitor Web`은 root self-hosting 전용으로 둘 수 있다.
   starter/downstream에는 팀 구성 계약, governance controls, parser-friendly schema, dormant enterprise pack placeholder만 승격할 수 있다.
   `.omx/*`는 root self-hosting에서만 optional sidecar로 둘 수 있고 downstream 기본 동작으로 강제하지 않는다.
-  rollout-ready dry-run/reporting은 root self-hosting에서만 먼저 수행할 수 있다.
+  rollout-ready dry-run/reporting과 local preview 재검증 / review closure evidence는 root self-hosting에서만 먼저 수행할 수 있다.
 
 ## Forbidden Changes
 - 승인 없이 추가하면 안 되는 폴더/레이어:
@@ -63,6 +65,8 @@
 - [2026-04-06] Planner: `v0.2` 승인에 따라 `team.json`, parser contract, `Project Monitor Web` product boundary를 아키텍처 정본으로 고정
 - [2026-04-07] Planner: `CR-02 Enterprise Hybrid Harness`에 따라 enterprise-governed pack, `governance_controls.json`, `.omx` sidecar compatibility, critical-domain verification lane을 추가했다.
 - [2026-04-07] Planner: current version closeout 후 `CR-03 Hybrid Harness Completion` draft에 맞춰 runtime reference, governed fixture, monitor hybrid visibility, rollout defer gate를 planning 범위에 추가했다.
+- [2026-04-07] Planner: `CR-03` requirement revision에 맞춰 visibility-first HUD, governed fixture + validator baseline, completion evidence contract를 아키텍처 정본에 동기화했다.
+- [2026-04-07] Planner: mandatory planner deep-interview skill, PMW feedback intake, `PROJECT_HISTORY.md` artifact를 `CR-03` draft 아키텍처 경계에 추가했다.
 
 ## Requirement Change Sync
 
@@ -70,7 +74,7 @@
 |---|---|---|---|---|
 | CR-01 | Boundary Update | Approved Boundaries / Domain Map / Folder Structure / Artifact Parser Contract / Team Registry Contract | Synced | web app 분리, team registry 경로, parser mandatory source를 고정 |
 | CR-02 | Layer Rule Update | Approved Boundaries / Forbidden Changes / Domain Map / Folder Structure / Team Registry Contract / Enterprise Governance Pack Contract / Optional Runtime Contract / OMX Compatibility Map / Promotion Boundary | Synced | enterprise-governed overlay와 `.omx` sidecar를 truth plane 밖에 유지 |
-| CR-03 | Completion Draft | Quick Read / Approved Boundaries / Forbidden Changes / Domain Map / Promotion Boundary / Integration Boundaries | Synced | rollout-ready completion을 정의하되 actual rollout은 defer |
+| CR-03 | Completion Draft | Quick Read / Approved Boundaries / Domain Map / Folder Structure / Promotion Boundary / Integration Boundaries | Synced | visibility-first HUD와 `preview revalidation + review closure + dry-run/reporting` completion evidence를 정의하고, mandatory deep-interview + project-history artifact를 추가하되 actual rollout은 defer |
 
 ## Architecture Summary
 - 아키텍처 스타일: truth layer와 projection/orchestration layer를 분리한 local-first layered architecture
@@ -80,9 +84,12 @@
   enterprise burden은 optional pack으로만 올린다.
   `.omx/*`는 optional sidecar이지 truth가 아니다.
   monitor는 read-only 정적 뷰어로 시작한다.
+  root self-hosting HUD/readiness surface는 operator visibility용이며 control plane이 아니다.
+  Planner discovery skill은 requirements 작성 전 mandatory process aid이지만 truth를 소유하지 않는다.
+  `PROJECT_HISTORY.md`는 long-term timeline이지 current-state truth가 아니다.
   human approval과 manual gate는 agent activity와 동등한 운영 개념이다.
   critical domain에서는 generator와 reviewer/verifier lane을 분리한다.
-  actual rollout은 completion gate 뒤로 미룬다.
+  actual rollout은 `preview revalidation + review closure + dry-run/reporting` completion gate 뒤로 미룬다.
 
 ## Domain Map
 
@@ -91,16 +98,20 @@
 | Governance Core | 문서 기반 운영 truth 유지 | Task, Lock, Handoff, Gate, Requirement Baseline, Stage | `.agents/artifacts/*`, `.agents/rules/*` 중심 |
 | Profile Contract | 프로필별 의무 필드와 팀 계약 유지 | Solo profile, Team profile, Large/Governed profile, Team Registry, Pack Activation | `team.json`과 profile required field를 고정 |
 | Enterprise Governance Pack | 고위험 도메인 통제 규칙 유지 | Governance controls, Protected path, HITL escalation, Critical domain docs | `enterprise_governed` overlay only |
-| Hybrid Runtime Reference | root self-hosting completion 기준 유지 | `.omx` guide, runtime/HUD visibility, local runbook, rollout defer contract | root only, truth 아님 |
+| Planner Discovery Skill | requirements 작성 전 구조화된 사용자 인터뷰 수행 | `requirements_deep_interview`, scope clarification, UI intake, acceptance shaping | shared skill, artifact truth 아님 |
+| Hybrid Runtime Reference | root self-hosting completion 기준 유지 | `.omx` guide, runtime/HUD visibility, local runbook, preview revalidation, rollout defer contract | root only, truth 아님 |
 | Parser & Projection | mandatory source를 읽어 read model 생성 | Task projection, Blocker queue, Recent activity, Health projection, Team directory projection | UI와 분리된 shared library |
-| Project Monitor Web | read-only 웹 UI 제공 | Dashboard panels, manual refresh, filter, detail drill-down | `tools/project-monitor-web/*` |
+| Project Monitor Web | read-only 웹 UI 제공 | Dashboard panels, runtime/HUD readiness summary, manual refresh, filter, detail drill-down | `tools/project-monitor-web/*` |
 | Integration Adapters | optional 주변 정보 연결 | Git, PR, CI, future health snapshot, future event hook, optional OMX sidecar | Phase 1에서는 optional/reserved only |
 
 ## Folder Structure
 ```text
 .agents/
   artifacts/
+    PROJECT_HISTORY.md
   rules/
+  skills/
+    requirements_deep_interview/
   runtime/
     team.json
     governance_controls.json
@@ -115,7 +126,10 @@ tools/
 templates_starter/
   .agents/
     artifacts/
+      PROJECT_HISTORY.md
       enterprise_governed/
+    skills/
+      requirements_deep_interview/
     rules/
     runtime/
       team.json
@@ -131,6 +145,7 @@ templates_starter/
 ## Layer Responsibilities
 - `domain/`: `task`, `lock`, `handoff`, `gate`, `profile`, `pack`, `team member`, `governance control`, `health snapshot` 개념과 불변식
 - `application/`: artifact parsing, projection assembly, profile validation, pack activation validation, health aggregation, manual refresh orchestration
+- `planner-skill/`: structured requirements interview, change-request discovery, UI intake, mockup brief synthesis
 - `infrastructure/`: file system read, JSON parse, optional health snapshot read, local HTTP server, optional `.omx` sidecar read
 - `presentation/`: single-screen dashboard UI, filters, panel layout, artifact link-out
 - `release-readiness`: dry-run/reporting evidence와 rollout defer state를 artifact로 정리한다
@@ -141,6 +156,7 @@ templates_starter/
 - infrastructure는 파일 읽기, JSON 읽기, 로컬 HTTP 제공, optional sidecar read를 구현한다.
 - presentation은 application이 만든 projection을 렌더링하고 직접 비즈니스 규칙을 가지지 않는다.
 - Governance Core와 runtime contract truth는 parser/projection보다 상위다.
+- Planner workflow는 `requirements_deep_interview` skill을 먼저 수행하고 그 결과를 artifact schema에 맞춰 동기화한다.
 - UI layer는 parser contract를 우회해서 직접 markdown을 해석하지 않는다.
 - optional orchestration mapping은 workflow layer에만 존재하고 truth layer를 바꾸지 않는다.
 
@@ -197,6 +213,7 @@ templates_starter/
 | Workflow Intent | Optional OMX Mapping | Contract |
 |---|---|---|
 | Discovery | `$deep-interview` | optional acceleration only, requirement truth는 artifact에 남긴다 |
+| Requirements capture | internalized `requirements_deep_interview` | mandatory shared planner skill. OMX phrasing/runtime는 참고만 가능하며 최종 truth는 `REQUIREMENTS.md`다 |
 | Planning | `$ralplan` | planner 결과는 `REQUIREMENTS.md` / `ARCHITECTURE_GUIDE.md` / `IMPLEMENTATION_PLAN.md`에 동기화돼야 한다 |
 | Parallel implementation | `$team` | 병렬 실행은 `TASK_LIST.md` lock/scope truth를 우회하지 않는다 |
 | Persistent completion / verification | `$ralph` | 완료 판단은 review/test/deploy artifact gate가 계속 진실이다 |
@@ -216,11 +233,13 @@ templates_starter/
 | Capability | Default Home | Starter Default | Promotion Rule | Notes |
 |---|---|---|---|---|
 | `Project Monitor Web` runtime | root self-hosting only | No | optional package로 추출 검토 가능 | starter 기본 동작으로 넣지 않는다 |
+| `requirements_deep_interview` skill | root + starter | Yes | shared planner behavior로 유지 | raw discovery notes는 truth가 아니다 |
+| root runtime/HUD reference | root self-hosting only | No | local operator surface로 유지 | control plane으로 승격하지 않는다 |
 | `team.json` contract | root + starter | Yes | shared schema로 유지 | runtime watcher를 암시하지 않는다 |
 | `governance_controls.json` contract | root + starter | Optional | `enterprise_governed` 활성 시 required | team profile에서는 dormant placeholder 가능 |
 | enterprise-governed pack docs | starter + reset source | Optional | `active_packs`가 `enterprise_governed`일 때만 활성 truth로 읽는다 | core flow는 pack 미활성 시 무시한다 |
 | `.omx/*` sidecar | root self-hosting only | No | compatibility guide만 starter에 남긴다 | truth plane으로 승격하지 않는다 |
-| rollout dry-run/reporting | root self-hosting only | No | completion review와 self-hosting revalidation 뒤에만 실제 rollout을 연다 | current version에서는 evidence만 남긴다 |
+| rollout dry-run/reporting | root self-hosting only | No | local preview 재검증과 review closure 뒤에만 실제 rollout을 연다 | current version에서는 evidence만 남긴다 |
 | event hook transport | root experiment 또는 adapter package | No | event producer shape가 안정화된 뒤 별도 설계 | Phase 1은 이름 예약만 수행한다 |
 | container/read-only sandbox | self-hosting experiment only | No | Phase 2 이후 별도 검토 | starter 기본값으로 넣지 않는다 |
 
@@ -228,6 +247,7 @@ templates_starter/
 - 전역 상태: `.agents/artifacts/*.md`와 `.agents/rules/*`가 운영 truth를 가진다.
 - profile / pack activation 상태: `.agents/runtime/team.json`이 profile과 enabled pack truth를 가진다.
 - governance control 상태: `.agents/runtime/governance_controls.json`이 protected path와 human gate truth를 가진다.
+- 장기 이력 상태: `PROJECT_HISTORY.md`가 major decision / milestone timeline을 append-only로 가진다. current task / lock truth는 아니다.
 - 로컬 UI 상태: 필터, 선택된 패널, 정렬, 검색, 마지막 수동 새로고침 시각만 가진다.
 - 영속 저장소: Phase 1은 추가 DB를 요구하지 않는다. future health snapshot 또는 event store는 별도 저장소로 분리한다.
 - sidecar 상태: `.omx/*`는 캐시/로그/보조 memory만 가진다. repo truth보다 우선할 수 없다.
@@ -237,7 +257,8 @@ templates_starter/
 - 인증 경계: Phase 1은 로컬 self-hosting 사용을 전제로 하며 특정 auth provider를 강제하지 않는다.
 - 파일/스토리지 경계: Phase 1 web app은 artifact와 runtime contract, optional `.omx/*`, optional `health_snapshot.json`을 읽을 수 있지만 validator나 write action은 실행하지 않는다.
 - optional observability / monitor contract: `.omx/*`와 health snapshot은 read-only auxiliary input이며 release/review truth를 대체하지 않는다.
-- rollout 경계: operating-project mutation은 current draft 범위 밖이며 dry-run/reporting evidence가 먼저 필요하다.
+- planning discovery contract: deep-interview skill output은 planner의 구조화 입력일 뿐이며 승인/정본은 항상 artifact에 남긴다.
+- rollout 경계: operating-project mutation은 current draft 범위 밖이며 local preview 재검증, review closure, dry-run/reporting evidence가 먼저 필요하다.
 
 ## Naming Conventions
 - pack identifier: `enterprise_governed`

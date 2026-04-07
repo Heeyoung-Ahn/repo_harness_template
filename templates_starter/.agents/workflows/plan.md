@@ -15,10 +15,13 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 - 실행 중 목표, 범위, 대상 파일/환경, 실행 종류, 명령 세트가 달라져야 하면 멈추고 이유와 대안을 설명한 뒤 사용자 확정 전까지 진행하지 않습니다.
 - 사용자가 명령어, 설명, 초안만 요청했다면 실제 실행, 백그라운드 실행, 추가 작업을 하지 않습니다.
 
-## Optional OMX / Enterprise Pack Notes
+## Requirements Discovery / OMX / Enterprise Pack Notes
+- Planner는 `REQUIREMENTS.md`를 새로 쓰거나 수정하기 전에 항상 shared `requirements_deep_interview` skill을 먼저 수행합니다.
+- 이 skill은 OMX `deep-interview` 아이디어를 내부화한 절차이며, raw OMX script/runtime 의존이나 `.omx/*` truth 승격을 뜻하지 않습니다.
 - workflow compatibility만 허용합니다. `Discovery -> $deep-interview`, `Planning -> $ralplan`
 - OMX 결과나 `.omx/*` sidecar는 보조 입력일 뿐이며, Planner는 항상 `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`에 정본을 동기화해야 합니다.
 - `team.json > active_packs`에 `enterprise_governed`가 있으면 `governance_controls.json`과 `enterprise_governed/*` 문서를 같은 턴에 함께 닫습니다.
+- `Project Monitor Web` 같은 user-facing / operator-facing UI delta는 `requirements intake -> mockup -> user feedback -> implementation` 순서를 따라야 합니다.
 
 ## 수행 절차
 
@@ -31,6 +34,8 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 문서가 아직 템플릿 skeleton 상태라면 새 프로젝트 또는 새 버전 시작으로 간주합니다.
 
 ### Step 2: 요구사항 정렬과 사용자 대화
+- `requirements_deep_interview` skill로 goal, actor, in-scope, out-of-scope, workflow, constraints, evidence, acceptance, open question을 먼저 구조화합니다.
+- UI/operator-facing delta가 있으면 information hierarchy, pain point, must-see signal, test task까지 discovery에 포함합니다.
 - 사용자의 요구사항, 보류 항목, 정책 선택지를 `REQUIREMENTS.md`에 반영합니다.
 - 사용자의 프롬프트에 직접 질문이 섞여 있으면, 그 질문에 대한 답변 또는 확인 상태를 먼저 정리합니다.
 - 승인 후 범위나 완료 기준이 바뀌면 기존 합의를 덮어쓰지 말고, `Current Requirement Baseline`, `Requirements Sync Status`, `Approved Change Log`를 먼저 갱신합니다.
@@ -69,6 +74,7 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 - `TASK_LIST.md`의 개발/테스트/리뷰 태스크마다 `Scope`를 적습니다.
 - `CURRENT_STATE.md`에 다음 역할과 `Must Read Next`, `Requirement Baseline`, `Requirements Sync Check`를 짧게 정리합니다.
 - UI 범위면 Designer로, 비UI 범위면 `UI_DESIGN.md not required for this scope`를 기록합니다.
+- UI 범위면 `DSG-*`로 mockup-first gate를 열고, approved mockup 전에는 대응하는 `DEV-*` implementation scope를 닫지 않습니다.
 
 ### Step 5: 문서 완성도 체크
 아래 조건이 모두 충족될 때만 Developer 또는 Designer로 handoff합니다.

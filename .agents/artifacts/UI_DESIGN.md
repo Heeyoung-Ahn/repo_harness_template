@@ -6,6 +6,7 @@
 ## Quick Read
 - 이번 범위의 UI 목표: 분산 artifact를 머릿속에서 조합하지 않고도 프로젝트 현재 상태를 한 화면에서 판단할 수 있는 `Project Monitor Web`을 설계한다.
 - 현재 설계 대상 화면: single-screen dashboard + task/detail drawer
+- current `CR-03` delta는 current 화면 테스트 후 usability feedback을 받고, low-fi mockup 승인 뒤에만 implementation scope를 연다.
 - 이번 문서에서 꼭 지켜야 할 흐름: 사용자는 먼저 한 화면에서 전체 상태를 파악하고, 필요할 때만 세부 drawer와 source artifact 링크로 들어간다.
 - 금지된 UI 해석 또는 생략: 실시간처럼 보이는 가짜 애니메이션, inline edit, write action, raw log stream, decorative chart 추가
 - 테스트 때 놓치면 안 되는 포인트: 수동 새로고침 semantics, blocker/gate 구분, source artifact 링크, team/solo/large 필터 동작
@@ -14,11 +15,11 @@
 ## Applicability
 - Status: Required
 - Reason: self-hosting 전용 별도 웹앱인 `Project Monitor Web` Phase 1을 구현하기 위한 UI artifact가 필요하다.
-- Last Updated At: 2026-04-06 18:06
+- Last Updated At: 2026-04-07 21:54
 
 ## Current UI Scope
 - Current screen / route: `/` `Project Monitor Dashboard`, `Task Detail Drawer`
-- Current design task IDs: `DSG-05`, `DEV-12`, `TST-04`
+- Current design task IDs: `DSG-01`, `DSG-02`, `DSG-03`
 - Related implementation scope: `tools/project-monitor-web/*`, parser/projection output, `.agents/runtime/team.json`, mandatory artifact files
 
 ## Must Preserve Interactions
@@ -30,6 +31,7 @@
 
 ## Changelog
 - [2026-04-06] Designer: `Project Monitor Web` Phase 1 single-screen dashboard와 detail drawer 구조를 승인 baseline에 맞춰 작성
+- [2026-04-07] Planner: current PMW usability delta는 user feedback -> mockup -> implementation 순서로 다시 열고, current 화면 테스트 포인트를 design gate의 입력으로 유지했다.
 
 ## UX Goal
 - 사용자는 첫 화면 30초 안에 현재 iteration, active task, blocker, 문서 건강, 팀 책임 구조를 파악한다.

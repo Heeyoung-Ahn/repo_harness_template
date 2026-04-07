@@ -78,11 +78,18 @@ description: 오늘 하루 진행했던 업무 내용을 검토하여 물리적 
 
 - 진행 상태 / lock / handoff: `TASK_LIST.md`
 - 최신 추천 역할 / open blocker / 다음 진입점: `CURRENT_STATE.md`
+- 장기 이력 / 주요 결정 / 큰 진척: `PROJECT_HISTORY.md`
 - 테스트 결과: `WALKTHROUGH.md`
 - 리뷰 상태: `REVIEW_REPORT.md`
 - 배포 준비 상태: `DEPLOYMENT_PLAN.md`
 
 문서에는 실제 사실만 적는다.
+
+`PROJECT_HISTORY.md`에는 아래처럼 사건 중심 항목만 추가한다.
+- 승인되거나 뒤집힌 주요 결정
+- 구조나 범위를 바꾼 구현 마일스톤
+- review / deploy / closeout 같은 gate closure
+- 다음 버전으로 넘긴 핵심 이유
 
 ## 6단계: Handoff Log를 남긴다
 
@@ -118,6 +125,16 @@ description: 오늘 하루 진행했던 업무 내용을 검토하여 물리적 
 `CURRENT_STATE.md`는 마지막에 맞춰야 다음 세션 진입점이 정확해진다.
 - `Latest Handoff Summary`는 최신 delta만 적고, `Task Pointers`와 `Recent History Summary`에 같은 handoff 원문을 반복 복사하지 않는다.
 - `CURRENT_STATE.md`가 길어지면 과거 상세는 `HANDOFF_ARCHIVE.md`와 relevant artifact에 남기고, resume에 필요한 사실만 압축한다.
+
+## 8단계: `PROJECT_HISTORY.md` append 여부를 판단한다
+
+아래 중 하나라도 있으면 `PROJECT_HISTORY.md`에 1~3개 항목을 추가한다.
+- `CR-*` 수준의 요구사항/정책 변경
+- architecture / workflow / runtime contract의 방향 전환
+- major task 완료로 baseline이 바뀐 경우
+- review / deploy / version closeout 같은 전환점
+
+day wrap up에서는 raw 작업일지가 아니라 사건 요약만 남긴다.
 
 ## 완료 후 사용자 보고 원칙
 

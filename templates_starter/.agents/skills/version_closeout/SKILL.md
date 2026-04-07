@@ -24,6 +24,7 @@ description: 리뷰와 배포가 완료된 버전을 아카이빙하고, 현재 
 - `.agents/artifacts/archive/releases/vX.X.X/` 폴더를 생성합니다.
 - 아래 문서를 이동 또는 복사합니다.
   - `CURRENT_STATE.md`
+  - `PROJECT_HISTORY.md` (snapshot copy only, live file은 유지)
   - `HANDOFF_ARCHIVE.md`
   - `TASK_LIST.md`
   - `IMPLEMENTATION_PLAN.md`
@@ -32,6 +33,7 @@ description: 리뷰와 배포가 완료된 버전을 아카이빙하고, 현재 
   - `DEPLOYMENT_PLAN.md`
 
 ### 3단계: Living Documents 유지
+- `PROJECT_HISTORY.md`
 - `REQUIREMENTS.md`
 - `ARCHITECTURE_GUIDE.md`
 - `UI_DESIGN.md` (UI 프로젝트만)
@@ -58,9 +60,11 @@ powershell -ExecutionPolicy Bypass -File ".agents/scripts/reset_version_artifact
   - `CURRENT_STATE.md`: `Snapshot`, `Next Recommended Agent`, `Must Read Next`, `Active Scope`, `Task Pointers`, `Open Decisions / Blockers`, `Latest Handoff Summary`, `Recent History Summary`
   - `TASK_LIST.md`: `Current Release Target`, carry-over backlog, `## Active Locks`, 초기 `## Handoff Log` 1건
 - `IMPLEMENTATION_PLAN.md`, `WALKTHROUGH.md`, `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`, `HANDOFF_ARCHIVE.md`는 canonical 구조를 유지하고, 새 버전 작업이 실제로 열릴 때 해당 역할이 채웁니다.
+- `PROJECT_HISTORY.md`는 프로젝트 전체 이력이므로 reset하지 않습니다. version closeout 시 릴리즈 요약 1건을 append하고 live 문서로 계속 유지합니다.
 - `# Walkthrough (Draft)`, `# Review Report (Draft)`, `# Deployment Plan (Draft)`, `# Implementation Plan (Draft)`, `# CURRENT STATE SNAPSHOT` 같은 대체 제목이나 축약 스키마를 새로 쓰지 않습니다.
 - `CURRENT_STATE.md`에는 `single source of truth` 같은 표현을 쓰지 않습니다. 이 문서는 resume router이고, 실제 task / lock 기준은 `TASK_LIST.md`입니다.
 
 ### 5단계: 릴리즈 요약 반영
+- `PROJECT_HISTORY.md`에 버전 closeout 요약을 append합니다.
 - `CHANGELOG.md`에 핵심 변경 사항을 기록합니다.
 - `README.md`는 저장소 소개 문서이므로, 사용자가 명시적으로 요청한 경우에만 함께 갱신합니다.

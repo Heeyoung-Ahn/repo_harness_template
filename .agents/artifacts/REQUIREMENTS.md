@@ -4,26 +4,28 @@
 > 구조, 구현, 테스트, 리뷰, 배포는 모두 이 문서를 기준으로 판단합니다.
 
 ## Quick Read
-- 이번 문서의 핵심 목표: current `v0.3` contract와 preview evidence를 바탕으로 hybrid harness를 rollout-ready 완성본 수준까지 self-hosting 템플릿 안에서 마무리한다.
-- 이번 버전의 꼭 필요한 결과: ① root self-hosting hybrid runtime reference / HUD / runbook 정리 ② `enterprise_governed` activation guide와 governed fixture baseline ③ `Project Monitor Web` hybrid visibility와 rollout readiness summary ④ actual rollout 없는 dry-run/reporting gate ⑤ starter generic / `.omx` optional / truth boundary 유지
-- 이번 버전에서 하지 않을 것: operating-project actual rollout, OMX truth 승격, starter 기본 orchestration 의존, write action monitor, default container/read-only sandbox, public exposure 확대
-- 사용자가 현재 턴에서 확정한 방향: 운영중인 프로젝트 rollout은 완성본 이후로 미루고, 먼저 current version closeout 후 next version planning을 진행한다.
-- 현재 draft 기준선과 변경 요약: `Hybrid Harness Completion v0.1` 초안. `v0.3`에서 고정한 profile/runtime/monitor/pack boundary를 유지하면서 completion gate와 rollout-ready 범위를 추가한다.
-- 현재 남아 있는 큰 질문: 없음. current draft 기본값은 `no rollout before completion`.
-- 다음 역할이 꼭 읽어야 할 포인트: `.agents/*`와 runtime contract가 계속 truth이며, `.omx/*`는 self-hosting optional sidecar일 뿐이고 rollout은 completion gate 뒤로 미룬다.
+- 이번 문서의 핵심 목표: current `v0.3` contract와 preview evidence를 바탕으로 hybrid harness를 `준운영 수준`의 rollout-ready 완성본까지 self-hosting 템플릿 안에서 마무리한다.
+- 이번 버전의 꼭 필요한 결과: ① root self-hosting hybrid runtime reference / HUD / runbook 정리 ② `enterprise_governed` activation guide + governed fixture + validator regression baseline ③ `Project Monitor Web` hybrid visibility와 rollout readiness summary ④ local preview 재검증 + review closure + actual rollout 없는 dry-run/reporting evidence ⑤ starter generic / `.omx` optional / truth boundary 유지 ⑥ mandatory deep-interview requirements discovery + mockup-first PMW intake ⑦ append-only `PROJECT_HISTORY.md` artifact 추가
+- 이번 버전에서 하지 않을 것: operating-project actual rollout, OMX truth 승격, starter 기본 orchestration 의존, write action monitor, default container/read-only sandbox, public exposure 확대, PMW usability delta를 mockup 승인 없이 바로 구현
+- 사용자가 현재 턴에서 확정한 방향: completion 기준은 `local preview 재검증 + review closure + dry-run/reporting evidence`, governed 범위는 `activation guide + fixture + validator regression`, monitor 범위는 현 초안 유지하되 usability 개선은 `feedback -> mockup -> implementation` 순서로 다시 닫고, Planner는 요구사항 작성 전에 internalized deep-interview skill을 반드시 수행한다.
+- 현재 draft 기준선과 변경 요약: `Hybrid Harness Completion v0.1` 초안. `v0.3`에서 고정한 profile/runtime/monitor/pack boundary를 유지하면서 `준운영 수준` completion gate, requirements discovery gate, project-history artifact를 추가한다.
+- 현재 남아 있는 큰 질문: ① current `Project Monitor Web`를 사용자가 직접 테스트한 뒤 어떤 usability delta가 필요한지 ② 그 delta를 반영할 low-fi mockup / wireframe이 어떤 수준이면 충분한지.
+- 다음 역할이 꼭 읽어야 할 포인트: `.agents/*`와 runtime contract가 계속 truth이며, `.omx/*`는 self-hosting optional sidecar일 뿐이다. PMW 개선은 current 화면 테스트 후 feedback을 받고, mockup 승인 뒤에만 implementation scope를 닫는다.
 
 ## Status
-- Document Status: Draft
+- Document Status: Needs User Answers
 - Owner: Planner
 - Current Requirement Baseline: Hybrid Harness Completion v0.1
-- Requirements Sync Status: Needs Re-Approval
-- Last Requirement Change At: 2026-04-07 14:53
-- Last Updated At: 2026-04-07 14:53
+- Requirements Sync Status: Needs User Answers
+- Last Requirement Change At: 2026-04-07 21:54
+- Last Updated At: 2026-04-07 21:54
 - Last Approved By: User (`v0.3` baseline)
 - Last Approved At: 2026-04-07 10:33
 
 ## Open Questions
-- 없음
+- `Project Monitor Web` current 화면을 직접 써봤을 때 가장 불편한 점, 꼭 보여야 할 정보, 반드시 바뀌어야 할 흐름은 무엇인가.
+- PMW usability delta를 닫기 위한 첫 mockup / wireframe은 어떤 수준의 fidelity면 충분한가.
+- PMW usability feedback을 반영한 revised `CR-03` draft를 어떤 기준으로 승인할 것인가.
 
 ## Change Control Rules
 - 승인 후에도 범위, 완료 기준, acceptance criteria, out-of-scope 정의가 바뀔 수 있으며, 이 경우 Planner가 먼저 이 문서를 갱신합니다.
@@ -38,6 +40,8 @@
 - [2026-04-06] Planner: 사용자 승인에 따라 `v0.2`에서 `Project Monitor Web`, `team.json`, parser contract, testable AC를 고정하고 open question을 모두 닫음
 - [2026-04-07] Planner: `CR-02 Enterprise Hybrid Harness` 승인에 따라 `enterprise_governed` pack, `governance_controls.json`, optional `.omx` sidecar compatibility, critical-domain verification gate를 `v0.3` 기준선으로 반영
 - [2026-04-07] Planner: current version closeout 후 `Hybrid Harness Completion v0.1` 초안을 열고 completion gate, governed fixture, monitor visibility, rollout defer policy를 draft 범위에 추가
+- [2026-04-07] Planner: `CR-03` draft를 `준운영 수준` completion 기준으로 강화하고 `preview revalidation + review closure + dry-run/reporting evidence`를 completion evidence로 고정했다.
+- [2026-04-07] Planner: `CR-03` draft를 PMW usability feedback 대기 상태로 다시 열고, mandatory deep-interview / mockup-first gate / `PROJECT_HISTORY.md` artifact를 기준선에 추가했다.
 
 ## Product Goal
 - 이 프로젝트가 해결하려는 문제:
@@ -49,8 +53,9 @@
   1. 하나의 template에서 solo 경량 운영과 team/large 통제 운영을 모두 지원한다.
   2. enterprise 규율이 필요한 프로젝트는 core template를 깨지 않고 `enterprise_governed` pack만 opt-in 한다.
   3. orchestration compatibility를 도입해도 source of truth는 계속 artifact와 runtime contract에 남는다.
-  4. 운영자는 `Project Monitor Web` 한 화면에서 "누가 무엇을 하고 있는지", "무엇이 막혀 있는지", "내가 무엇을 결정해야 하는지"를 30초 안에 파악할 수 있다.
-  5. operating-project rollout 전에 self-hosting repo 안에서 completion evidence와 dry-run/reporting 근거를 재현할 수 있다.
+  4. 운영자는 `Project Monitor Web` 또는 root self-hosting HUD read-only surface에서 "누가 무엇을 하고 있는지", "무엇이 막혀 있는지", "런타임/릴리즈 준비도가 어떤지", "내가 무엇을 결정해야 하는지"를 30초 안에 파악할 수 있다.
+  5. operating-project rollout 전에 self-hosting repo 안에서 local preview 재검증, review closure, dry-run/reporting completion evidence를 재현할 수 있다.
+  6. Planner는 같은 질문 체계를 반복 적용하는 discovery skill을 통해 요구사항 누락과 UI 재작업을 줄일 수 있다.
 
 ## Operational Profiles
 
@@ -100,10 +105,13 @@
 - optional `.omx/*` sidecar compatibility와 workflow mapping 정의
 - generator / reviewer / verifier 분리와 skeptical evaluator gate를 critical domain 계약으로 반영
 - core template와 self-hosting only 웹앱 / optional orchestration sidecar 경계 정의
+- Planner용 mandatory requirements discovery skill과 artifact truth boundary 정의
 - root self-hosting hybrid runtime reference / HUD / runbook 정리
-- `enterprise_governed` activation guide와 governed fixture baseline 정리
+- `enterprise_governed` activation guide와 governed fixture baseline + validator regression 정리
 - `Project Monitor Web` hybrid visibility와 rollout readiness summary 정리
-- operating-project mutation 없는 rollout-ready dry-run/reporting 기준 정의
+- `Project Monitor Web` usability feedback intake와 mockup-first design gate 정리
+- append-only `PROJECT_HISTORY.md` artifact 정의
+- self-hosting preview 재검증, review closure, operating-project mutation 없는 rollout-ready dry-run/reporting completion evidence 기준 정의
 
 ## Out of Scope
 - 실시간 이벤트 스트리밍, WebSocket 기반 live monitor, push 알림
@@ -115,6 +123,7 @@
 - container/read-only filesystem sandbox를 starter 기본값으로 강제 적용
 - approval / budget / audit 도메인 자동 merge를 human gate 없이 허용하는 정책
 - current version 안에서 operating-project actual rollout 실행
+- PMW usability feedback을 intake 없이 추측으로 구현하거나 mockup 승인 없이 바로 code path를 여는 것
 
 ## Functional Requirements
 
@@ -133,10 +142,13 @@
 | FR-11 | 고위험 도메인은 `.agents/runtime/governance_controls.json`으로 protected path와 human gate를 선언해야 한다. | High | ① 파일 경로가 `.agents/runtime/governance_controls.json`으로 고정된다. ② `protected_paths`, `human_review_required_scopes`, `validator_profile`, `critical_domains`, `sandbox_policy` 필드가 문서화된다. ③ `team`에서는 optional, `large/governed + enterprise_governed`에서는 required다. |
 | FR-12 | OMX 연동은 workflow compatibility로만 허용되어야 한다. | Medium | ① `Discovery -> $deep-interview`, `Planning -> $ralplan`, `parallel implementation -> $team`, `persistent completion/verification -> $ralph` 매핑이 workflow 문서에 반영된다. ② starter 기본 실행은 OMX가 없어도 동일하게 유지된다. ③ `.omx/*`가 truth로 취급되지 않는다. |
 | FR-13 | critical domain에서는 generator와 reviewer/verifier lane이 분리되어야 한다. | High | ① enterprise pack이 활성화된 승인/예산/감사 도메인에서는 skeptical evaluator lane이 필수다. ② mutation/property/edge-case verification gate가 requirement trace와 연결된다. ③ auto-merge보다 HITL escalation이 기본값이다. |
-| FR-14 | hybrid harness completion 버전은 root self-hosting용 runtime reference / HUD / runbook을 제공해야 한다. | High | ① `.omx/*`, runtime contract, preview/runbook의 역할이 root self-hosting 기준으로 문서화된다. ② optional sidecar visibility는 허용되지만 truth를 대체하지 않는다. ③ starter 기본 동작은 여전히 unchanged다. |
-| FR-15 | `enterprise_governed`는 placeholder-only 상태를 넘어 rollout-ready activation guide와 governed fixture baseline을 가져야 한다. | High | ① pack activation prerequisite와 human gate 기본값이 문서화된다. ② governed fixture가 validator/테스트에서 재현 가능하다. ③ pack 미활성 상태의 core flow는 그대로 유지된다. |
-| FR-16 | `Project Monitor Web`는 hybrid harness completion 판단에 필요한 read-only visibility를 제공해야 한다. | High | ① active pack, governance controls summary, optional runtime/health signal, rollout readiness summary가 read-only로 표시된다. ② 기존 board/blocker/activity/health/team 패널을 유지한다. ③ write action이나 orchestration control은 추가하지 않는다. |
-| FR-17 | operating-project rollout은 completion gate와 dry-run/reporting evidence가 닫히기 전까지 실행되면 안 된다. | High | ① deployment plan에 dry-run/reporting gate가 명시된다. ② current version에서는 downstream mutation 없이 evidence만 남긴다. ③ rollout decision은 completion review와 self-hosting revalidation 뒤에만 열린다. |
+| FR-14 | hybrid harness completion 버전은 root self-hosting용 runtime reference / HUD / runbook을 제공해야 한다. | High | ① `.omx/*`, runtime contract, local preview/runbook, HUD/visibility surface의 역할이 root self-hosting 기준으로 문서화된다. ② 운영자는 read-only operator surface에서 runtime/HUD summary를 바로 보고 completion 판단에 필요한 현재 상태를 확인할 수 있다. ③ optional sidecar visibility는 허용되지만 truth를 대체하지 않는다. ④ starter 기본 동작은 여전히 unchanged다. |
+| FR-15 | `enterprise_governed`는 placeholder-only 상태를 넘어 rollout-ready activation guide와 governed fixture baseline을 가져야 한다. | High | ① pack activation prerequisite, `approval_authority`, `governance_controls.json`, human gate 기본값이 문서화된다. ② governed fixture가 validator/테스트에서 재현 가능하다. ③ governed fixture + validator regression이 requirement trace와 연결된다. ④ pack 미활성 상태의 core flow는 그대로 유지된다. |
+| FR-16 | `Project Monitor Web`는 hybrid harness completion 판단에 필요한 read-only visibility를 제공해야 한다. | High | ① active pack, governance controls summary, optional runtime/health signal, rollout readiness summary가 read-only로 표시된다. ② 기존 board/blocker/activity/health/team 패널을 유지한다. ③ pack/governance/runtime/readiness summary를 local preview에서 읽기 전용으로 확인할 수 있다. ④ write action이나 orchestration control은 추가하지 않는다. |
+| FR-17 | operating-project rollout은 completion gate와 dry-run/reporting evidence가 닫히기 전까지 실행되면 안 된다. | High | ① completion gate는 `local preview 재검증 + review closure + dry-run/reporting evidence`로 정의된다. ② deployment plan에 dry-run/reporting gate와 actual rollout defer 상태가 명시된다. ③ current version에서는 downstream mutation 없이 evidence만 남긴다. ④ rollout decision은 completion gate가 닫힌 뒤 별도 결정으로만 열린다. |
+| FR-18 | user-facing 또는 operator-facing UI 변경은 `requirements intake -> low-fi mockup -> user feedback -> implementation freeze` 순서를 따라야 한다. | High | ① PMW usability delta는 먼저 요구사항과 open question으로 기록된다. ② DEV implementation scope가 열리기 전에 mockup 또는 wireframe이 존재한다. ③ user feedback으로 mockup이 닫히거나 수정된다. ④ 승인된 mockup이 implementation 기준이 되며 write/control plane은 계속 out-of-scope다. |
+| FR-19 | Planner는 `REQUIREMENTS.md`를 새로 쓰거나 수정하기 전에 반드시 internalized deep-interview discovery skill을 먼저 수행해야 한다. | High | ① 새 요구사항이나 change request는 goal, actor, in-scope, out-of-scope, workflow, constraint, evidence, acceptance를 다루는 structured interview로 시작한다. ② 이 skill은 OMX deep-interview 아이디어를 내부화한 shared planner skill이며 raw OMX script/runtime 의존이 아니다. ③ interview 결과는 `REQUIREMENTS.md`의 open questions, in scope, FR/NFR, acceptance로 정리되고 raw notes나 `.omx/*`는 truth가 아니다. ④ UI/operator surface가 포함되면 information hierarchy, pain point, test task를 추가로 수집한다. |
+| FR-20 | 템플릿은 project-wide append-only `PROJECT_HISTORY.md` artifact를 제공해야 한다. | Medium | ① live/starter/reset source에 `PROJECT_HISTORY.md`가 존재한다. ② 문서는 현재 상태 truth를 대체하지 않고 major decision / implementation milestone / gate closure만 요약한다. ③ `day_wrap_up`과 `version_closeout`은 이 문서에 append하는 규칙을 가진다. ④ future monitor timeline source로 활용할 수 있지만 Phase 1 parser mandatory source는 아니다. |
 
 ## Non-Functional Requirements
 
@@ -151,8 +163,10 @@
 | NFR-07 | parser는 기존 운영 프로젝트 artifact에서 강건하게 동작해야 한다. | High | ① 현재 active operating projects 3곳의 artifact fixture로 parser regression을 수행한다. ② 예상치 못한 형식을 만나면 전체 중단 대신 경고와 partial parse를 제공한다. |
 | NFR-08 | core template는 generic하게 유지되고 enterprise burden은 opt-in pack으로 격리되어야 한다. | High | ① starter default는 `solo` 기준으로 가볍게 유지된다. ② enterprise 문서는 dormant placeholder로 존재해도 pack이 활성화되기 전까지 필수 workflow를 무겁게 만들지 않는다. |
 | NFR-09 | `.omx/*`는 auxiliary state일 뿐 repo truth를 대체할 수 없어야 한다. | High | ① `.agents/*`와 runtime contract가 계속 truth다. ② `.omx/state`, `.omx/logs`, `.omx/project-memory.json`은 read-only sidecar로만 허용된다. ③ validator/workflow는 `.omx`를 authoritative state로 다루지 않는다. |
-| NFR-10 | completion 버전에서도 starter default는 generic해야 하고 rollout 전까지 operating-project mutation이 없어야 한다. | High | ① starter default는 `solo` 기준으로 유지된다. ② governed fixture와 runtime reference는 root/starter contract를 넘지 않는다. ③ current version release path에는 actual downstream mutation이 없다. |
-| NFR-11 | completion evidence는 local-first로 반복 가능해야 한다. | High | ① validator, local preview, dry-run/reporting 근거를 네트워크 의존 없이 재현할 수 있다. ② self-hosting evidence만으로 rollout decision을 미룰 수 있다. |
+| NFR-10 | completion 버전에서도 starter default는 generic해야 하고 rollout 전까지 operating-project mutation이 없어야 한다. | High | ① starter default는 `solo` 기준으로 유지된다. ② governed fixture와 runtime reference는 root/starter contract를 넘지 않는다. ③ current version release path에는 actual downstream mutation이 없다. ④ completion 기준은 문서-only가 아니라 preview/review/dry-run evidence contract까지 포함한다. |
+| NFR-11 | completion evidence는 local-first로 반복 가능해야 한다. | High | ① validator, local preview 재검증, review closure, dry-run/reporting 근거를 네트워크 의존 없이 재현할 수 있다. ② self-hosting evidence만으로 rollout decision을 미룰 수 있다. ③ 다음 agent가 같은 repo에서 같은 근거를 다시 확인할 수 있다. |
+| NFR-12 | PMW 같은 operator-facing UI 작업은 mockup-first validation으로 재작업 비용을 줄여야 한다. | High | ① usability delta는 구현 전에 mockup 단계에서 먼저 검토한다. ② user feedback이 들어오기 전에는 layout/flow를 완료처럼 고정하지 않는다. ③ mockup 승인 전에는 DEV-03 범위를 최소화한다. |
+| NFR-13 | deep-interview discovery output은 advisory input이며 artifact truth를 대체할 수 없어야 한다. | High | ① discovery notes나 `.omx/*` sidecar는 승인이나 truth artifact로 간주되지 않는다. ② 최종 합의는 항상 `REQUIREMENTS.md`와 downstream synced docs에 남는다. ③ 같은 질문 체계를 반복 적용해도 결과 정리는 artifact schema에 맞춰야 한다. |
 
 ## Constraints
 - 기술 제약: source of truth는 markdown artifact와 runtime contract이며, starter/reset source split과 validator 규칙을 깨지 않아야 한다.
@@ -160,7 +174,8 @@
 - 설계 제약: `Project Monitor Web`은 artifact와 runtime contract에 대해 read-only다. 정보 수정은 항상 기존 artifact 편집 경로에서 수행한다.
 - 설계 원칙: 단기 편의보다 장기 운영 비용 절감을 우선하며, 나중에 바꾸기 비싼 계약은 지금 더 명시적으로 고정한다.
 - 일정 제약: Phase 1은 정적 모니터 MVP와 pack/runtime contract까지이며, container/read-only sandbox 실험과 이벤트 기반 확장은 Phase 2 이후로 미룬다.
-- 릴리즈 제약: actual operating-project rollout은 completion review, self-hosting revalidation, dry-run/reporting gate가 모두 닫힐 때까지 미룬다.
+- 릴리즈 제약: actual operating-project rollout은 local preview 재검증, review closure, self-hosting revalidation, dry-run/reporting gate가 모두 닫힐 때까지 미룬다.
+- 프로세스 제약: PMW 같은 UI delta는 mockup 승인 전에 DEV implementation으로 직행하지 않는다.
 - 법무/보안/플랫폼 제약: 전자결재/회계/예산관리 같은 도메인으로 확장하더라도 audit trail, human approval trace, requirement trace를 손상시키면 안 된다.
 
 ## Dependencies
@@ -178,6 +193,9 @@
 - AI 에이전트 협업은 주로 비동기 턴제로 동작하며, Phase 1은 이 패턴을 기준으로 설계한다.
 - 이벤트 기반 확장은 기존 정적 모니터를 대체하지 않고 위에 덧붙이는 방식으로 진화한다.
 - rollout 전 완성본 기준을 self-hosting repo 안에서 먼저 닫고, operating-project rollout은 그 다음 단계로 연다.
+- HUD는 별도 control plane이 아니라 operator visibility surface를 뜻한다.
+- critical-domain urgency 표현은 requirement에서 과도하게 세분화하지 않고 review/test/deploy gate에서 구체화한다.
+- mandatory deep-interview skill은 shared planner process로 쓰되, 결과 자체는 artifact sync 전까지 초안 입력일 뿐이다.
 
 ## Approved Change Log
 
@@ -190,9 +208,10 @@
 
 | Change ID | Status | Requested By | Summary | Affected Areas | Next Action |
 |---|---|---|---|---|---|
-| CR-03 | Draft / Needs Approval | User direction after `v0.3` closeout | hybrid harness completion scope를 rollout-ready 수준까지 정리하되 operating-project rollout은 defer | Requirements / Architecture / Plan / Task / Review / Deploy | approval-ready draft 정리 후 사용자 승인 요청 |
+| CR-03 | Draft / Needs User Answers | User direction after `v0.3` closeout + PMW usability reopen | hybrid harness completion scope에 mandatory deep-interview, PMW feedback intake, mockup-first gate, `PROJECT_HISTORY.md` artifact를 반영하고 operating-project rollout은 defer | Requirements / Architecture / Plan / Task / Workflow / UI Design / Shared Skill / Artifact | user가 current PMW를 테스트하고 usability feedback을 준 뒤 revised draft를 재승인 |
 
 ## Approval History
 - 2026-04-06 16:39 User: `one core, multiple profiles` 방향의 구현 로드맵 초안 작성을 요청
 - 2026-04-06 18:06 User: product boundary, `Project Monitor Web`, `.agents/runtime/team.json`, parser 범위, profile required field를 승인
 - 2026-04-07 10:33 User: `Enterprise Hybrid Harness Baseline` 계획을 승인하고 실제 템플릿 반영을 지시
+- 2026-04-07 21:54 User: Planner requirements 작성 전에 internalized deep-interview를 mandatory로 두고, PMW usability 개선은 current 화면 테스트 후 `feedback -> mockup -> implementation` 순서로 닫으며 `PROJECT_HISTORY.md`를 표준 artifact로 추가하기로 했다

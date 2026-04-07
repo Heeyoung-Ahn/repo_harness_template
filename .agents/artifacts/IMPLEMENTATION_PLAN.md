@@ -4,20 +4,20 @@
 > Developer, Tester, DevOps는 이 문서를 기준으로 현재 단계와 검증 기준을 확인합니다.
 
 ## Quick Read
-- 이번 버전의 목표: current `v0.3` contract와 preview evidence를 기반으로 hybrid harness를 rollout-ready 완성본 수준까지 self-hosting 템플릿 안에서 마무리한다
+- 이번 버전의 목표: current `v0.3` contract와 preview evidence를 기반으로 hybrid harness를 `준운영 수준`의 rollout-ready 완성본까지 self-hosting 템플릿 안에서 마무리한다
 - 현재 stage: Planning and Architecture
 - 현재 iteration: Planning Kickoff - `CR-03 Hybrid Harness Completion`
-- 이번 iteration의 주요 Task ID: `PLN-01`, `PLN-02`, `PLN-03`, `PLN-04`
-- 이번 iteration의 Requirement IDs: `FR-14`, `FR-15`, `FR-16`, `FR-17`, `NFR-10`, `NFR-11`
+- 이번 iteration의 주요 Task ID: `PLN-01`, `PLN-02`, `PLN-03`, `PLN-04`, `PLN-05`, `PLN-06`, `DSG-01`, `DSG-02`, `DSG-03`
+- 이번 iteration의 Requirement IDs: `FR-14`, `FR-15`, `FR-16`, `FR-17`, `FR-18`, `FR-19`, `FR-20`, `NFR-10`, `NFR-11`, `NFR-12`, `NFR-13`
 - 현재 구현 기준 Requirement Baseline: Hybrid Harness Completion v0.1
-- 지금 바로 필요한 검증: requirements / architecture / plan / task sync, archive/reset 정상 완료, rollout defer policy 명시
+- 지금 바로 필요한 검증: requirements / architecture / plan / task sync, archive/reset 정상 완료, visibility-first HUD contract, `preview revalidation + review closure + dry-run/reporting` completion evidence 명시, mandatory deep-interview / mockup-first gate / project-history artifact 반영
 - 남아 있는 release gate (manual / dependency / compliance): current iteration은 planning only이므로 none
 - optional self-hosting tool boundary check: `.omx/*`와 monitor delta는 root self-hosting only로 유지한다
 - enterprise-governed pack / governance control check: pack은 optional overlay를 유지하되 governed fixture와 activation guide는 rollout-ready 수준으로 끌어올린다
 - 현재 green level target: `Targeted`
 - branch freshness precheck: 새 버전 draft는 `v0.3` archive 이후 clean baseline에서 시작한다
 - user-captured manual test expected: none in planning iteration
-- 다음 역할이 꼭 알아야 할 위험: operating-project rollout은 current version 범위 밖이며 completion gate 전에는 열지 않는다
+- 다음 역할이 꼭 알아야 할 위험: operating-project rollout은 current version 범위 밖이며 `preview revalidation + review closure + dry-run/reporting` completion gate 전에는 열지 않는다. PMW delta는 current 화면 feedback과 mockup 승인 없이 구현으로 넘어가면 안 된다.
 
 ## Status
 - Document Status: Draft
@@ -25,14 +25,14 @@
 - Based On: `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`
 - Requirement Baseline: Hybrid Harness Completion v0.1
 - Change Sync Check: Synced
-- Last Updated At: 2026-04-07 14:53
+- Last Updated At: 2026-04-07 21:54
 
 ## Current Iteration
 - Iteration name: Planning Kickoff - `CR-03 Hybrid Harness Completion`
-- Scope: `v0.3` closeout 이후 새 버전 draft를 열고, hybrid harness completion을 rollout-ready 범위로 정의한다. current iteration에서는 operating-project rollout을 실행하지 않는다
-- Main Task IDs: `PLN-01`, `PLN-02`, `PLN-03`, `PLN-04`
+- Scope: `v0.3` closeout 이후 새 버전 draft를 열고, hybrid harness completion을 `준운영 수준`의 rollout-ready 범위로 정의한다. current iteration에서는 operating-project rollout을 실행하지 않고, current PMW feedback intake와 mockup-first gate를 먼저 닫는다
+- Main Task IDs: `PLN-01`, `PLN-02`, `PLN-03`, `PLN-04`, `PLN-05`, `PLN-06`, `DSG-01`, `DSG-02`, `DSG-03`
 - Change requests in scope: `CR-03`
-- Exit criteria: requirement / architecture / implementation / task baseline이 같은 draft contract를 가리키고, user approval을 요청할 수 있는 수준까지 정리된다
+- Exit criteria: requirement / architecture / implementation / task baseline이 같은 draft contract를 가리키고, `preview revalidation + review closure + dry-run/reporting` completion bar, mandatory deep-interview, PMW feedback intake, mockup-first gate까지 user가 검토할 수 있는 수준으로 정리된다
 - Green level target: `Targeted`
 - Branch freshness precheck: archive path `.agents/artifacts/archive/releases/v0.3/`가 존재하고 version reset이 완료된 상태를 확인한다
 - User-captured manual test expected: none
@@ -47,15 +47,17 @@ powershell -ExecutionPolicy Bypass -File "templates_starter/.agents/scripts/chec
 
 ## Changelog
 - [2026-04-07] Planner: `Scalable Governance Profiles v0.3` closeout 이후 `Hybrid Harness Completion v0.1` draft를 열고 planning baseline을 초기화했다.
+- [2026-04-07] Planner: `CR-03` requirement revision에 맞춰 `준운영 수준` completion bar와 visibility-first HUD 기준을 implementation plan에 동기화했다.
+- [2026-04-07] Planner: PMW usability delta를 feedback-first / mockup-first로 다시 열고 mandatory deep-interview planner skill, `PROJECT_HISTORY.md` artifact를 execution planning에 반영했다.
 
 ## Objective
 - 이번 버전의 목표: hybrid harness를 운영 프로젝트에 rollout 가능한 완성본 수준까지 self-hosting 템플릿 안에서 마무리한다.
 - 릴리즈 단위: `CR-03 draft -> runtime/governed fixture completion -> monitor hybrid visibility -> rollout-ready dry-run/reporting`
-- 성공 기준: self-hosting hybrid runtime reference, governed fixture baseline, monitor visibility, rollout defer/completion gate가 모두 정리되고 operating-project rollout 전 필요한 evidence가 self-hosting repo 안에서 재현된다.
+- 성공 기준: self-hosting hybrid runtime reference / HUD / runbook, governed fixture + validator baseline, monitor visibility, local preview 재검증, review closure, rollout defer/dry-run evidence contract가 모두 정리되고 operating-project rollout 전 필요한 evidence가 self-hosting repo 안에서 재현된다.
 
 ## Delivery Strategy
 - 구현 전략: current truth plane과 starter generic boundary를 유지한 채 root self-hosting completion부터 닫는다.
-- 단계적 릴리즈 여부: Yes. `planning -> completion implementation -> review -> self-hosting revalidation -> rollout decision`
+- 단계적 릴리즈 여부: Yes. `planning -> completion implementation -> self-hosting preview revalidation -> review closure -> dry-run/reporting -> rollout decision`
 - 리스크가 큰 영역의 선행 검증 필요 여부: Yes. governed fixture, monitor visibility, dry-run/reporting, rollout defer gate를 먼저 고정한다.
 
 ## Requirement Trace
@@ -71,16 +73,21 @@ powershell -ExecutionPolicy Bypass -File "templates_starter/.agents/scripts/chec
 | FR-15 | `PLN-01`, `DEV-02`, `TST-01`, `REV-01` | governed fixture and activation guide |
 | FR-16 | `PLN-02`, `DEV-03`, `TST-02`, `REL-01` | monitor hybrid visibility and readiness summary |
 | FR-17 | `PLN-04`, `DEV-04`, `TST-02`, `REL-02`, `REL-03` | rollout-ready dry-run/reporting and defer gate |
+| FR-18 | `PLN-03`, `DSG-01`, `DSG-02`, `DSG-03`, `DEV-03` | PMW 같은 UI delta는 mockup 승인 뒤 implementation으로 진행 |
+| FR-19 | `PLN-02`, `PLN-05`, `REV-01` | shared deep-interview skill을 requirements capture 선행 절차로 고정 |
+| FR-20 | `PLN-06`, `DOC-01`, `DOC-02` | `PROJECT_HISTORY.md` artifact와 closeout/day-wrap-up integration |
 | NFR-08 | `PLN-01`, `DEV-02`, `REV-01` | core generic / pack opt-in 유지 |
 | NFR-09 | `PLN-02`, `DEV-01`, `REV-01` | `.omx/*` never becomes truth |
 | NFR-10 | `PLN-01`, `DEV-01`, `DEV-02`, `TST-01` | starter generic / no rollout before completion |
 | NFR-11 | `PLN-04`, `DEV-03`, `DEV-04`, `TST-02`, `REL-02` | local reproducibility and dry-run evidence |
+| NFR-12 | `DSG-01`, `DSG-02`, `DSG-03`, `DEV-03`, `REV-01` | mockup-first validation으로 PMW 재작업 비용 축소 |
+| NFR-13 | `PLN-02`, `PLN-05`, `REV-01` | discovery notes are advisory, artifacts remain truth |
 
 ## Requirement Change Impact
 
 | Change ID | Updated Task IDs | Validation Updates | Sync Status | Notes |
 |---|---|---|---|---|
-| CR-03 | `PLN-01`, `PLN-02`, `PLN-03`, `PLN-04` | requirement/architecture/plan/task sync, validator rerun, closeout archive check | Synced | approval pending draft for next version |
+| CR-03 | `PLN-01`, `PLN-02`, `PLN-03`, `PLN-04`, `PLN-05`, `PLN-06`, `DSG-01`, `DSG-02`, `DSG-03` | requirement/architecture/plan/task sync, validator rerun, closeout archive check, workflow/skill/source update | Synced | PMW feedback and revised approval pending for next version |
 
 ## Task Packet Ledger
 
@@ -90,7 +97,7 @@ powershell -ExecutionPolicy Bypass -File "templates_starter/.agents/scripts/chec
 |---|---|---|---|---|---|
 | DEV-01 | root self-hosting hybrid runtime reference / HUD / runbook을 정리한다 | In: `.omx/*`, root docs/runtime visibility, self-hosting boundary. Out: starter default runtime, operating-project rollout | root/starter validator pass, truth boundary 유지, `.omx` not-truth rule 유지 | `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`, root self-hosting docs | starter 기본 동작이 OMX 의존적으로 바뀌면 Planner/User로 올린다 |
 | DEV-02 | `enterprise_governed` activation guide와 governed fixture baseline을 완성한다 | In: starter/reset governed docs, runtime contract examples, validator fixtures. Out: real enterprise domain rollout | governed fixture가 validator에 걸리고 pack 미활성 시 core flow가 그대로 pass | starter/reset source, runtime contracts, validators, `TASK_LIST.md` | pack 미활성 상태까지 fail시키면 Planner/User로 올린다 |
-| DEV-03 | `Project Monitor Web`에 hybrid visibility와 rollout readiness summary를 추가한다 | In: read-only UI, projection, summary cards/panels. Out: write action, live polling, orchestration control plane | local preview smoke pass, root/snapshot/file contract 유지 | monitor source, `IMPLEMENTATION_PLAN.md`, `DEPLOYMENT_PLAN.md` | UI change가 별도 design approval을 요구하면 Planner/Designer로 올린다 |
+| DEV-03 | `Project Monitor Web`에 hybrid visibility와 rollout readiness summary를 추가한다 | In: read-only UI, projection, summary cards/panels, approved mockup 반영. Out: write action, live polling, orchestration control plane | local preview smoke pass, root/snapshot/file contract 유지, `DSG-03` mockup approval 완료 | monitor source, `IMPLEMENTATION_PLAN.md`, `DEPLOYMENT_PLAN.md`, `UI_DESIGN.md` | UI change가 mockup approval 없이 바로 구현으로 넘어가려 하면 Planner/Designer로 올린다 |
 | DEV-04 | operating-project mutation 없는 rollout-ready dry-run/reporting을 만든다 | In: dry-run, reporting, evidence capture. Out: actual downstream mutation | dry-run output이 completion gate 판단 근거가 되고 actual rollout은 수행하지 않는다 | deploy/plan artifacts, sync/reporting paths | 실제 rollout 실행이 필요해지면 User/Planner로 올린다 |
 | TST-01 | governed fixture와 validator regression을 검증한다 | In: root/starter validator, fixture coverage, pack activation rules. Out: operating-project rollout | validator pass, governed fixture required fields/path rules 확인 | validators, `CURRENT_STATE.md`, `TASK_LIST.md` | existing generic starter까지 깨지면 Planner로 올린다 |
 | TST-02 | local preview와 dry-run evidence를 검증한다 | In: preview smoke, monitor regression, dry-run outputs. Out: non-local deployment | preview smoke pass, dry-run evidence captured, no downstream mutation | deploy/review/current-state artifacts | preview가 non-loopback or write path로 바뀌면 DevOps/Reviewer로 올린다 |
@@ -100,7 +107,7 @@ powershell -ExecutionPolicy Bypass -File "templates_starter/.agents/scripts/chec
 | Stage | Goal | Primary Owner | Entry Criteria | Exit Criteria |
 |---|---|---|---|---|
 | Planning and Architecture | `CR-03` draft와 completion gate 확정 | Planner | `v0.3` closeout complete | `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md` draft sync |
-| Design Gate | monitor UI delta 필요 여부 결정 | Designer / Planner | Architecture draft ready | `UI_DESIGN.md` 필요성 판정 |
+| Design Gate | current PMW usability feedback과 mockup-first gate를 확정 | Designer / Planner / User | Architecture draft ready, current PMW test feedback available | `UI_DESIGN.md`와 approved mockup 기준 정리 |
 | Development and Test Loop | completion implementation과 regression | Developer / Tester | Ready for Execution | runtime/governed/monitor/dry-run tasks pass |
 | Review Gate | completion scope 구조 / 보안 / 품질 심사 | Reviewer | release-scope tests passed | `REVIEW_REPORT.md` 승인 |
 | Deployment | self-hosting revalidation과 rollout decision | DevOps | Review approved | `DEPLOYMENT_PLAN.md`에 dry-run/reporting 결과 기록 |
@@ -109,16 +116,16 @@ powershell -ExecutionPolicy Bypass -File "templates_starter/.agents/scripts/chec
 ## Iteration Plan
 
 ### Iteration 1
-- Scope: requirement/architecture freeze와 self-hosting runtime reference + governed fixture baseline을 닫는다.
-- Main Task IDs: `PLN-01`, `PLN-02`, `DEV-01`, `DEV-02`, `TST-01`
-- Requirement IDs: `FR-14`, `FR-15`, `FR-09`, `FR-10`, `FR-11`, `FR-12`, `FR-13`, `NFR-08`, `NFR-09`, `NFR-10`
-- Validation focus: truth boundary, pack activation, governed fixture, validator regression
+- Scope: requirement/architecture freeze와 self-hosting runtime reference + governed fixture baseline, mandatory deep-interview skill, project-history artifact, PMW feedback intake gate를 닫는다.
+- Main Task IDs: `PLN-01`, `PLN-02`, `PLN-05`, `PLN-06`, `DSG-01`, `DEV-01`, `DEV-02`, `TST-01`
+- Requirement IDs: `FR-14`, `FR-15`, `FR-09`, `FR-10`, `FR-11`, `FR-12`, `FR-13`, `FR-19`, `FR-20`, `NFR-08`, `NFR-09`, `NFR-10`, `NFR-13`
+- Validation focus: truth boundary, pack activation, governed fixture, validator regression, discovery skill boundary, history artifact boundary
 
 ### Iteration 2
 - Scope: monitor hybrid visibility와 rollout-ready dry-run/reporting을 정리한다.
-- Main Task IDs: `DEV-03`, `DEV-04`, `TST-02`, `REV-01`, `REV-02`, `REL-01`, `REL-02`, `REL-03`
-- Requirement IDs: `FR-16`, `FR-17`, `NFR-10`, `NFR-11`
-- Validation focus: local preview smoke, read-only monitor regression, dry-run/reporting evidence, rollout defer gate
+- Main Task IDs: `DSG-02`, `DSG-03`, `DEV-03`, `DEV-04`, `TST-02`, `REV-01`, `REV-02`, `REL-01`, `REL-02`, `REL-03`
+- Requirement IDs: `FR-16`, `FR-17`, `FR-18`, `NFR-10`, `NFR-11`, `NFR-12`
+- Validation focus: local preview smoke, read-only monitor regression, approved mockup 반영, dry-run/reporting evidence, rollout defer gate
 
 ## Environment Matrix
 
@@ -137,19 +144,22 @@ powershell -ExecutionPolicy Bypass -File "templates_starter/.agents/scripts/chec
 - enterprise-governed / critical-domain gate: protected path, HITL, critical domain, skeptical evaluator trace 유지
 - branch freshness gate: archive 기준선 이후 draft/implementation only
 - 요구사항 변경 동기화 gate: `CR-03` draft가 requirements/architecture/plan/task에 동기화돼야 한다
-- release-ready 판단 기준: completion implementation pass, review pass, self-hosting revalidation pass, rollout-ready dry-run/report complete
+- release-ready 판단 기준: completion implementation pass, local preview revalidation pass, review closure pass, rollout-ready dry-run/report complete, actual rollout decision documented
 
 ## Risks and Mitigations
 
 | Risk | Impact | Mitigation | Owner |
 |---|---|---|---|
 | completion scope가 다시 문서-only 수준에 머묾 | rollout 기준 불명확 | runtime reference, governed fixture, monitor visibility, dry-run/report를 모두 completion gate에 묶는다 | Planner |
+| PMW usability를 추측으로 구현해 재작업이 커짐 | UI 낭비와 승인 지연 | current 화면 테스트 -> feedback intake -> low-fi mockup -> approval 뒤 구현 순서를 강제한다 | Planner / Designer |
 | starter가 optional runtime 때문에 무거워짐 | generic template 채택 저하 | root self-hosting only와 starter shared source를 계속 분리한다 | Planner / Developer |
 | rollout defer policy가 흐려짐 | 운영 프로젝트 premature mutation | `FR-17`과 `REL-02`에서 dry-run only를 명시하고 actual rollout을 backlog로 분리한다 | Planner / DevOps |
 | monitor 확장 중 read-only 경계가 무너짐 | 보안 / 구조 리스크 | write path 금지, preview smoke, reviewer focus로 차단한다 | Developer / Reviewer |
+| deep-interview가 raw note 축적으로만 남음 | requirements truth 오염 | shared skill은 structure만 제공하고 최종 합의는 artifact에만 남긴다 | Planner |
 
 ## Handoff Notes
 - Designer required: TBD by `DSG-01`
 - Reviewer focus: `.omx` truth boundary, governed fixture correctness, monitor read-only 유지, rollout defer gate
+- Reviewer focus: `.omx` truth boundary, governed fixture correctness, monitor read-only 유지, rollout defer gate, mandatory discovery skill이 raw truth를 만들지 않는지 확인
 - DevOps preflight notes: current version의 preview evidence는 archive에 남겼고, next version에서는 actual rollout이 아니라 self-hosting revalidation + dry-run/reporting까지만 수행한다
 - Build artifact reuse / rebuild note: current monitor는 plain Node server 기반이며 next version에서도 local-first 전제를 유지한다

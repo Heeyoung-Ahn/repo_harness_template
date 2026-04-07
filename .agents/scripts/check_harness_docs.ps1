@@ -220,6 +220,7 @@ $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $pathMap = @{
     LiveAgents         = Join-Path $repoRoot 'AGENTS.md'
     CurrentState       = Join-Path $repoRoot '.agents\artifacts\CURRENT_STATE.md'
+    ProjectHistory     = Join-Path $repoRoot '.agents\artifacts\PROJECT_HISTORY.md'
     HandoffArchive     = Join-Path $repoRoot '.agents\artifacts\HANDOFF_ARCHIVE.md'
     TaskList           = Join-Path $repoRoot '.agents\artifacts\TASK_LIST.md'
     Requirements       = Join-Path $repoRoot '.agents\artifacts\REQUIREMENTS.md'
@@ -266,6 +267,7 @@ $templateRuntimeMap = @{
 
 $templateArtifactMap = @{
     CurrentState       = Join-Path $repoRoot 'templates\version_reset\artifacts\CURRENT_STATE.md'
+    ProjectHistory     = Join-Path $repoRoot 'templates\version_reset\artifacts\PROJECT_HISTORY.md'
     HandOffArchive     = Join-Path $repoRoot 'templates\version_reset\artifacts\HANDOFF_ARCHIVE.md'
     TaskList           = Join-Path $repoRoot 'templates\version_reset\artifacts\TASK_LIST.md'
     ImplementationPlan = Join-Path $repoRoot 'templates\version_reset\artifacts\IMPLEMENTATION_PLAN.md'
@@ -276,6 +278,7 @@ $templateArtifactMap = @{
 
 $starterResetArtifactMap = @{
     CurrentState       = Join-Path $repoRoot 'templates_starter\templates\version_reset\artifacts\CURRENT_STATE.md'
+    ProjectHistory     = Join-Path $repoRoot 'templates_starter\templates\version_reset\artifacts\PROJECT_HISTORY.md'
     HandOffArchive     = Join-Path $repoRoot 'templates_starter\templates\version_reset\artifacts\HANDOFF_ARCHIVE.md'
     TaskList           = Join-Path $repoRoot 'templates_starter\templates\version_reset\artifacts\TASK_LIST.md'
     ImplementationPlan = Join-Path $repoRoot 'templates_starter\templates\version_reset\artifacts\IMPLEMENTATION_PLAN.md'
@@ -344,6 +347,7 @@ $utf8 = [System.Text.Encoding]::UTF8
 $culture = [System.Globalization.CultureInfo]::InvariantCulture
 
 $currentStateText = [System.IO.File]::ReadAllText($pathMap.CurrentState, $utf8)
+$projectHistoryText = [System.IO.File]::ReadAllText($pathMap.ProjectHistory, $utf8)
 $currentStateLines = [System.IO.File]::ReadAllLines($pathMap.CurrentState, $utf8)
 $liveAgentsText = [System.IO.File]::ReadAllText($pathMap.LiveAgents, $utf8)
 $taskListText = [System.IO.File]::ReadAllText($pathMap.TaskList, $utf8)
@@ -363,6 +367,7 @@ $handoffWorkflowText = [System.IO.File]::ReadAllText($pathMap.HandoffWorkflow, $
 $expoDeviceSkillText = [System.IO.File]::ReadAllText($pathMap.ExpoDeviceSkill, $utf8)
 $syncTemplateDocsText = [System.IO.File]::ReadAllText($pathMap.SyncTemplateDocs, $utf8)
 $templateCurrentStateText = [System.IO.File]::ReadAllText($templateArtifactMap.CurrentState, $utf8)
+$templateProjectHistoryText = [System.IO.File]::ReadAllText($templateArtifactMap.ProjectHistory, $utf8)
 $templateHandoffArchiveText = [System.IO.File]::ReadAllText($templateArtifactMap.HandOffArchive, $utf8)
 $templateTaskListText = [System.IO.File]::ReadAllText($templateArtifactMap.TaskList, $utf8)
 $templateImplementationPlanText = [System.IO.File]::ReadAllText($templateArtifactMap.ImplementationPlan, $utf8)
@@ -526,6 +531,12 @@ $resetArtifactSchemas = @{
             }
         )
     }
+    ProjectHistory = [pscustomobject]@{
+        ExpectedTitle    = 'Project History'
+        RequiredSections = @('## Quick Read', '## Usage Rules', '## Timeline')
+        RequiredFields   = @()
+        ForbiddenChecks  = @()
+    }
     HandOffArchive = [pscustomobject]@{
         ExpectedTitle    = 'Handoff Archive'
         RequiredSections = @('## Usage Rules', '## Archived Entries')
@@ -585,6 +596,7 @@ $resetArtifactSchemas = @{
 }
 
 Validate-ArtifactSchema -Text $currentStateText -Path '.agents/artifacts/CURRENT_STATE.md' -Schema $resetArtifactSchemas.CurrentState
+Validate-ArtifactSchema -Text $projectHistoryText -Path '.agents/artifacts/PROJECT_HISTORY.md' -Schema $resetArtifactSchemas.ProjectHistory
 Validate-ArtifactSchema -Text $handoffArchiveText -Path '.agents/artifacts/HANDOFF_ARCHIVE.md' -Schema $resetArtifactSchemas.HandOffArchive
 Validate-ArtifactSchema -Text $taskListText -Path '.agents/artifacts/TASK_LIST.md' -Schema $resetArtifactSchemas.TaskList
 Validate-ArtifactSchema -Text $implementationPlanText -Path '.agents/artifacts/IMPLEMENTATION_PLAN.md' -Schema $resetArtifactSchemas.ImplementationPlan
@@ -592,6 +604,7 @@ Validate-ArtifactSchema -Text $walkthroughText -Path '.agents/artifacts/WALKTHRO
 Validate-ArtifactSchema -Text $reviewReportText -Path '.agents/artifacts/REVIEW_REPORT.md' -Schema $resetArtifactSchemas.ReviewReport
 Validate-ArtifactSchema -Text $deploymentPlanText -Path '.agents/artifacts/DEPLOYMENT_PLAN.md' -Schema $resetArtifactSchemas.DeploymentPlan
 Validate-ArtifactSchema -Text $templateCurrentStateText -Path 'templates/version_reset/artifacts/CURRENT_STATE.md' -Schema $resetArtifactSchemas.CurrentState
+Validate-ArtifactSchema -Text $templateProjectHistoryText -Path 'templates/version_reset/artifacts/PROJECT_HISTORY.md' -Schema $resetArtifactSchemas.ProjectHistory
 Validate-ArtifactSchema -Text $templateHandoffArchiveText -Path 'templates/version_reset/artifacts/HANDOFF_ARCHIVE.md' -Schema $resetArtifactSchemas.HandOffArchive
 Validate-ArtifactSchema -Text $templateTaskListText -Path 'templates/version_reset/artifacts/TASK_LIST.md' -Schema $resetArtifactSchemas.TaskList
 Validate-ArtifactSchema -Text $templateImplementationPlanText -Path 'templates/version_reset/artifacts/IMPLEMENTATION_PLAN.md' -Schema $resetArtifactSchemas.ImplementationPlan
