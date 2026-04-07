@@ -1,6 +1,7 @@
 import {
   collectSectionWarnings,
   extractSection,
+  parseListItems,
   parseBulletEntries,
   parseMarkdownTable
 } from "./markdown-utils.js";
@@ -26,6 +27,14 @@ export function parseRequirements(markdown) {
 
   return {
     status,
+    quickRead: parseBulletEntries(extractSection(markdown, "Quick Read")),
+    openQuestions: parseListItems(extractSection(markdown, "Open Questions")),
+    productGoal: parseListItems(extractSection(markdown, "Product Goal"), {
+      includeNumbered: true
+    }),
+    pendingChangeRequests: parseMarkdownTable(
+      extractSection(markdown, "Pending Change Requests")
+    ),
     operationalProfiles: parseMarkdownTable(
       extractSection(markdown, "Operational Profiles")
     ),

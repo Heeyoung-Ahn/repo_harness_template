@@ -1,0 +1,10 @@
+{
+  "defaultProjectId": "self-hosting-template",
+  "projects": [
+    {
+      "id": "self-hosting-template",
+      "label": "repo_harness_template",
+      "repoRoot": "../.."
+    }
+  ]
+}

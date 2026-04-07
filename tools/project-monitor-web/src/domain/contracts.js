@@ -1,5 +1,8 @@
 export const TEAM_REGISTRY_PATH = ".agents/runtime/team.json";
 export const HEALTH_SNAPSHOT_PATH = ".agents/runtime/health_snapshot.json";
+export const GOVERNANCE_CONTROLS_PATH = ".agents/runtime/governance_controls.json";
+export const PROJECT_HISTORY_PATH = ".agents/artifacts/PROJECT_HISTORY.md";
+export const UI_DESIGN_PATH = ".agents/artifacts/UI_DESIGN.md";
 
 export const MANDATORY_SOURCE_PATHS = [
   ".agents/artifacts/CURRENT_STATE.md",
@@ -11,14 +14,17 @@ export const MANDATORY_SOURCE_PATHS = [
 
 export const OPTIONAL_SOURCE_PATHS = [
   ".agents/artifacts/REVIEW_REPORT.md",
-  ".agents/artifacts/DEPLOYMENT_PLAN.md"
+  ".agents/artifacts/DEPLOYMENT_PLAN.md",
+  PROJECT_HISTORY_PATH,
+  UI_DESIGN_PATH
 ];
 
 export const ALLOWED_SOURCE_PATHS = [
   ...MANDATORY_SOURCE_PATHS,
   ...OPTIONAL_SOURCE_PATHS,
   TEAM_REGISTRY_PATH,
-  HEALTH_SNAPSHOT_PATH
+  HEALTH_SNAPSHOT_PATH,
+  GOVERNANCE_CONTROLS_PATH
 ];
 
 export const TEAM_MEMBER_REQUIRED_FIELDS = [

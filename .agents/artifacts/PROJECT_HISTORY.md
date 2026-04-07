@@ -64,3 +64,35 @@
 - Why: `CURRENT_STATE.md`, `TASK_LIST.md`, `HANDOFF_ARCHIVE.md`만으로는 장기 맥락 복원이 어려웠기 때문이다.
 - Impact: live/starter/reset source와 closeout/day-wrap-up skill에 history maintenance 규칙을 연결한다.
 - Related: `PLN-06`, `DOC-01`, `DOC-02`
+
+### 2026-04-08
+
+#### HIST-20260408-01 Design
+- Summary: user feedback에 따라 `Project Monitor Web`를 밝은 operator workspace로 재정의하고 low-fi wireframe을 작성했다.
+- Why: 기존 dark, long-scroll dashboard는 실제 사용성과 정보 구조 면에서 불편하다는 피드백이 들어왔기 때문이다.
+- Impact: `CR-03` draft에 artifact-aware overview, project selector, `PROJECT_HISTORY.md` view, icon/exit shell affordance, left-nav workspace IA가 추가됐다.
+- Related: `DSG-01`, `DSG-02`, `FR-16`, `FR-21`, `FR-22`, `FR-23`
+
+#### HIST-20260408-02 Approval
+- Summary: user가 revised PMW workspace baseline을 승인했다.
+- Why: `Project History` 전용 조회, project selector, launcher/stop icon, top-bar `Exit`, artifact-aware overview 방향이 구현 시작 기준으로 충분하다고 판단했기 때문이다.
+- Impact: `DSG-03`가 닫혔고, 다음 단계는 `DEV-03`과 `PLN-04`다. 별도 follow-up 후보로 `Approval Queue -> 상세 결정 패킷` 뷰가 backlog에 남았다.
+- Related: `CR-03`, `DSG-03`, `DEV-03`, `BACKLOG-06`
+
+#### HIST-20260408-03 Planning
+- Summary: user 지시에 따라 `CR-04`로 `Approval Queue -> 상세 결정 패킷` view를 먼저 열었다.
+- Why: Codex 대화창의 짧은 승인 질문만으로는 의사결정에 필요한 맥락이 부족하고, 사용자가 여러 문서를 직접 찾아다니는 비용이 크기 때문이다.
+- Impact: PMW는 단순 approval queue가 아니라 recommendation, impact, source link, recent context를 압축한 decision packet을 보여주는 방향으로 확장 검토에 들어갔다.
+- Related: `CR-04`, `PLN-07`, `DSG-05`, `FR-24`, `NFR-15`
+
+#### HIST-20260408-04 Implementation
+- Summary: approved `CR-04` baseline에 따라 PMW workspace, decision packet, project selector, history view, launcher/stop assets를 실제 구현했다.
+- Why: design gate를 닫은 뒤 실제 operator workspace와 read-only decision context가 code path에서도 동작해야 했기 때문이다.
+- Impact: `DEV-03`이 완료됐고, PMW는 `/api/projects`, project-aware `/api/snapshot` / `/api/file`, artifact-aware overview, history timeline, decision packet content pane을 제공한다.
+- Related: `CR-04`, `DSG-06`, `DEV-03`, `TST-02`
+
+#### HIST-20260408-05 Planning
+- Summary: `PLN-04`를 마감하며 completion gate와 post-completion rollout entry criteria를 release-stage 문서까지 고정했다.
+- Why: 승인된 `FR-17` 기준이 deployment 문서에는 placeholder로 남아 있어 actual rollout defer 조건이 충분히 명시되지 않았기 때문이다.
+- Impact: `DEPLOYMENT_PLAN.md`가 live completion gate 문서가 됐고, `BLK-02`가 제거됐다. 다음 작업은 `TST-02`, `REV-01` / `REV-02`, `REL-01` / `REL-02` evidence capture다.
+- Related: `PLN-04`, `FR-17`, `TST-02`, `REL-01`, `REL-02`, `REL-03`

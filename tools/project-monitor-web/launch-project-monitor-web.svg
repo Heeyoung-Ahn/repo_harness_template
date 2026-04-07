@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Launch Project Monitor Web">
+  <defs>
+    <linearGradient id="launch-bg" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#e8f2fb" />
+      <stop offset="100%" stop-color="#fff7ee" />
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="52" fill="url(#launch-bg)" />
+  <rect x="42" y="46" width="172" height="132" rx="24" fill="#ffffff" stroke="#1a5e9f" stroke-width="10" />
+  <path d="M62 90h132" stroke="#1a5e9f" stroke-linecap="round" stroke-width="10" />
+  <path d="M62 118h94" stroke="#6d8798" stroke-linecap="round" stroke-width="10" />
+  <path d="M62 146h74" stroke="#6d8798" stroke-linecap="round" stroke-width="10" />
+  <circle cx="190" cy="188" r="34" fill="#1a5e9f" />
+  <path d="M179 172l22 16-22 16z" fill="#ffffff" />
+</svg>

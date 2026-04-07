@@ -5,13 +5,18 @@ import { URL } from "node:url";
 
 import { ALLOWED_SOURCE_PATHS } from "../domain/contracts.js";
 import { buildDashboardSnapshot } from "../application/build-dashboard-snapshot.js";
+import {
+  loadProjectRegistry,
+  resolveProjectContext
+} from "../application/load-project-registry.js";
 
 const MIME_TYPES = {
   ".css": "text/css; charset=utf-8",
   ".html": "text/html; charset=utf-8",
   ".js": "application/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
-  ".md": "text/plain; charset=utf-8"
+  ".md": "text/plain; charset=utf-8",
+  ".svg": "image/svg+xml; charset=utf-8"
 };
 
 async function serveStaticFile(response, filePath) {
@@ -35,10 +40,7 @@ function resolveStaticPath(presentationRoot, pathname) {
   const absolutePath = path.normalize(path.join(presentationRoot, relativePath));
   const relativeToRoot = path.relative(presentationRoot, absolutePath);
 
-  if (
-    relativeToRoot.startsWith("..") ||
-    path.isAbsolute(relativeToRoot)
-  ) {
+  if (relativeToRoot.startsWith("..") || path.isAbsolute(relativeToRoot)) {
     return null;
   }
 
@@ -57,9 +59,27 @@ export function createProjectMonitorServer({ repoRoot }) {
   return http.createServer(async (request, response) => {
     try {
       const requestUrl = new URL(request.url, "http://localhost");
+      const requestedProjectId = requestUrl.searchParams.get("project") || "";
+
+      if (requestUrl.pathname === "/api/projects") {
+        const registry = await loadProjectRegistry(repoRoot);
+        sendJson(response, 200, {
+          generatedAt: new Date().toISOString(),
+          registryPath: registry.path,
+          defaultProjectId: registry.defaultProjectId,
+          projects: registry.projects.map((project) => ({
+            id: project.id,
+            label: project.label
+          })),
+          warnings: registry.warnings
+        });
+        return;
+      }
 
       if (requestUrl.pathname === "/api/snapshot") {
-        const snapshot = await buildDashboardSnapshot(repoRoot);
+        const snapshot = await buildDashboardSnapshot(repoRoot, {
+          projectId: requestedProjectId
+        });
         sendJson(response, 200, snapshot);
         return;
       }
@@ -71,10 +91,13 @@ export function createProjectMonitorServer({ repoRoot }) {
           return;
         }
 
-        const absolutePath = path.join(repoRoot, relativePath);
+        const registry = await loadProjectRegistry(repoRoot);
+        const projectContext = resolveProjectContext(registry, requestedProjectId);
+        const absolutePath = path.join(projectContext.repoRoot, relativePath);
         const contents = await fs.readFile(absolutePath, "utf8");
         response.writeHead(200, {
-          "Content-Type": MIME_TYPES[path.extname(relativePath)] || "text/plain; charset=utf-8"
+          "Content-Type":
+            MIME_TYPES[path.extname(relativePath)] || "text/plain; charset=utf-8"
         });
         response.end(contents);
         return;

@@ -32,6 +32,7 @@ export async function loadTeamRegistry(repoRoot) {
     return {
       path: TEAM_REGISTRY_PATH,
       activeProfile: parsed.active_profile || "solo",
+      activePacks: Array.isArray(parsed.active_packs) ? parsed.active_packs : [],
       schemaVersion: parsed.schema_version || "1.0",
       members,
       warnings
@@ -41,6 +42,7 @@ export async function loadTeamRegistry(repoRoot) {
     return {
       path: TEAM_REGISTRY_PATH,
       activeProfile: "solo",
+      activePacks: [],
       schemaVersion: "1.0",
       members: [],
       warnings

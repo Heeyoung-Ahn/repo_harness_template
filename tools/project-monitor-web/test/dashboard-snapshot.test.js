@@ -18,6 +18,11 @@ test("dashboard snapshot exposes the approved Phase 1 panels", async () => {
   const snapshot = await buildDashboardSnapshot(repoRoot);
 
   assert.equal(snapshot.activeProfile, "solo");
+  assert.ok(Array.isArray(snapshot.projects));
+  assert.ok(snapshot.projectContext.id);
+  assert.ok(snapshot.overview.goalSummary);
+  assert.ok(Array.isArray(snapshot.history));
+  assert.ok(Array.isArray(snapshot.decisionPackets));
   assert.ok(Array.isArray(snapshot.boardTasks));
   assert.ok(Array.isArray(snapshot.blockers));
   assert.ok(Array.isArray(snapshot.recentActivity));
@@ -68,9 +73,13 @@ test("http server is read-only and blocks arbitrary file traversal", async (cont
   const address = server.address();
   const baseUrl = `http://127.0.0.1:${address.port}`;
 
+  const projectsResponse = await fetch(`${baseUrl}/api/projects`);
   const snapshotResponse = await fetch(`${baseUrl}/api/snapshot`);
+  const projectAwareSnapshotResponse = await fetch(
+    `${baseUrl}/api/snapshot?project=${encodeURIComponent("self-hosting-template")}`
+  );
   const teamFileResponse = await fetch(
-    `${baseUrl}/api/file?path=${encodeURIComponent(".agents/runtime/team.json")}`
+    `${baseUrl}/api/file?project=${encodeURIComponent("self-hosting-template")}&path=${encodeURIComponent(".agents/runtime/team.json")}`
   );
   const healthSnapshotResponse = await fetch(
     `${baseUrl}/api/file?path=${encodeURIComponent(".agents/runtime/health_snapshot.json")}`
@@ -80,11 +89,26 @@ test("http server is read-only and blocks arbitrary file traversal", async (cont
   );
   const traversalResponse = await fetch(`${baseUrl}/../../package.json`);
 
+  assert.equal(projectsResponse.status, 200);
   assert.equal(snapshotResponse.status, 200);
+  assert.equal(projectAwareSnapshotResponse.status, 200);
   assert.equal(teamFileResponse.status, 200);
   assert.equal(healthSnapshotResponse.status, 200);
   assert.equal(blockedFileResponse.status, 400);
   assert.equal(traversalResponse.status, 404);
+});
+
+test("snapshot exposes decision packet and multi-project metadata", async () => {
+  const snapshot = await buildDashboardSnapshot(repoRoot, {
+    projectId: "self-hosting-template"
+  });
+
+  assert.equal(snapshot.projectContext.id, "self-hosting-template");
+  assert.ok(snapshot.projects.some((project) => project.isCurrent));
+  assert.ok(snapshot.header.currentAgent);
+  assert.ok(Array.isArray(snapshot.overview.productGoal));
+  assert.ok(Array.isArray(snapshot.documentHealth.optionalSources));
+  assert.ok(Array.isArray(snapshot.governance.protectedPaths));
 });
 
 test("future hook and promotion boundary contracts are exposed in the snapshot", async () => {

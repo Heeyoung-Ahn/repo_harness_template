@@ -1,7 +1,8 @@
 import {
   collectSectionWarnings,
   extractSection,
-  parseBulletEntries
+  parseBulletEntries,
+  parseMarkdownTable
 } from "./markdown-utils.js";
 
 export function parseImplementationPlan(markdown) {
@@ -38,7 +39,10 @@ export function parseImplementationPlan(markdown) {
 
   return {
     status,
+    quickRead: parseBulletEntries(extractSection(markdown, "Quick Read")),
     currentIteration,
+    requirementTrace: parseMarkdownTable(extractSection(markdown, "Requirement Trace")),
+    taskPacketLedger: parseMarkdownTable(extractSection(markdown, "Task Packet Ledger")),
     validationGates,
     warnings
   };

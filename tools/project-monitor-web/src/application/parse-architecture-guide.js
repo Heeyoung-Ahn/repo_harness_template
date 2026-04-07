@@ -29,6 +29,10 @@ export function parseArchitectureGuide(markdown) {
 
   return {
     status,
+    quickRead: parseBulletEntries(extractSection(markdown, "Quick Read")),
+    architectureSummary: parseBulletEntries(
+      extractSection(markdown, "Architecture Summary")
+    ),
     parserContract: parseMarkdownTable(
       extractSection(markdown, "Artifact Parser Contract")
     ),

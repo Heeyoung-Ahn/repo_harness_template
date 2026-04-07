@@ -4,61 +4,35 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Project Monitor Web</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <div class="grain"></div>
+    <div class="ambient-grid" aria-hidden="true"></div>
+    <div class="ambient-orb ambient-orb-left" aria-hidden="true"></div>
+    <div class="ambient-orb ambient-orb-right" aria-hidden="true"></div>
+
     <main class="shell">
-      <section class="hero" id="hero"></section>
-      <section class="filters card" id="filters"></section>
+      <header class="app-header card" id="app-header"></header>
       <section class="warning-stack" id="warnings"></section>
-      <section class="grid">
-        <article class="card board-panel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Primary View</p>
-              <h2>Project Board</h2>
+
+      <section class="workspace">
+        <aside class="workspace-sidebar" id="navigation"></aside>
+
+        <section class="workspace-main">
+          <section class="dashboard-grid" id="dashboard"></section>
+
+          <section class="content-shell card">
+            <div class="content-head">
+              <div>
+                <p class="eyebrow">Content Area</p>
+                <h2 id="content-heading">Project Overview</h2>
+              </div>
+              <p class="content-meta" id="content-meta"></p>
             </div>
-            <p class="panel-note">작업 상태와 책임 구조를 한 번에 본다.</p>
-          </div>
-          <div id="board"></div>
-        </article>
-        <article class="card blocker-panel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Immediate Attention</p>
-              <h2>Blocker / Approval Queue</h2>
-            </div>
-          </div>
-          <div id="blockers"></div>
-        </article>
-        <article class="card activity-panel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Latest Delta</p>
-              <h2>Recent Activity</h2>
-            </div>
-          </div>
-          <div id="activity"></div>
-        </article>
-        <article class="card health-panel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Integrity</p>
-              <h2>Document Health</h2>
-            </div>
-          </div>
-          <div id="health"></div>
-        </article>
-        <article class="card team-panel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Directory</p>
-              <h2>Team Registry</h2>
-            </div>
-          </div>
-          <div id="team"></div>
-        </article>
+            <div class="content-scroll" id="content"></div>
+          </section>
+        </section>
       </section>
     </main>
 
@@ -68,7 +42,7 @@
         <button class="drawer-close" type="button" data-close-drawer="true">
           Close
         </button>
-        <p class="eyebrow drawer-eyebrow">Detail</p>
+        <p class="eyebrow drawer-eyebrow">Detail Drawer</p>
         <h2 class="drawer-title" id="drawer-title">Detail</h2>
         <div id="drawer-content"></div>
       </div>

@@ -61,6 +61,26 @@ export function parseBulletEntries(sectionText) {
     });
 }
 
+export function parseListItems(sectionText, options = {}) {
+  if (!sectionText) {
+    return [];
+  }
+
+  const includeNumbered = options.includeNumbered ?? false;
+
+  return sectionText
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("- ") || (includeNumbered && /^\d+\.\s+/.test(line)))
+    .map((line) => {
+      const content = line.replace(/^- /, "").replace(/^\d+\.\s+/, "").trim();
+      return {
+        raw: line,
+        value: content
+      };
+    });
+}
+
 export function parseMarkdownTable(sectionText) {
   if (!sectionText) {
     return [];

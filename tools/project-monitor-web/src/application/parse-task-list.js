@@ -47,15 +47,18 @@ export function parseTaskList(markdown) {
     .map(parseBracketedLogLine)
     .filter(Boolean);
 
-  const blockers = (extractSection(markdown, "Blockers") || "")
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line.startsWith("- ") && line.toLowerCase() !== "- none")
-    .map((line, index) => ({
-      id: `task-list-blocker-${index + 1}`,
-      category: "general",
-      label: "Task List Blocker",
-      value: line.slice(2).trim(),
+  const blockerRows = parseMarkdownTable(extractSection(markdown, "Blockers"));
+  const blockers = blockerRows
+    .filter((row) => row.id)
+    .map((row) => ({
+      id: row.id,
+      category: row.category || "general",
+      impact: row.impact || "",
+      observedSymptom: row.observed_symptom || "",
+      attemptedRecovery: row.attempted_recovery || "",
+      nextEscalation: row.next_escalation || "",
+      label: row.id,
+      value: row.observed_symptom || row.next_escalation || row.category || "",
       sourcePath: ".agents/artifacts/TASK_LIST.md"
     }));
 

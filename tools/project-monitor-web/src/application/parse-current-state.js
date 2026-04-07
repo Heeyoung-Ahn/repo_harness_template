@@ -26,7 +26,8 @@ export function parseCurrentState(markdown) {
     [
       ["Snapshot", "Snapshot"],
       ["Open Decisions / Blockers", "Open Decisions / Blockers"],
-      ["Latest Handoff Summary", "Latest Handoff Summary"]
+      ["Latest Handoff Summary", "Latest Handoff Summary"],
+      ["Next Recommended Agent", "Next Recommended Agent"]
     ],
     "CURRENT_STATE.md",
     markdown
@@ -56,9 +57,17 @@ export function parseCurrentState(markdown) {
     extractSection(markdown, "Latest Handoff Summary")
   );
 
+  const nextRecommendedAgent = parseBulletEntries(
+    extractSection(markdown, "Next Recommended Agent")
+  ).reduce((accumulator, entry) => {
+    accumulator[entry.keyNormalized] = entry.value;
+    return accumulator;
+  }, {});
+
   return {
     snapshot,
     blockers,
+    nextRecommendedAgent,
     latestHandoffSummary: handoffEntries,
     warnings
   };
