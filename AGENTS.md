@@ -11,6 +11,8 @@
 - root의 `AGENTS.md`, `.agents/rules/*.md`, `.agents/workflows/*.md`, `.agents/scripts/*.ps1`, `.agents/artifacts/*.md`는 이 저장소 자체를 운영하는 live 문서입니다.
 - downstream 프로젝트용 assembled starter source는 `templates_starter`에 따로 있습니다.
 - downstream repo의 version closeout reset source는 root `templates/version_reset/artifacts`에 canonical하게 관리합니다.
+- optional `enterprise_governed` pack source는 starter/reset tree의 `enterprise_governed/*` placeholder 문서와 `.agents/runtime/governance_controls.json` 계약으로 관리합니다.
+- self-hosting repo에 optional `.omx/*` sidecar가 있을 수 있지만, 이는 보조 상태일 뿐이며 truth는 계속 `.agents/*`와 runtime contract에 남습니다.
 - downstream 기본 동작을 바꾸는 작업이면 [`.agents/rules/template_repo.md`](.agents/rules/template_repo.md)를 추가로 읽고, 같은 턴에 대응하는 `templates_starter/*`와 필요 시 `templates/version_reset/artifacts/*`를 함께 갱신합니다.
 - self-hosting 표준 템플릿 운영의 기본 입력 문서는 `AGENTS.md`, `.agents/rules/workspace.md`, `.agents/rules/template_repo.md`, `.agents/artifacts/CURRENT_STATE.md`, `.agents/artifacts/TASK_LIST.md`입니다.
 - `.agents/workflows/*.md`는 선택 참고 자료이며, self-hosting 표준 템플릿 운영의 필수 입력 문서는 아닙니다. workflow 문서와 rules / artifacts가 충돌하면 rules / artifacts가 우선합니다.

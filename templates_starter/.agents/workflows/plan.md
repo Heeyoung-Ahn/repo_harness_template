@@ -15,6 +15,11 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 - 실행 중 목표, 범위, 대상 파일/환경, 실행 종류, 명령 세트가 달라져야 하면 멈추고 이유와 대안을 설명한 뒤 사용자 확정 전까지 진행하지 않습니다.
 - 사용자가 명령어, 설명, 초안만 요청했다면 실제 실행, 백그라운드 실행, 추가 작업을 하지 않습니다.
 
+## Optional OMX / Enterprise Pack Notes
+- workflow compatibility만 허용합니다. `Discovery -> $deep-interview`, `Planning -> $ralplan`
+- OMX 결과나 `.omx/*` sidecar는 보조 입력일 뿐이며, Planner는 항상 `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`에 정본을 동기화해야 합니다.
+- `team.json > active_packs`에 `enterprise_governed`가 있으면 `governance_controls.json`과 `enterprise_governed/*` 문서를 같은 턴에 함께 닫습니다.
+
 ## 수행 절차
 
 ### Step 1: 작은 요약층부터 맥락 파악

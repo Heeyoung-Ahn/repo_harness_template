@@ -24,9 +24,11 @@ trigger: always_on
 - 운영 규칙의 최상위 정본은 이 `workspace.md`입니다.
 - 이 템플릿은 repo 안의 요구사항, 구조, 계획, 상태, review/deploy gate를 문서와 validator로 관리하는 `repo-level governance harness`입니다.
 - 실제 프로젝트 상태의 단일 진실 공급원은 `.agents/artifacts/` 아래 문서입니다.
+- `.agents/runtime/*`는 parser-friendly machine-readable contract이며 optional `.omx/*` sidecar보다 항상 우선하는 truth layer입니다.
 - `CURRENT_STATE.md`는 day-start용 resume router, `TASK_LIST.md`는 task / lock truth, `TASK_LIST.md > ## Handoff Log`는 최신 delta, `HANDOFF_ARCHIVE.md`는 오래된 원문 보관입니다.
 - 역할 문서는 기본적으로 `Quick Read`, `Current Iteration`, `Latest Result`, `Approval Status`, `Must Read Next`에 적힌 범위만 읽습니다.
 - `README.md`와 `PROJECT_WORKFLOW_MANUAL.md`는 설명용 문서이며, 운영 규칙과 live state 문서의 정본이 아닙니다.
+- `enterprise_governed` 같은 optional pack 문서는 starter에 placeholder로 있을 수 있지만, `team.json > active_packs`가 활성화하기 전까지 기본 진입 문서로 읽지 않습니다.
 
 ## 3. Context Budget
 - 기본 전략은 `CURRENT_STATE -> TASK_LIST relevant scope -> Must Read Next`입니다.

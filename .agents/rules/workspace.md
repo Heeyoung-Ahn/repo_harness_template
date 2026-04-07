@@ -26,10 +26,12 @@ trigger: always_on
 - downstream 프로젝트에 배포되는 표준 source는 `templates_starter/*`와 root `templates/version_reset/artifacts/*`에서 따로 관리합니다.
 - 이 저장소는 repo 안의 요구사항, 구조, 계획, 상태, review/deploy gate를 문서와 validator로 관리하는 `repo-level governance harness`의 self-hosting 원본입니다.
 - 실제 프로젝트 상태의 단일 진실 공급원은 `.agents/artifacts/` 아래 문서입니다.
+- `.agents/runtime/*`는 parser-friendly machine-readable contract이며, optional `.omx/*` sidecar보다 항상 우선하는 truth layer입니다.
 - `CURRENT_STATE.md`는 day-start용 resume router, `TASK_LIST.md`는 task / lock truth, `TASK_LIST.md > ## Handoff Log`는 최신 delta, `HANDOFF_ARCHIVE.md`는 오래된 원문 보관입니다.
 - 역할 문서는 기본적으로 `Quick Read`, `Current Iteration`, `Latest Result`, `Approval Status`, `Must Read Next`에 적힌 범위만 읽습니다.
 - `README.md`와 `templates_starter/PROJECT_WORKFLOW_MANUAL.md`는 설명용 문서이며, 운영 규칙과 live state 문서의 정본이 아닙니다.
 - downstream 기본 동작을 바꾸는 변경이면 대응하는 `templates_starter/*` source와 필요 시 `templates/version_reset/artifacts/*`를 같은 턴에 갱신하고, root live 문서를 그대로 downstream으로 복사하지 않습니다.
+- `enterprise_governed` 같은 optional pack은 starter/reset source에 dormant placeholder로 둘 수 있지만, `team.json > active_packs`가 활성화하기 전까지 core flow의 기본 진입 문서로 읽지 않습니다.
 - downstream 프로젝트 반영은 `.agents/scripts/sync_template_docs.ps1`를 통해 수행하고, 기본 동작은 대상 repo의 live `.agents/artifacts/*` 보존입니다.
 
 ## 3. Context Budget
@@ -113,6 +115,7 @@ powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1
 
 ## 11. Template Source Split
 - root live 문서/스크립트와 `templates_starter/*`, `templates/version_reset/artifacts/*` deployable source는 목적이 다르므로 같은 파일로 취급하지 않습니다.
+- self-hosting only `.omx/*` sidecar, local HUD/runtime 메모, optional orchestration 실험 경로는 root에만 남기고 template source로 복사하지 않습니다.
 - self-hosting 전용 규칙, validator, handoff, 운영 메모는 root에만 남기고 template source로 되밀지 않습니다.
 - downstream 공통 동작 중 starter 문서/workflow/skill/script는 `templates_starter/*` source에서, version close reset template는 root `templates/version_reset/*`에서 canonical하게 관리합니다.
 - artifact schema나 starter content를 바꾸면 `templates/version_reset/artifacts/*`, `templates_starter/.agents/artifacts/*`, `templates_starter/templates/version_reset/artifacts/*`, 관련 reset/validator/sync 경로와 필요한 downstream sync 절차를 함께 갱신합니다.

@@ -138,6 +138,39 @@ function Get-HandoffEntryMatches {
     return [regex]::Matches($Text, '(?ms)^### \[(?<timestamp>[^\]]+)\] \[(?<from>[^\]]+)\] -> \[(?<to>[^\]]+)\]\r?\n(?<body>.*?)(?=^### |\z)')
 }
 
+function Get-JsonDocument {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    try {
+        $jsonText = [System.IO.File]::ReadAllText($Path, [System.Text.Encoding]::UTF8)
+        return ($jsonText | ConvertFrom-Json)
+    } catch {
+        Add-Finding -Severity 'ERROR' -Path $Path -Message ('Invalid JSON document: {0}' -f $_.Exception.Message)
+        return $null
+    }
+}
+
+function Has-ConcreteItems {
+    param($Value)
+
+    if ($null -eq $Value) {
+        return $false
+    }
+
+    $items = @($Value)
+    if ($items.Count -eq 0) {
+        return $false
+    }
+
+    foreach ($item in $items) {
+        if ([string]::IsNullOrWhiteSpace([string]$item)) {
+            return $false
+        }
+    }
+
+    return $true
+}
+
 function Validate-ArtifactSchema {
     param(
         [Parameter(Mandatory = $true)][string]$Text,
@@ -222,6 +255,9 @@ $pathMap = @{
     TestWorkflow       = Join-Path $repoRoot '.agents\workflows\test.md'
     HandoffWorkflow    = Join-Path $repoRoot '.agents\workflows\handoff.md'
     ExpoDeviceSkill    = Join-Path $repoRoot '.agents\skills\expo_real_device_test\SKILL.md'
+    TeamRegistry       = Join-Path $repoRoot '.agents\runtime\team.json'
+    GovernanceControls = Join-Path $repoRoot '.agents\runtime\governance_controls.json'
+    HealthSnapshot     = Join-Path $repoRoot '.agents\runtime\health_snapshot.json'
     ResetScript        = Join-Path $repoRoot '.agents\scripts\reset_version_artifacts.ps1'
 }
 
@@ -235,6 +271,14 @@ $templateArtifactMap = @{
     DeploymentPlan     = Join-Path $repoRoot 'templates\version_reset\artifacts\DEPLOYMENT_PLAN.md'
 }
 
+$enterprisePackRelativePaths = @(
+    'enterprise_governed\APPROVAL_RULE_MATRIX.md',
+    'enterprise_governed\AUDIT_EVENT_SPEC.md',
+    'enterprise_governed\BUDGET_CONTROL_RULES.md',
+    'enterprise_governed\ORG_ROLE_PERMISSION_MATRIX.md',
+    'enterprise_governed\MONTH_END_CLOSE_CHECKLIST.md'
+)
+
 foreach ($entry in $pathMap.GetEnumerator()) {
     if (-not (Test-Path -LiteralPath $entry.Value)) {
         Add-Finding -Severity 'ERROR' -Path $entry.Value -Message 'Missing required harness document.'
@@ -244,6 +288,17 @@ foreach ($entry in $pathMap.GetEnumerator()) {
 foreach ($entry in $templateArtifactMap.GetEnumerator()) {
     if (-not (Test-Path -LiteralPath $entry.Value)) {
         Add-Finding -Severity 'ERROR' -Path $entry.Value -Message 'Missing required reset template artifact.'
+    }
+}
+
+foreach ($relativePath in $enterprisePackRelativePaths) {
+    $liveArtifactPath = Join-Path $repoRoot ('.agents\artifacts\' + $relativePath)
+    $resetArtifactPath = Join-Path $repoRoot ('templates\version_reset\artifacts\' + $relativePath)
+
+    foreach ($path in @($liveArtifactPath, $resetArtifactPath)) {
+        if (-not (Test-Path -LiteralPath $path)) {
+            Add-Finding -Severity 'ERROR' -Path $path -Message 'Missing required enterprise-governed pack placeholder.'
+        }
     }
 }
 
@@ -282,6 +337,90 @@ $templateImplementationPlanText = [System.IO.File]::ReadAllText($templateArtifac
 $templateWalkthroughText = [System.IO.File]::ReadAllText($templateArtifactMap.Walkthrough, $utf8)
 $templateReviewReportText = [System.IO.File]::ReadAllText($templateArtifactMap.ReviewReport, $utf8)
 $templateDeploymentPlanText = [System.IO.File]::ReadAllText($templateArtifactMap.DeploymentPlan, $utf8)
+$teamRegistry = Get-JsonDocument -Path $pathMap.TeamRegistry
+$governanceControls = Get-JsonDocument -Path $pathMap.GovernanceControls
+
+foreach ($relativePath in $enterprisePackRelativePaths) {
+    $liveArtifactPath = Join-Path $repoRoot ('.agents\artifacts\' + $relativePath)
+    $resetArtifactPath = Join-Path $repoRoot ('templates\version_reset\artifacts\' + $relativePath)
+    $liveArtifactText = [System.IO.File]::ReadAllText($liveArtifactPath, $utf8)
+    $resetArtifactText = [System.IO.File]::ReadAllText($resetArtifactPath, $utf8)
+
+    foreach ($requiredSection in @('## Activation Rules', '## Required Human Gates')) {
+        if (-not $liveArtifactText.Contains($requiredSection)) {
+            Add-Finding -Severity 'ERROR' -Path $liveArtifactPath -Message ('Enterprise-governed pack placeholder is missing required section: {0}' -f $requiredSection)
+        }
+    }
+
+    if ($relativePath -match 'AUDIT_EVENT_SPEC|BUDGET_CONTROL_RULES|MONTH_END_CLOSE_CHECKLIST') {
+        if (-not $liveArtifactText.Contains('## Verification Requirements')) {
+            Add-Finding -Severity 'ERROR' -Path $liveArtifactPath -Message 'Critical-domain enterprise placeholder is missing "## Verification Requirements".'
+        }
+    }
+
+    if ($liveArtifactText -ne $resetArtifactText) {
+        Add-Finding -Severity 'WARNING' -Path $resetArtifactPath -Message ('Reset enterprise pack placeholder is out of sync with live artifact seed: {0}' -f $relativePath)
+    }
+}
+
+foreach ($runtimePath in @($pathMap.TeamRegistry, $pathMap.GovernanceControls, $pathMap.HealthSnapshot)) {
+    if (-not (Test-Path -LiteralPath $runtimePath)) {
+        Add-Finding -Severity 'ERROR' -Path $runtimePath -Message 'Missing required runtime contract.'
+    }
+}
+
+if ($null -ne $teamRegistry) {
+    foreach ($field in @('schema_version', 'active_profile', 'active_packs', 'members')) {
+        if ($teamRegistry.PSObject.Properties.Name -notcontains $field) {
+            Add-Finding -Severity 'ERROR' -Path $pathMap.TeamRegistry -Message ('team.json is missing required field: {0}' -f $field)
+        }
+    }
+
+    $activeProfile = [string]$teamRegistry.active_profile
+    if ($activeProfile -notin @('solo', 'team', 'large/governed')) {
+        Add-Finding -Severity 'ERROR' -Path $pathMap.TeamRegistry -Message ('team.json has unsupported active_profile: {0}' -f $activeProfile)
+    }
+
+    $activePacks = @($teamRegistry.active_packs)
+    foreach ($packName in $activePacks) {
+        if ([string]::IsNullOrWhiteSpace([string]$packName)) {
+            Add-Finding -Severity 'ERROR' -Path $pathMap.TeamRegistry -Message 'team.json active_packs contains a blank value.'
+        } elseif ($packName -ne 'enterprise_governed') {
+            Add-Finding -Severity 'ERROR' -Path $pathMap.TeamRegistry -Message ('team.json has unsupported pack identifier: {0}' -f $packName)
+        }
+    }
+
+    $enterprisePackActive = $activePacks -contains 'enterprise_governed'
+    if ($enterprisePackActive -and $activeProfile -ne 'large/governed') {
+        Add-Finding -Severity 'ERROR' -Path $pathMap.TeamRegistry -Message 'enterprise_governed pack requires active_profile `large/governed`.'
+    }
+
+    if ($enterprisePackActive) {
+        $approvalOwners = @($teamRegistry.members | Where-Object { Has-ConcreteItems $_.approval_authority })
+        if ($approvalOwners.Count -eq 0) {
+            Add-Finding -Severity 'ERROR' -Path $pathMap.TeamRegistry -Message 'enterprise_governed pack is active but no member has approval_authority.'
+        }
+    }
+}
+
+if ($null -ne $governanceControls) {
+    foreach ($field in @('schema_version', 'validator_profile', 'protected_paths', 'human_review_required_scopes', 'critical_domains', 'sandbox_policy')) {
+        if ($governanceControls.PSObject.Properties.Name -notcontains $field) {
+            Add-Finding -Severity 'ERROR' -Path $pathMap.GovernanceControls -Message ('governance_controls.json is missing required field: {0}' -f $field)
+        }
+    }
+
+    if ($null -ne $teamRegistry -and (@($teamRegistry.active_packs) -contains 'enterprise_governed')) {
+        if ([string]$governanceControls.validator_profile -ne 'enterprise-governed') {
+            Add-Finding -Severity 'ERROR' -Path $pathMap.GovernanceControls -Message 'enterprise_governed pack requires validator_profile `enterprise-governed`.'
+        }
+        foreach ($fieldName in @('protected_paths', 'human_review_required_scopes', 'critical_domains')) {
+            if (-not (Has-ConcreteItems $governanceControls.$fieldName)) {
+                Add-Finding -Severity 'ERROR' -Path $pathMap.GovernanceControls -Message ('enterprise_governed pack requires non-empty field: {0}' -f $fieldName)
+            }
+        }
+    }
+}
 
 $wordCount = ([regex]::Matches($currentStateText, '\S+')).Count
 if ($currentStateLines.Count -gt 120) {
@@ -820,6 +959,9 @@ if (-not $workspaceText.Contains('REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IM
 if (-not $workspaceText.Contains('manual gate pending') -or -not $workspaceText.Contains('user decision pending')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing stale-lock stop tokens.'
 }
+if (-not $workspaceText.Contains('.omx') -or -not $workspaceText.Contains('enterprise_governed')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md should mention the optional `.omx` sidecar and enterprise_governed pack rules.'
+}
 
 if (-not $planWorkflowText.Contains($planQuestionPhrase)) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the user-question-first rule.'
@@ -833,6 +975,9 @@ if (-not $planWorkflowText.Contains('Task Packet Ledger')) {
 if (-not $planWorkflowText.Contains('No Architecture Change')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the architecture-sync acknowledgement rule.'
 }
+if (-not $planWorkflowText.Contains('$deep-interview') -or -not $planWorkflowText.Contains('$ralplan')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the optional OMX discovery/planning compatibility mapping.'
+}
 if (-not $reviewWorkflowText.Contains('code_review_checklist')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/review.md' -Message 'review.md is missing the code_review_checklist skill reference.'
 }
@@ -844,6 +989,9 @@ if (-not $reviewWorkflowText.Contains('ARCHITECTURE_GUIDE.md') -or -not $reviewW
 }
 if (-not $reviewWorkflowText.Contains('Green Level Reviewed') -or -not $reviewWorkflowText.Contains('Branch Freshness Reviewed')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/review.md' -Message 'review.md is missing the green-level or branch-freshness review rule.'
+}
+if (-not $reviewWorkflowText.Contains('$ralph') -or -not $reviewWorkflowText.Contains('skeptical evaluator')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/review.md' -Message 'review.md is missing the optional OMX verification mapping or skeptical evaluator rule.'
 }
 if (-not $testWorkflowText.Contains('expo_real_device_test')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/test.md' -Message 'test.md is missing the expo_real_device_test skill reference.'
@@ -870,6 +1018,9 @@ if (-not $testWorkflowText.Contains('Requirement Baseline Tested') -or -not $tes
 if (-not $testWorkflowText.Contains('Green Level Achieved') -or -not $testWorkflowText.Contains('Branch Freshness')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/test.md' -Message 'test.md is missing the green-level or branch-freshness test rule.'
 }
+if (-not $testWorkflowText.Contains('mutation/property/edge-case')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/test.md' -Message 'test.md is missing the critical-domain mutation/property/edge-case verification rule.'
+}
 if (-not $testWorkflowText.Contains('User-Captured Manual Test Report')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/test.md' -Message 'test.md is missing the user-captured manual test synthesis rule.'
 }
@@ -892,6 +1043,9 @@ if (
 }
 if (-not $deployWorkflowText.Contains('green level') -or -not $deployWorkflowText.Contains('branch freshness')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/deploy.md' -Message 'deploy.md is missing the green-level or branch-freshness preflight rule.'
+}
+if (-not $deployWorkflowText.Contains('$ralph') -or -not $deployWorkflowText.Contains('governance_controls.json')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/deploy.md' -Message 'deploy.md is missing the optional OMX verification mapping or governance control preflight rule.'
 }
 if (-not $expoDeviceSkillText.Contains('User Report Alignment Check')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/skills/expo_real_device_test/SKILL.md' -Message 'Expo Real Device Test skill is missing the user report alignment step.'

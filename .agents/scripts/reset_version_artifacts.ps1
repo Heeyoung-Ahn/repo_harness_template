@@ -1,9 +1,18 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-    [string]$RepoRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+    [string]$RepoRoot
 )
 
 $ErrorActionPreference = 'Stop'
+
+if (-not $RepoRoot) {
+    $scriptPath = $MyInvocation.MyCommand.Path
+    if (-not $scriptPath) {
+        throw 'RepoRoot must be provided when the script path cannot be resolved.'
+    }
+
+    $RepoRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $scriptPath))
+}
 
 $repoRootPath = (Resolve-Path -LiteralPath $RepoRoot).Path
 $templateRoot = Join-Path $repoRootPath 'templates\version_reset\artifacts'
@@ -16,7 +25,12 @@ $resetFiles = @(
     'IMPLEMENTATION_PLAN.md',
     'WALKTHROUGH.md',
     'REVIEW_REPORT.md',
-    'DEPLOYMENT_PLAN.md'
+    'DEPLOYMENT_PLAN.md',
+    'enterprise_governed\APPROVAL_RULE_MATRIX.md',
+    'enterprise_governed\AUDIT_EVENT_SPEC.md',
+    'enterprise_governed\BUDGET_CONTROL_RULES.md',
+    'enterprise_governed\ORG_ROLE_PERMISSION_MATRIX.md',
+    'enterprise_governed\MONTH_END_CLOSE_CHECKLIST.md'
 )
 
 if (-not (Test-Path -LiteralPath $templateRoot)) {
@@ -42,6 +56,11 @@ if ($missingSources.Count -gt 0) {
 foreach ($file in $resetFiles) {
     $sourcePath = Join-Path $templateRoot $file
     $destinationPath = Join-Path $artifactsRoot $file
+    $destinationDir = Split-Path -Parent $destinationPath
+
+    if (-not (Test-Path -LiteralPath $destinationDir)) {
+        New-Item -ItemType Directory -Path $destinationDir -Force | Out-Null
+    }
 
     if ($PSCmdlet.ShouldProcess($destinationPath, "Reset artifact from $sourcePath")) {
         [System.IO.File]::WriteAllBytes(

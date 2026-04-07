@@ -10,6 +10,9 @@
 - 요약 문서와 상세 문서가 충돌하면 상세 문서가 우선이며, 즉시 `CURRENT_STATE.md`를 정정해야 합니다.
 - 이 템플릿의 운영 프로세스 정본은 `.agents/rules/workspace.md`, `.agents/artifacts/*.md`, `.agents/workflows/*.md`, `.agents/skills/*`입니다.
 - version closeout 후 artifact reset에 쓰는 canonical starter는 `templates/version_reset/artifacts`입니다.
+- `.agents/runtime/team.json`은 profile/pack activation truth이고 `.agents/runtime/governance_controls.json`은 optional governance contract입니다.
+- optional `enterprise_governed` pack 문서는 `.agents/artifacts/enterprise_governed/*`에 둘 수 있지만, `team.json > active_packs`가 활성화하기 전까지 기본 진입 문서로 읽지 않습니다.
+- optional `.omx/*` sidecar가 있더라도 truth는 계속 `.agents/*`와 runtime contract에 남습니다.
 - 읽기, 상태 확인, 당연한 사전 검토는 사용자에게 확인 질문 없이 진행합니다.
 - 사용자가 명시적으로 오더한 실행은 범위, 대상, 실행 여부를 임의로 바꾸지 말고 그대로 수행합니다.
 - 코드/문서 수정, 롤백, 빌드/배포, 백그라운드 프로세스 시작, 장시간 검증처럼 상태를 바꾸는 작업은 사용자 오더 기준의 짧은 실행 계획을 먼저 보여준 뒤 바로 수행합니다.

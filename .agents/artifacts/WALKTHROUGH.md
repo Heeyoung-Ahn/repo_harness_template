@@ -8,9 +8,11 @@
 - 이번에 확인한 요구사항:
 - 검증 기준 Requirement Baseline:
 - 문서/디자인 기준 사용자 기대 결과:
+- 현재 green level과 branch freshness:
 - 실패 시 가장 큰 원인:
 - 남아 있는 release gate와 빌드 / 실행물 판단:
-- 사용자 상세 feedback handoff status:
+- user-reported manual test status:
+- user feedback handoff status:
 - 다음 역할이 확인해야 할 포인트:
 
 ## Latest Result
@@ -21,7 +23,10 @@
 - Manual / Environment Pass: Yes / No / Pending
 - Requirement Baseline Tested:
 - Requirements Sync Check: Pass / Fail / Planner Update Needed
-- User Feedback Handoff Status: Pending / Ready / Sent / N/A
+- Green Level Achieved: None / Targeted / Package / Workspace / Merge Ready
+- Branch Freshness at Test Time: Fresh / Behind / Diverged / Not Checked
+- User-Captured Manual Test Status: Not Needed / Waiting for User Results / Under Review / Finalized
+- User Feedback Handoff Status: Pending / Ready / Sent / Not Needed
 - Recommended Next Agent:
 - Last Updated At: [YYYY-MM-DD HH:MM]
 
@@ -62,6 +67,19 @@
 - New build / package required: Yes / No / N/A
 - Basis:
 
+## Branch Freshness
+- Status: Fresh / Behind / Diverged / Not Checked
+- Base branch:
+- Checked at:
+- Action taken:
+
+## Failure Classification and Recovery
+- Category: Requirement / Architecture / Branch / Build / Test / Review / Manual / Dependency / Deploy / External
+- Impact: Iteration / Release / Docs Only
+- Observed symptom:
+- Attempted recovery:
+- Next escalation:
+
 ## Commands Executed
 ```bash
 # 실행한 검증 명령 기록
@@ -73,9 +91,18 @@
 
 ## Manual Test Checklist
 
-| Check Item | Result | Notes |
-|---|---|---|
-| [항목] | Pass / Fail | [메모] |
+| Check Item | Expected Result | Reporter | Actual Result | Tester Assessment | Notes |
+|---|---|---|---|---|---|
+| [항목] | [기대 결과] | User / Tester | [실제 결과] | Pass / Fail / Pending | [메모] |
+
+## User-Captured Manual Test Report
+- Checklist prepared by:
+- Test reporter: User / Tester / Pair
+- Analysis status: Waiting for User Results / Under Review / Finalized
+- Raw report source:
+- Raw feedback preserved: Yes / No
+- Detailed feedback location:
+- Tester synthesis:
 
 ## Developer Feedback Handoff
 - Handoff status: Pending / Ready / Sent
@@ -95,6 +122,7 @@
 - Expected user outcome reviewed:
 - User raw notes (do not compress):
 - Results:
+- Tester interpretation:
 - Feedback themes for Developer handoff:
 - Remaining manual / environment checks:
 - Assessment:

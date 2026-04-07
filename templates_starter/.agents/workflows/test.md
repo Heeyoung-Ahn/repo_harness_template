@@ -20,6 +20,11 @@ description: 테스터/QA(Tester) 에이전트 워크플로우
 - 테스트 결과가 release gate, dependency 근거, 기존 build 재사용 판단까지 바꾸면 `dependency_audit` 결과와 함께 봅니다.
 - 한국어 artifact 문서를 갱신하면 `korean-artifact-utf8-guard` 기준을 함께 따릅니다.
 
+## Optional OMX / Enterprise Pack Notes
+- `enterprise_governed` pack이 활성화된 critical domain에서는 mutation/property/edge-case verification을 별도 gate로 기록합니다.
+- skeptical evaluator lane이 필요한 범위에서는 generator 결과만으로 pass를 선언하지 않습니다.
+- `.omx/*` sidecar는 보조 관찰 정보일 뿐이며 테스트 pass/fail truth는 artifact와 실행 결과에 남깁니다.
+
 ## 수행 절차
 
 ### Step 1: 요약 우선 맥락 파악

@@ -29,6 +29,12 @@
 - 원격 승인 watcher / scheduler / registry / mobile routing 같은 확장 자산은 기본 템플릿에서 제외되었습니다.
 - 관련 자산은 [`backup/remote_approval/`](backup/remote_approval/README.md)에 보관되어 있으며, 기본 workflow와 artifact는 이를 전제로 하지 않습니다.
 
+현재 starter baseline에서 새로 알아둘 것:
+- 기본 운영 profile은 `solo`, `team`, `large/governed`입니다. 프로젝트가 커지더라도 core 문서 흐름은 그대로 유지합니다.
+- 더 강한 승인 체계가 필요한 경우에만 optional `enterprise_governed` pack을 켭니다. 이때 `.agents/runtime/governance_controls.json`과 관련 placeholder 문서를 함께 닫아야 합니다.
+- optional `.omx/*` sidecar나 self-hosting only `Project Monitor Web`은 **보조 상태 / 읽기 전용 가시화 도구**일 뿐이며, 정본은 계속 `.agents/*`와 runtime contract에 남습니다.
+- 이미 운영 중인 프로젝트에 이 템플릿을 반영할 때는 바로 실제 mutation을 하지 않고, 먼저 `dry-run/reporting`과 review evidence를 확보한 뒤 actual rollout을 엽니다.
+
 ---
 
 ## 이 파일이 프로젝트에 들어오는 방식
@@ -39,7 +45,7 @@
 1. 템플릿 저장소를 받아둘 workspace를 만들고, 보통 이름을 `repo_harness_template`로 둡니다.
 2. 그 폴더에 템플릿 저장소를 clone 또는 pull합니다.
 3. 완전히 새 프로젝트를 시작할 때는 `templates_starter/` 하위 내용을 새 프로젝트 root에 그대로 복사합니다.
-4. 기존 운영 프로젝트에 표준 템플릿을 적용할 때는 `repo_harness_template` 저장소를 Codex에서 열고 대상 프로젝트 경로를 알려 준 뒤 표준 템플릿 적용을 요청합니다.
+4. 기존 운영 프로젝트에 표준 템플릿을 적용할 때는 `repo_harness_template` 저장소를 Codex에서 열고 대상 프로젝트 경로를 알려 준 뒤 표준 템플릿 적용을 요청합니다. 이때 기본 흐름은 `dry-run/reporting -> review -> actual rollout decision` 순서입니다.
 
 빠른 구분:
 - self-hosting 템플릿 저장소 root: `.agents/`, `backup/`, `templates/`, `templates_starter/`, `AGENTS.md`, `README.md`

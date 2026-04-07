@@ -11,13 +11,17 @@
 - 새 프로젝트 시작용 assembled starter root: `templates_starter/`
 - starter root 문서: `templates_starter/AGENTS.md`, `templates_starter/PROJECT_WORKFLOW_MANUAL.md`
 - starter `.agents` 문서: `templates_starter/.agents/rules/*`, `templates_starter/.agents/workflows/*`, `templates_starter/.agents/scripts/*`, `templates_starter/.agents/skills/*`, `templates_starter/.agents/artifacts/*`
+- optional enterprise pack placeholder: `templates_starter/.agents/artifacts/enterprise_governed/*`, `templates_starter/.agents/runtime/governance_controls.json`
 - version closeout canonical reset template: root `templates/version_reset/artifacts/*.md`
+- optional enterprise pack reset mirror: root `templates/version_reset/artifacts/enterprise_governed/*`
 - downstream repo의 실제 reset path는 rollout 후 `templates/version_reset/artifacts/*.md`입니다.
 - starter 내부 deployable mirror: `templates_starter/templates/version_reset/artifacts/*.md`
 
 ## 3. 언제 둘 다 수정해야 하는가
 - downstream 기본 동작이 바뀌면 root live 문서와 별개로 대응하는 `templates_starter/*` source와 필요 시 root `templates/version_reset/artifacts/*`를 같은 턴에 갱신합니다.
+- `enterprise_governed` pack placeholder, `team.json > active_packs`, `governance_controls.json` 같은 shared contract를 바꾸면 starter assembled source, root reset canonical source, starter reset mirror를 함께 갱신합니다.
 - self-hosting 전용 운영 메모, validator 로직, local handoff 규칙처럼 이 저장소에서만 의미가 있는 변경은 root live 문서/스크립트에만 반영합니다.
+- self-hosting only `.omx/*` sidecar와 local orchestration runtime 메모는 root에만 남기고 starter/reset source로 복사하지 않습니다.
 - artifact schema, reset starter content, validator 기대 구조가 바뀌면 `templates/version_reset/artifacts/*`, `templates_starter/.agents/artifacts/*`, `templates_starter/templates/version_reset/artifacts/*`, 관련 script/validator/sync 경로를 함께 갱신합니다.
 
 ## 4. Sync Rules

@@ -9,8 +9,10 @@
 - 검증 기준 Requirement Baseline:
 - 문서/디자인 기준 사용자 기대 결과:
 - 현재 green level과 branch freshness:
-- 실패 시 가장 큰 원인:
+- optional runtime / visibility boundary 결과:
+- enterprise-governed verification gate:
 - 남아 있는 release gate와 빌드 / 실행물 판단:
+- dry-run / reporting evidence status:
 - user-reported manual test status:
 - user feedback handoff status:
 - 다음 역할이 확인해야 할 포인트:
@@ -21,6 +23,9 @@
 - Release Pass: Yes / No
 - Code / Automation Pass: Yes / No
 - Manual / Environment Pass: Yes / No / Pending
+- Optional Runtime Boundary Pass: Yes / No / N/A
+- Enterprise / Critical-Domain Verification: Yes / No / Pending / N/A
+- Dry-Run / Reporting Evidence Status: Pending / Ready / Finalized / N/A
 - Requirement Baseline Tested:
 - Requirements Sync Check: Pass / Fail / Planner Update Needed
 - Green Level Achieved: None / Targeted / Package / Workspace / Merge Ready
@@ -35,6 +40,8 @@
 - Task IDs under test:
 - Related requirements:
 - Change requests covered:
+- Optional packs / runtime contracts in scope:
+- Read-only visibility / sidecar expectation:
 - Expected user-visible outcome:
 
 ## User Report Alignment
@@ -54,7 +61,7 @@
 - Raw feedback preservation plan:
 
 ## Changelog
-- [YYYY-MM-DD] Tester: initial draft
+- [2026-04-07] Template Maintainer: hybrid / governed / rollout defer validation baseline을 반영했다.
 
 ## Environment
 
@@ -65,6 +72,7 @@
 ## Build / Runtime Decision
 - Existing build / artifact reusable: Yes / No / N/A
 - New build / package required: Yes / No / N/A
+- Optional runtime / visibility reused: Yes / No / N/A
 - Basis:
 
 ## Branch Freshness
@@ -88,6 +96,9 @@
 ## Automated Test Results
 - Result: Pass / Fail / Partial
 - Details:
+- Optional runtime / visibility boundary:
+- Enterprise / critical-domain verification:
+- Dry-run / reporting verification:
 
 ## Manual Test Checklist
 
@@ -120,6 +131,7 @@
 - Preconditions:
 - Commands run:
 - Expected user outcome reviewed:
+- Optional runtime / sidecar expectation:
 - User raw notes (do not compress):
 - Results:
 - Tester interpretation:

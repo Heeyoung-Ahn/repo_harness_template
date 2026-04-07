@@ -26,6 +26,11 @@ description: self-hosting template repo용 리뷰어 및 보안 검증(Reviewer)
 - 이번 리뷰가 릴리즈 게이트, `npm audit`, vendored/native dependency, build 재사용 판단까지 포함하면 `dependency_audit`도 함께 사용합니다.
 - 한국어 artifact 문서를 수정하거나 handoff를 남기면 `korean-artifact-utf8-guard` 기준을 함께 따릅니다.
 
+## Optional OMX / Enterprise Pack Notes
+- persistent completion / verification acceleration이 필요할 때만 `persistent completion/verification -> $ralph` 매핑을 사용합니다.
+- `enterprise_governed` pack이 활성화된 승인/예산/감사 도메인에서는 skeptical evaluator lane과 HITL closure를 별도 finding 없이 통과시키지 않습니다.
+- review 판단은 항상 artifact gate가 정본이며 `.omx/*` sidecar 로그는 보조 근거로만 사용합니다.
+
 ## 수행 절차
 
 ### Step 1: 요약 우선 맥락 파악

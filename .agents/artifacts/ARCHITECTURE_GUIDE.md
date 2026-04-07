@@ -4,80 +4,97 @@
 > Developer, Tester, Reviewer, DevOps는 이 문서를 기준으로 작업하며, 임의 구조 변경은 금지됩니다.
 
 ## Quick Read
-- 현재 승인된 아키텍처 스타일: document-centric governance core + profile contract + separate `Project Monitor Web`
-- 현재 반영된 Requirement Baseline / 변경 영향: `Scalable Governance Profiles v0.2` 승인본에 맞춰 `team.json`, parser contract, web product boundary를 고정했다.
-- 핵심 도메인 경계: Governance Core / Profile Contract / Parser & Projection / Project Monitor Web / Integration Adapters
-- 이번 범위에서 건드리는 폴더/모듈: `.agents/artifacts/*`, `.agents/rules/*`, `.agents/runtime/team.json`, `tools/project-monitor-web/*`, starter profile/schema source
-- 상태와 데이터의 주인: artifact와 `team.json`이 truth를 유지하고, monitor는 파생 projection만 가진다.
-- 다음 역할이 꼭 지켜야 할 구조 규칙: web app은 read-only이며 Phase 1에서 validator 실행기나 write surface를 갖지 않는다.
-- 이번 문서의 리뷰 포인트: parser contract의 안정성, reserved hook name, optional health snapshot contract, product boundary, starter 반영 범위
+- 현재 아키텍처 스타일: document-centric governance core + optional enterprise-governed pack + separate `Project Monitor Web` + optional OMX sidecar compatibility
+- 현재 반영된 Requirement Baseline / 변경 영향: `Hybrid Harness Completion v0.1` draft에 맞춰 root self-hosting runtime reference, governed fixture baseline, monitor hybrid visibility, rollout defer gate를 completion scope로 추가한다.
+- 핵심 도메인 경계: Governance Core / Profile Contract / Enterprise Governance Pack / Hybrid Runtime Reference / Parser & Projection / Project Monitor Web / Integration Adapters
+- 이번 범위에서 건드리는 폴더/모듈: `.agents/artifacts/*`, `.agents/rules/*`, `.agents/runtime/{team.json,governance_controls.json}`, `.omx/*`, `tools/project-monitor-web/*`, starter/reset governed source, rollout dry-run/reporting path
+- 상태와 데이터의 주인: artifact와 runtime contract가 truth를 유지하고, monitor와 `.omx/*`는 파생 projection 또는 보조 상태만 가진다.
+- 다음 역할이 꼭 지켜야 할 구조 규칙: starter는 OMX나 sandbox runtime에 의존하지 않으며, actual rollout은 completion gate가 닫히기 전까지 실행하지 않는다.
+- 이번 문서의 리뷰 포인트: runtime reference/HUD boundary, pack activation rule, governed fixture path, `.omx` truth boundary, monitor hybrid visibility, rollout defer gate
 
 ## Status
-- Document Status: Approved
+- Document Status: Draft
 - Owner: Planner
-- Requirement Baseline: Scalable Governance Profiles v0.2
+- Requirement Baseline: Hybrid Harness Completion v0.1
 - Change Sync Check: Synced
-- Last Requirement Sync At: 2026-04-06 18:06
-- Last Updated At: 2026-04-06 22:44
-- Last Approved By: User
-- Last Approved At: 2026-04-06 18:06
+- Last Requirement Sync At: 2026-04-07 14:53
+- Last Updated At: 2026-04-07 14:53
+- Last Approved By: User (`v0.3` baseline)
+- Last Approved At: 2026-04-07 10:33
 
 ## Approved Boundaries
 - 도메인 경계:
   Governance Core는 artifact truth와 운영 규칙을 담당한다.
   Profile Contract는 `solo`, `team`, `large/governed` required field와 `team.json` contract를 담당한다.
-  Parser & Projection은 artifact와 `team.json`을 읽어 read model을 만든다.
+  Enterprise Governance Pack은 `enterprise_governed` overlay, protected path/HITL/critical-domain 문서를 담당한다.
+  Parser & Projection은 artifact와 runtime contract를 읽어 read model을 만든다.
   Project Monitor Web은 parser/projection 결과를 웹 UI로 보여주는 self-hosting only 도구다.
-  Integration Adapters는 future Git/PR/CI/health snapshot/event hook을 optional로 연결한다.
+  Integration Adapters는 future Git/PR/CI/health snapshot/event hook/OMX sidecar를 optional로 연결한다.
 - 계층 책임 경계:
   Governance Core가 task/lock/gate/handoff truth를 소유한다.
-  `team.json`은 팀 디렉터리 truth를 소유한다.
+  `team.json`은 profile/pack activation truth를 소유한다.
+  `governance_controls.json`은 protected path, human gate, critical domain 선언 truth를 소유한다.
   Parser & Projection은 truth를 읽어 파생 state만 계산한다.
-  Project Monitor Web은 UI와 수동 새로고침만 제공한다.
+  Project Monitor Web과 `.omx/*`는 read-only projection 또는 보조 상태만 가진다.
 - 승인된 예외:
   `Project Monitor Web`은 root self-hosting 전용으로 둘 수 있다.
-  starter/downstream에는 팀 구성 계약과 parser-friendly schema만 승격할 수 있다.
+  starter/downstream에는 팀 구성 계약, governance controls, parser-friendly schema, dormant enterprise pack placeholder만 승격할 수 있다.
+  `.omx/*`는 root self-hosting에서만 optional sidecar로 둘 수 있고 downstream 기본 동작으로 강제하지 않는다.
+  rollout-ready dry-run/reporting은 root self-hosting에서만 먼저 수행할 수 있다.
 
 ## Forbidden Changes
 - 승인 없이 추가하면 안 되는 폴더/레이어:
-  starter 기본 source에 `Project Monitor Web`, watcher, scheduler, registry, agent control plane을 추가하지 않는다.
+  starter 기본 source에 `Project Monitor Web`, watcher, scheduler, registry, container sandbox, agent control plane을 추가하지 않는다.
 - 금지된 직접 참조:
   web UI가 artifact truth를 직접 수정하는 write path
+  `.omx/*`를 기준으로 task/gate truth를 복원하는 경로
   Phase 1 web app이 validator를 직접 실행하고 그 결과를 truth처럼 저장하는 경로
   profile-specific field를 core schema와 별도 비공식 파일에 분산 저장하는 구조
+  completion gate가 닫히기 전 operating-project rollout을 실행하는 경로
 - 금지된 구조 우회:
   source of truth를 markdown artifact 밖의 임의 DB나 UI state로 이전하는 구조
   self-hosting 전용 tool을 starter/downstream 기본 동작으로 몰래 확장하는 구조
+  `approval`, `budget`, `audit` 도메인에서 HITL 없이 auto-merge를 기본값으로 두는 구조
+  pack activation 없이 enterprise 문서를 mandatory truth로 읽게 만드는 구조
 
 ## Changelog
 - [2026-04-06] Developer: reserved future hook contract, optional `health_snapshot.json` contract, self-hosting/downstream promotion boundary를 아키텍처 정본에 추가했다.
 - [2026-04-06] Planner: `Scalable Governance Profiles v0.1` 기준으로 core/profile/observability/integration 경계를 초안 작성
 - [2026-04-06] Planner: `v0.2` 승인에 따라 `team.json`, parser contract, `Project Monitor Web` product boundary를 아키텍처 정본으로 고정
+- [2026-04-07] Planner: `CR-02 Enterprise Hybrid Harness`에 따라 enterprise-governed pack, `governance_controls.json`, `.omx` sidecar compatibility, critical-domain verification lane을 추가했다.
+- [2026-04-07] Planner: current version closeout 후 `CR-03 Hybrid Harness Completion` draft에 맞춰 runtime reference, governed fixture, monitor hybrid visibility, rollout defer gate를 planning 범위에 추가했다.
 
 ## Requirement Change Sync
 
 | Change ID | Architecture Impact | Updated Sections | Sync Status | Notes |
 |---|---|---|---|---|
 | CR-01 | Boundary Update | Approved Boundaries / Domain Map / Folder Structure / Artifact Parser Contract / Team Registry Contract | Synced | web app 분리, team registry 경로, parser mandatory source를 고정 |
+| CR-02 | Layer Rule Update | Approved Boundaries / Forbidden Changes / Domain Map / Folder Structure / Team Registry Contract / Enterprise Governance Pack Contract / Optional Runtime Contract / OMX Compatibility Map / Promotion Boundary | Synced | enterprise-governed overlay와 `.omx` sidecar를 truth plane 밖에 유지 |
+| CR-03 | Completion Draft | Quick Read / Approved Boundaries / Forbidden Changes / Domain Map / Promotion Boundary / Integration Boundaries | Synced | rollout-ready completion을 정의하되 actual rollout은 defer |
 
 ## Architecture Summary
-- 아키텍처 스타일: truth layer와 projection layer를 분리한 local-first layered architecture
-- 주요 도메인: Governance Core, Profile Contract, Parser & Projection, Project Monitor Web, Integration Adapters
+- 아키텍처 스타일: truth layer와 projection/orchestration layer를 분리한 local-first layered architecture
+- 주요 도메인: Governance Core, Profile Contract, Enterprise Governance Pack, Hybrid Runtime Reference, Parser & Projection, Project Monitor Web, Integration Adapters
 - 핵심 설계 원칙:
-  source of truth는 artifact와 `team.json`이 유지한다.
-  change-expensive contract는 초기 단계에서 명시적으로 고정한다.
+  source of truth는 artifact와 runtime contract가 유지한다.
+  enterprise burden은 optional pack으로만 올린다.
+  `.omx/*`는 optional sidecar이지 truth가 아니다.
   monitor는 read-only 정적 뷰어로 시작한다.
   human approval과 manual gate는 agent activity와 동등한 운영 개념이다.
+  critical domain에서는 generator와 reviewer/verifier lane을 분리한다.
+  actual rollout은 completion gate 뒤로 미룬다.
 
 ## Domain Map
 
 | Domain | Responsibility | Key Entities / Use Cases | Notes |
 |---|---|---|---|
 | Governance Core | 문서 기반 운영 truth 유지 | Task, Lock, Handoff, Gate, Requirement Baseline, Stage | `.agents/artifacts/*`, `.agents/rules/*` 중심 |
-| Profile Contract | 프로필별 의무 필드와 팀 계약 유지 | Solo profile, Team profile, Large/Governed profile, Team Registry | `team.json`과 profile required field를 고정 |
+| Profile Contract | 프로필별 의무 필드와 팀 계약 유지 | Solo profile, Team profile, Large/Governed profile, Team Registry, Pack Activation | `team.json`과 profile required field를 고정 |
+| Enterprise Governance Pack | 고위험 도메인 통제 규칙 유지 | Governance controls, Protected path, HITL escalation, Critical domain docs | `enterprise_governed` overlay only |
+| Hybrid Runtime Reference | root self-hosting completion 기준 유지 | `.omx` guide, runtime/HUD visibility, local runbook, rollout defer contract | root only, truth 아님 |
 | Parser & Projection | mandatory source를 읽어 read model 생성 | Task projection, Blocker queue, Recent activity, Health projection, Team directory projection | UI와 분리된 shared library |
 | Project Monitor Web | read-only 웹 UI 제공 | Dashboard panels, manual refresh, filter, detail drill-down | `tools/project-monitor-web/*` |
-| Integration Adapters | optional 주변 정보 연결 | Git, PR, CI, future health snapshot, future event hook | Phase 1에서는 optional/reserved only |
+| Integration Adapters | optional 주변 정보 연결 | Git, PR, CI, future health snapshot, future event hook, optional OMX sidecar | Phase 1에서는 optional/reserved only |
 
 ## Folder Structure
 ```text
@@ -86,6 +103,7 @@
   rules/
   runtime/
     team.json
+    governance_controls.json
     health_snapshot.json (optional)
 tools/
   project-monitor-web/
@@ -97,25 +115,34 @@ tools/
 templates_starter/
   .agents/
     artifacts/
+      enterprise_governed/
     rules/
     runtime/
+      team.json
+      governance_controls.json
   templates/
     version_reset/
+      artifacts/
+        enterprise_governed/
+.omx/
+  README.md (self-hosting optional sidecar only)
 ```
 
 ## Layer Responsibilities
-- `domain/`: `task`, `lock`, `handoff`, `gate`, `profile`, `team member`, `health snapshot` 개념과 불변식
-- `application/`: artifact parsing, projection assembly, profile validation, health aggregation, manual refresh orchestration
-- `infrastructure/`: file system read, JSON parse, optional health snapshot read, local HTTP server
+- `domain/`: `task`, `lock`, `handoff`, `gate`, `profile`, `pack`, `team member`, `governance control`, `health snapshot` 개념과 불변식
+- `application/`: artifact parsing, projection assembly, profile validation, pack activation validation, health aggregation, manual refresh orchestration
+- `infrastructure/`: file system read, JSON parse, optional health snapshot read, local HTTP server, optional `.omx` sidecar read
 - `presentation/`: single-screen dashboard UI, filters, panel layout, artifact link-out
+- `release-readiness`: dry-run/reporting evidence와 rollout defer state를 artifact로 정리한다
 
 ## Dependency Rules
 - domain은 application/presentation/infrastructure를 모른다.
 - application은 domain을 사용하며 parser/projection use case를 조합한다.
-- infrastructure는 파일 읽기, JSON 읽기, 로컬 HTTP 제공을 구현한다.
+- infrastructure는 파일 읽기, JSON 읽기, 로컬 HTTP 제공, optional sidecar read를 구현한다.
 - presentation은 application이 만든 projection을 렌더링하고 직접 비즈니스 규칙을 가지지 않는다.
-- Governance Core와 Team Registry truth는 parser/projection보다 상위다.
+- Governance Core와 runtime contract truth는 parser/projection보다 상위다.
 - UI layer는 parser contract를 우회해서 직접 markdown을 해석하지 않는다.
+- optional orchestration mapping은 workflow layer에만 존재하고 truth layer를 바꾸지 않는다.
 
 ## Artifact Parser Contract
 
@@ -123,8 +150,8 @@ templates_starter/
 |---|---|---|---|
 | `CURRENT_STATE.md` | Mandatory | `Snapshot`, `Open Decisions / Blockers`, `Latest Handoff Summary` | health/status와 blocker source |
 | `TASK_LIST.md` | Mandatory | `Current Release Target`, `Active Locks`, workflow task rows, `Handoff Log` | board / activity / lock source |
-| `REQUIREMENTS.md` | Mandatory | `Status`, `Operational Profiles`, `Functional Requirements`, `Non-Functional Requirements` | profile contract source |
-| `ARCHITECTURE_GUIDE.md` | Mandatory | `Status`, `Domain Map`, `Artifact Parser Contract`, `Team Registry Contract`, `Future Hook Contract`, `Promotion Boundary` | architecture and parser contract reference |
+| `REQUIREMENTS.md` | Mandatory | `Status`, `Operational Profiles`, `Optional Packs`, `Functional Requirements`, `Non-Functional Requirements` | profile/pack contract source |
+| `ARCHITECTURE_GUIDE.md` | Mandatory | `Status`, `Domain Map`, `Artifact Parser Contract`, `Team Registry Contract`, `Enterprise Governance Pack Contract`, `Optional Runtime Contract`, `Promotion Boundary` | architecture and parser contract reference |
 | `IMPLEMENTATION_PLAN.md` | Mandatory | `Status`, `Current Iteration`, `Requirement Trace`, `Iteration Plan`, `Validation Gates` | execution context source |
 | `REVIEW_REPORT.md` | Optional | review gate summary | release-stage optional source |
 | `DEPLOYMENT_PLAN.md` | Optional | deployment gate summary | release-stage optional source |
@@ -133,6 +160,10 @@ templates_starter/
 
 | Field | Required In | Meaning |
 |---|---|---|
+| `schema_version` | top-level | runtime contract schema version |
+| `active_profile` | top-level | current operating profile |
+| `active_packs` | top-level optional | enabled optional overlays such as `enterprise_governed` |
+| `members` | top-level | team registry rows |
 | `id` | all rows | stable owner identifier |
 | `display_name` | all rows | 화면 표시용 이름 |
 | `kind` | all rows | `human` 또는 `ai` |
@@ -140,13 +171,35 @@ templates_starter/
 | `ownership_scopes` | all rows | 책임 범위 목록 |
 | `handoff_targets` | all rows | 기본 handoff 대상 목록 |
 | `default_model` | optional | 기본 AI 모델 메타데이터 |
-| `approval_authority` | optional | 승인 권한 범위 |
+| `approval_authority` | optional by default, effectively required in `enterprise_governed` | 승인 권한 범위 |
+
+## Enterprise Governance Pack Contract
+
+| Artifact | Required When | Meaning | Phase 1 Behavior |
+|---|---|---|---|
+| `.agents/runtime/governance_controls.json` | optional in `team`, required in `large/governed + enterprise_governed` | protected path, human gate, validator profile, critical domain contract | parser/validator가 읽고 workflow gate를 강화한다 |
+| `.agents/artifacts/enterprise_governed/APPROVAL_RULE_MATRIX.md` | `enterprise_governed` active | 승인 authority와 escalation matrix | placeholder 허용, HITL rule은 명시되어야 한다 |
+| `.agents/artifacts/enterprise_governed/AUDIT_EVENT_SPEC.md` | `enterprise_governed` active | 감사 event 분류와 required evidence | mutation/property/edge-case verification 기준을 함께 적는다 |
+| `.agents/artifacts/enterprise_governed/BUDGET_CONTROL_RULES.md` | `enterprise_governed` active | 예산/재무 관련 protected path와 승인 기준 | auto-merge보다 human gate가 우선이다 |
+| `.agents/artifacts/enterprise_governed/ORG_ROLE_PERMISSION_MATRIX.md` | `enterprise_governed` active | 사람/에이전트 역할별 권한 경계 | `approval_authority`와 연결된다 |
+| `.agents/artifacts/enterprise_governed/MONTH_END_CLOSE_CHECKLIST.md` | `enterprise_governed` active | month-end / closeout checklist | critical domain closeout contract로 사용한다 |
 
 ## Optional Runtime Contract
 
 | File | Required In | Meaning | Phase 1 Behavior |
 |---|---|---|---|
-| `health_snapshot.json` | optional in root/starter runtime | validator, adapter, CI가 남기는 read-only health summary | placeholder 허용, monitor는 읽을 수 있지만 truth를 대체하지 않는다 |
+| `.agents/runtime/governance_controls.json` | optional in root/starter runtime, required in `large/governed + enterprise_governed` | protected path, human gate, validator profile, critical domains, sandbox policy | truth contract이지만 pack activation 전에는 dormant placeholder 허용 |
+| `.agents/runtime/health_snapshot.json` | optional in root/starter runtime | validator, adapter, CI가 남기는 read-only health summary | placeholder 허용, monitor는 읽을 수 있지만 truth를 대체하지 않는다 |
+| `.omx/state/*`, `.omx/logs/*`, `.omx/project-memory.json` | self-hosting only optional sidecar | orchestration/runtime 보조 상태 | artifact truth를 대체하지 않으며 validator/workflow가 authoritative state로 사용하지 않는다 |
+
+## OMX Compatibility Map
+
+| Workflow Intent | Optional OMX Mapping | Contract |
+|---|---|---|
+| Discovery | `$deep-interview` | optional acceleration only, requirement truth는 artifact에 남긴다 |
+| Planning | `$ralplan` | planner 결과는 `REQUIREMENTS.md` / `ARCHITECTURE_GUIDE.md` / `IMPLEMENTATION_PLAN.md`에 동기화돼야 한다 |
+| Parallel implementation | `$team` | 병렬 실행은 `TASK_LIST.md` lock/scope truth를 우회하지 않는다 |
+| Persistent completion / verification | `$ralph` | 완료 판단은 review/test/deploy artifact gate가 계속 진실이다 |
 
 ## Future Hook Contract
 
@@ -162,28 +215,35 @@ templates_starter/
 
 | Capability | Default Home | Starter Default | Promotion Rule | Notes |
 |---|---|---|---|---|
-| `Project Monitor Web` runtime | root self-hosting only | No | `REV-03` 이후 optional package로 추출 검토 가능 | starter 기본 동작으로 넣지 않는다 |
-| `team.json` contract | root + starter | Yes | 이미 shared schema로 유지 | runtime watcher를 암시하지 않는다 |
-| `health_snapshot.json` contract | root + starter | Optional | validator/adapter/CI가 실제 snapshot을 emit할 때 사용 | placeholder file만 허용한다 |
+| `Project Monitor Web` runtime | root self-hosting only | No | optional package로 추출 검토 가능 | starter 기본 동작으로 넣지 않는다 |
+| `team.json` contract | root + starter | Yes | shared schema로 유지 | runtime watcher를 암시하지 않는다 |
+| `governance_controls.json` contract | root + starter | Optional | `enterprise_governed` 활성 시 required | team profile에서는 dormant placeholder 가능 |
+| enterprise-governed pack docs | starter + reset source | Optional | `active_packs`가 `enterprise_governed`일 때만 활성 truth로 읽는다 | core flow는 pack 미활성 시 무시한다 |
+| `.omx/*` sidecar | root self-hosting only | No | compatibility guide만 starter에 남긴다 | truth plane으로 승격하지 않는다 |
+| rollout dry-run/reporting | root self-hosting only | No | completion review와 self-hosting revalidation 뒤에만 실제 rollout을 연다 | current version에서는 evidence만 남긴다 |
 | event hook transport | root experiment 또는 adapter package | No | event producer shape가 안정화된 뒤 별도 설계 | Phase 1은 이름 예약만 수행한다 |
+| container/read-only sandbox | self-hosting experiment only | No | Phase 2 이후 별도 검토 | starter 기본값으로 넣지 않는다 |
 
 ## State and Data Ownership
 - 전역 상태: `.agents/artifacts/*.md`와 `.agents/rules/*`가 운영 truth를 가진다.
-- 팀 구성 상태: `.agents/runtime/team.json`이 team/large 프로필의 team truth를 가진다.
+- profile / pack activation 상태: `.agents/runtime/team.json`이 profile과 enabled pack truth를 가진다.
+- governance control 상태: `.agents/runtime/governance_controls.json`이 protected path와 human gate truth를 가진다.
 - 로컬 UI 상태: 필터, 선택된 패널, 정렬, 검색, 마지막 수동 새로고침 시각만 가진다.
 - 영속 저장소: Phase 1은 추가 DB를 요구하지 않는다. future health snapshot 또는 event store는 별도 저장소로 분리한다.
-- 캐시 전략: projection cache는 재생성 가능해야 하고 truth보다 우선할 수 없다.
+- sidecar 상태: `.omx/*`는 캐시/로그/보조 memory만 가진다. repo truth보다 우선할 수 없다.
 
 ## Integration Boundaries
 - 외부 API/서비스: 선택적 GitHub/CI/PM adapter, future enterprise system adapter
 - 인증 경계: Phase 1은 로컬 self-hosting 사용을 전제로 하며 특정 auth provider를 강제하지 않는다.
-- 파일/스토리지 경계: Phase 1 web app은 artifact와 `team.json`, optional `health_snapshot.json`을 읽을 수 있지만 validator나 write action은 실행하지 않는다.
-- 이벤트 경계: Phase 1은 reserved hook name만 고정하고, queue/websocket/registry/presence transport는 추가하지 않는다.
+- 파일/스토리지 경계: Phase 1 web app은 artifact와 runtime contract, optional `.omx/*`, optional `health_snapshot.json`을 읽을 수 있지만 validator나 write action은 실행하지 않는다.
+- optional observability / monitor contract: `.omx/*`와 health snapshot은 read-only auxiliary input이며 release/review truth를 대체하지 않는다.
+- rollout 경계: operating-project mutation은 current draft 범위 밖이며 dry-run/reporting evidence가 먼저 필요하다.
 
 ## Naming Conventions
-- 폴더: `core`, `profiles`, `projection`, `adapters`, `presentation`처럼 책임이 드러나는 이름 사용
-- 파일: parser contract와 team registry 계약은 목적이 드러나는 명명 사용
-- 클래스/함수: `parseCurrentState`, `buildBoardProjection`, `loadTeamRegistry`, `buildHealthPanelProjection`처럼 동작을 드러내는 이름 사용
+- pack identifier: `enterprise_governed`
+- runtime files: `team.json`, `governance_controls.json`, `health_snapshot.json`
+- folder: `enterprise_governed`, `projection`, `adapters`, `presentation`처럼 책임이 드러나는 이름 사용
+- 클래스/함수: `parseCurrentState`, `loadTeamRegistry`, `loadGovernanceControls`, `buildBoardProjection`, `buildCriticalDomainGateSummary`처럼 동작을 드러내는 이름 사용
 - 상태/액션: future hook name은 `task.claimed`, `task.blocked`, `handoff.recorded`, `gate.awaiting_human`, `task.completed`처럼 일관되게 사용
 
 ## Change Control

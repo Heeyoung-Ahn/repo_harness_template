@@ -16,6 +16,11 @@ description: 인프라 및 배포(DevOps) 에이전트 워크플로우
 - 실행 중 목표, 범위, 대상 파일/환경, 실행 종류, 명령 세트가 달라져야 하면 멈추고 이유와 대안을 설명한 뒤 사용자 확정 전까지 진행하지 않습니다.
 - 사용자가 명령어, 설명, 초안만 요청했다면 실제 실행, 백그라운드 실행, 추가 작업을 하지 않습니다.
 
+## Optional OMX / Enterprise Pack Notes
+- persistent completion / verification acceleration이 필요할 때만 `persistent completion/verification -> $ralph` 매핑을 사용합니다.
+- `enterprise_governed` pack이 활성화된 승인/예산/감사 도메인에서는 `governance_controls.json`, protected path, HITL closure, critical-domain verification gate를 확인하기 전 배포를 시작하지 않습니다.
+- `.omx/*` sidecar 상태는 배포 readiness를 보조 설명할 수 있지만 review/test/deploy artifact gate를 대체할 수 없습니다.
+
 ## 수행 절차
 
 ### Step 1: 요약 우선 맥락 파악
