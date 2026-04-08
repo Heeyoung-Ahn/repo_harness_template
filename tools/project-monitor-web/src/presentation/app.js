@@ -306,6 +306,44 @@ function renderDashboard(snapshot) {
     .join("");
 }
 
+function formatSignalStatus(status) {
+  switch (status) {
+    case "active":
+      return "Active";
+    case "watch":
+      return "Watch";
+    default:
+      return "Clear";
+  }
+}
+
+function renderRiskSignalCards(signals) {
+  if (!signals.length) {
+    return `<div class="empty-state">현재 추가 주의 signal이 없습니다.</div>`;
+  }
+
+  return `<div class="stack-list">${signals
+    .map(
+      (signal) => `
+        <article class="list-card compact">
+          <div class="queue-item-header">
+            <span class="info-pill">${escapeHtml(signal.label)}</span>
+            <span class="subtle">${escapeHtml(formatSignalStatus(signal.status))}</span>
+          </div>
+          <div class="subtle">${escapeHtml(signal.detail)}</div>
+          ${
+            signal.sourceLinks?.length
+              ? `<div class="source-stack">${signal.sourceLinks
+                  .map((item) => buildSourceLink(item.path, item.label))
+                  .join("")}</div>`
+              : ""
+          }
+        </article>
+      `
+    )
+    .join("")}</div>`;
+}
+
 function renderOverview(snapshot) {
   const overview = snapshot.overview;
 
@@ -445,6 +483,17 @@ function renderOverview(snapshot) {
                 .join("")}</div>`
             : `<div class="empty-state">주요 이슈가 없습니다.</div>`
         }
+      </section>
+
+      <section class="content-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Risk Signals</p>
+            <h3>Recurrence and Guardrail Watch</h3>
+          </div>
+          <button type="button" class="link-button" data-view="health">Open Health</button>
+        </div>
+        ${renderRiskSignalCards(overview.riskSignals)}
       </section>
 
       <section class="content-card">
@@ -806,6 +855,10 @@ function renderPacketDetail(packet) {
         </div>
       </section>
       <section class="packet-block">
+        <span class="packet-label">Current Risk Signals</span>
+        ${renderRiskSignalCards(packet.riskSignals || [])}
+      </section>
+      <section class="packet-block">
         <span class="packet-label">Recent History Context</span>
         ${
           packet.recentHistoryContext.length
@@ -1009,6 +1062,15 @@ function renderHealth(snapshot) {
         </div>
         <div class="section-head secondary">
           <div>
+            <p class="eyebrow">Risk Signals</p>
+            <h3>${escapeHtml(
+              `${health.signalSummary.active} active / ${health.signalSummary.watch} watch`
+            )}</h3>
+          </div>
+        </div>
+        ${renderRiskSignalCards(health.riskSignals)}
+        <div class="section-head secondary">
+          <div>
             <p class="eyebrow">Optional Sources</p>
             <h3>Projection Coverage</h3>
           </div>
@@ -1044,12 +1106,28 @@ function renderHealth(snapshot) {
             <div>${escapeHtml(String(health.governance.protectedPathCount))}</div>
           </div>
           <div class="detail-card">
+            <strong>Sensitive Paths</strong>
+            <div>${escapeHtml(String(health.governance.sensitivePathCount))}</div>
+          </div>
+          <div class="detail-card">
             <strong>Human Review Scopes</strong>
             <div>${escapeHtml(String(health.governance.humanReviewScopeCount))}</div>
           </div>
           <div class="detail-card">
             <strong>Critical Domains</strong>
             <div>${escapeHtml(String(health.governance.criticalDomainCount))}</div>
+          </div>
+          <div class="detail-card">
+            <strong>Tool Allowlist</strong>
+            <div>${escapeHtml(String(health.governance.toolAllowlistCount))}</div>
+          </div>
+          <div class="detail-card">
+            <strong>Tool Denylist</strong>
+            <div>${escapeHtml(String(health.governance.toolDenylistCount))}</div>
+          </div>
+          <div class="detail-card">
+            <strong>Exfiltration Classes</strong>
+            <div>${escapeHtml(String(health.governance.exfiltrationClassCount))}</div>
           </div>
           <div class="detail-card">
             <strong>Sandbox Mode</strong>
@@ -1108,12 +1186,28 @@ function renderTeam(snapshot) {
             <div>${escapeHtml(snapshot.governance.protectedPaths.join(", ") || "none")}</div>
           </div>
           <div class="detail-card">
+            <strong>Sensitive Paths</strong>
+            <div>${escapeHtml(snapshot.governance.sensitivePaths.join(", ") || "none")}</div>
+          </div>
+          <div class="detail-card">
             <strong>Human Review Required</strong>
             <div>${escapeHtml(snapshot.governance.humanReviewRequiredScopes.join(", ") || "none")}</div>
           </div>
           <div class="detail-card">
             <strong>Critical Domains</strong>
             <div>${escapeHtml(snapshot.governance.criticalDomains.join(", ") || "none")}</div>
+          </div>
+          <div class="detail-card">
+            <strong>Tool Allowlist</strong>
+            <div>${escapeHtml(snapshot.governance.toolAllowlist.join(", ") || "none")}</div>
+          </div>
+          <div class="detail-card">
+            <strong>Tool Denylist</strong>
+            <div>${escapeHtml(snapshot.governance.toolDenylist.join(", ") || "none")}</div>
+          </div>
+          <div class="detail-card">
+            <strong>Exfiltration Classes</strong>
+            <div>${escapeHtml(snapshot.governance.exfiltrationSensitiveInputClasses.join(", ") || "none")}</div>
           </div>
           <div class="detail-card">
             <strong>Sandbox Policy</strong>
@@ -1233,6 +1327,14 @@ function drawerPacketBody(packet) {
           <div class="source-stack">${packet.sourceLinks
             .map((item) => buildSourceLink(item.path, item.label))
             .join("")}</div>
+        </div>
+        <div class="detail-card">
+          <strong>Risk Signals</strong>
+          <div>${escapeHtml(
+            (packet.riskSignals || [])
+              .map((signal) => `${signal.label}: ${formatSignalStatus(signal.status)}`)
+              .join(" / ") || "none"
+          )}</div>
         </div>
       </div>
     </div>

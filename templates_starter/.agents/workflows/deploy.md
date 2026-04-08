@@ -48,6 +48,7 @@ description: 인프라 및 배포(DevOps) 에이전트 워크플로우
 - `REQUIREMENTS.md`의 최신 `Current Requirement Baseline`, `ARCHITECTURE_GUIDE.md`의 `Requirement Baseline`, `IMPLEMENTATION_PLAN.md`의 `Requirement Baseline`, `WALKTHROUGH.md`의 `Requirement Baseline Tested`, `REVIEW_REPORT.md`의 `Requirement Baseline Reviewed`, `DEPLOYMENT_PLAN.md`의 `Requirement Baseline for Release`가 서로 맞는지 교차 확인합니다.
 - `WALKTHROUGH.md`, `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`, `CURRENT_STATE.md`의 green level과 branch freshness가 서로 모순되지 않는지 확인합니다.
 - 사용자가 직접 수행한 실기기 / 브라우저 테스트가 있으면 raw report와 Tester 최종 판정이 모순되지 않는지 다시 확인합니다.
+- 웹앱 또는 브라우저 UI scope면 browser-rendered smoke 또는 user browser raw report가 없는 상태로 manual/environment gate를 닫지 않습니다.
 - `WALKTHROUGH.md`의 `Release Pass`, `REVIEW_REPORT.md`의 승인 상태, `DEPLOYMENT_PLAN.md`의 `Requirements Sync Gate` / `Reviewer Gate`, `CURRENT_STATE.md`의 `Review Gate`가 서로 모순되지 않는지 교차 확인합니다.
 - 하나라도 `No / Open / Blocked / Pending`이면 배포를 시작하지 않습니다.
 

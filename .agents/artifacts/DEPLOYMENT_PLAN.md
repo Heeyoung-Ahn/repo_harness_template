@@ -11,12 +11,12 @@
 
 ## Quick Read
 - 이번 배포 대상: `Hybrid Harness Completion v0.1`의 self-hosting completion evidence와 local preview 재검증 결과
-- 현재 배포 상태: `PLN-04`까지는 닫혔고, actual rollout은 defer 상태다. 다음 실행 게이트는 `TST-02`, `REV-01` / `REV-02`, `REL-01`, `REL-02`다
+- 현재 배포 상태: `TST-02` local preview smoke는 닫혔고, actual rollout은 defer 상태다. 다음 실행 게이트는 `REV-01` / `REV-02`, `REL-01`, `REL-02`다
 - 배포 기준 Requirement Baseline / sync gate: `Hybrid Harness Completion v0.1` / Closed
 - current green level / branch freshness / GitHub release gate: `Targeted` / Start of `Hybrid Harness Completion v0.1` / Open
 - GitHub release path / source -> target: current version에서는 GitHub release path를 열지 않는다. `REL-03` 전까지 target branch도 고정하지 않는다
 - deployment provider / selected skill: developer PC local self-hosting preview / explicit deploy skill 없음
-- 배포 전 꼭 확인할 것: `127.0.0.1` loopback bind, `/api/projects` 포함 preview smoke, decision packet/history view regression, write path 부재, dry-run/reporting output
+- 배포 전 꼭 확인할 것: `127.0.0.1` loopback bind, browser-rendered preview smoke, `/api/projects` 포함 preview smoke, decision packet/history view regression, write path 부재, dry-run/reporting output
 - 남아 있는 release gate (manual / dependency / compliance): manual/environment `Open`, dependency/compliance `Open`, reviewer `Open`
 - 실패 시 롤백 핵심 경로: local preview 프로세스를 중지하고 downstream mutation을 전혀 만들지 않는다
 - 사용자 공지 핵심 변경 / 다음 역할 포인트: current version은 rollout-ready evidence까지만 닫고 operating-project rollout은 별도 사용자 결정으로 분리한다
@@ -37,7 +37,7 @@
 - Target Branch for Release: Not selected; rollout decision deferred until `REL-03`
 - Deployment Provider: Developer PC local self-hosting preview
 - Selected Deployment Skill: N/A (local preview + dry-run evidence)
-- Last Updated At: 2026-04-08 01:35
+- Last Updated At: 2026-04-08 13:30
 
 ## Rollback Snapshot
 - 롤백 조건: preview smoke 실패, non-loopback exposure, write path 감지, dry-run이 downstream mutation을 유발하는 경우
@@ -46,6 +46,7 @@
 
 ## Changelog
 - [2026-04-08] Planner: `PLN-04`를 반영해 completion gate와 post-completion rollout entry criteria를 live deployment 문서로 고정했다.
+- [2026-04-08] Tester: `TST-02` local preview smoke를 수행해 `127.0.0.1:4173` loopback bind, static asset, browser-rendered home/workspace smoke, `/api/projects`, `/api/snapshot`, `/api/file` allow/block, decision packet/history/risk signal 노출을 확인했고 `sync_template_docs.ps1 -WhatIf`로 no-mutation dry-run 경로를 점검했다.
 
 ## Release Target
 - Version: Hybrid Harness Completion v0.1
@@ -90,6 +91,7 @@
 - [x] 대상 버전은 `Hybrid Harness Completion v0.1`로 고정했다
 - [x] 환경 변수 / 비밀값 요구사항이 없고 allowed runtime env가 `PROJECT_MONITOR_REPO_ROOT`, `PROJECT_MONITOR_HOST`, `PORT`뿐임을 확인했다
 - [ ] `TST-02`와 `REL-01` self-hosting preview 재검증을 완료했다
+- [ ] browser-facing web scope의 browser-rendered smoke 또는 user browser raw report를 확보했다
 - [ ] user/browser smoke와 Tester 판정이 서로 모순되지 않음을 확인했다
 - [ ] `REL-02` dry-run/reporting evidence와 dependency/compliance triage를 완료했다
 - [x] 롤백 경로는 local preview stop + no downstream mutation으로 고정했다
@@ -122,10 +124,10 @@ powershell -ExecutionPolicy Bypass -File ".agents\scripts\check_harness_docs.ps1
 - branch freshness 판단: current version은 `v0.3` archive 이후 draft에서 시작했고, actual rollout branch selection은 아직 열지 않았다
 - GitHub release path 확인 결과: current version은 self-hosting evidence only다. GitHub release path는 `REL-03` user decision 전까지 deferred다
 - deployment provider / skill routing 판단: current version은 local preview 절차만 사용하며, dedicated publish skill routing은 actual rollout decision 뒤에만 선택한다
-- 수동 / 실환경 재검증 계획: `TST-02`, `REL-01`에서 developer PC loopback preview와 PMW read-only regression을 수행한다
+- 수동 / 실환경 재검증 계획: `TST-02`는 완료됐고 developer PC loopback preview에서 static asset, `/api/projects`, `/api/snapshot`, `/api/file` allow/block, decision packet/history/risk signal을 확인했다. `REL-01`에서 같은 기준으로 self-hosting preview를 다시 검증한다
 - 사용자 수동 테스트 / raw report 처리 상태: current version에서 아직 시작하지 않았다. 필요 시 `TST-02` 결과와 함께 기록한다
 - 운영 직후 확인할 항목: current version에서는 actual rollout이 없으므로 N/A. 대신 dry-run/report output completeness와 defer rationale을 확인한다
-- release-ready 차단 요소: `TST-02`, `REV-01`, `REV-02`, `REL-01`, `REL-02`가 아직 open이며 `REL-03` user decision도 남아 있다
+- release-ready 차단 요소: `REV-01`, `REV-02`, `REL-01`, `REL-02`가 아직 open이며 `REL-03` user decision도 남아 있다
 
 ## Document / Harness Follow-up
 - Current release blocker 여부: Yes. actual rollout은 completion gate evidence가 닫힐 때까지 의도적으로 block 상태다

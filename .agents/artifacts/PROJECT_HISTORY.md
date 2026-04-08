@@ -96,3 +96,9 @@
 - Why: 승인된 `FR-17` 기준이 deployment 문서에는 placeholder로 남아 있어 actual rollout defer 조건이 충분히 명시되지 않았기 때문이다.
 - Impact: `DEPLOYMENT_PLAN.md`가 live completion gate 문서가 됐고, `BLK-02`가 제거됐다. 다음 작업은 `TST-02`, `REV-01` / `REV-02`, `REL-01` / `REL-02` evidence capture다.
 - Related: `PLN-04`, `FR-17`, `TST-02`, `REL-01`, `REL-02`, `REL-03`
+
+#### HIST-20260408-06 Reinforcement
+- Summary: `CR-05 Hybrid Harness Reinforcement + Day Wrap Up Recurrence Gate`를 live/starter/runtime/PMW에 반영하고 회귀 검증까지 완료했다.
+- Why: AI 코딩 비판에서 반복적으로 지적되는 전역 맥락 상실, 중복/추상화 부채, 검증·보안 가드레일 부재를 하네스 공통 기본값에서 줄이기 위해서다.
+- Impact: task packet context contract, deep-interview 확장, recurrence review, AI-specific review checklist, optional governance guardrail field, PMW risk signal이 shared baseline이 됐다. root/starter validator와 PMW test, Korean mojibake check도 통과했다.
+- Related: `CR-05`, `PLN-08`, `DEV-06`, `TST-03`, `FR-25`~`FR-29`, `NFR-16`~`NFR-18`

@@ -13,10 +13,18 @@ export async function loadGovernanceControls(repoRoot) {
       path: GOVERNANCE_CONTROLS_PATH,
       validatorProfile: parsed.validator_profile || "unknown",
       protectedPaths: Array.isArray(parsed.protected_paths) ? parsed.protected_paths : [],
+      sensitivePaths: Array.isArray(parsed.sensitive_paths) ? parsed.sensitive_paths : [],
       humanReviewRequiredScopes: Array.isArray(parsed.human_review_required_scopes)
         ? parsed.human_review_required_scopes
         : [],
       criticalDomains: Array.isArray(parsed.critical_domains) ? parsed.critical_domains : [],
+      toolAllowlist: Array.isArray(parsed.tool_allowlist) ? parsed.tool_allowlist : [],
+      toolDenylist: Array.isArray(parsed.tool_denylist) ? parsed.tool_denylist : [],
+      exfiltrationSensitiveInputClasses: Array.isArray(
+        parsed.exfiltration_sensitive_input_classes
+      )
+        ? parsed.exfiltration_sensitive_input_classes
+        : [],
       sandboxPolicy: parsed.sandbox_policy || {},
       warnings: []
     };
@@ -25,8 +33,12 @@ export async function loadGovernanceControls(repoRoot) {
       path: GOVERNANCE_CONTROLS_PATH,
       validatorProfile: "unknown",
       protectedPaths: [],
+      sensitivePaths: [],
       humanReviewRequiredScopes: [],
       criticalDomains: [],
+      toolAllowlist: [],
+      toolDenylist: [],
+      exfiltrationSensitiveInputClasses: [],
       sandboxPolicy: {},
       warnings: [`governance_controls.json: ${error.message}`]
     };

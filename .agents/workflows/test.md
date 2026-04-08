@@ -57,6 +57,8 @@ description: self-hosting template repo용 테스터/QA(Tester) 에이전트 워
 - 현재 iteration 또는 릴리즈 Scope에 맞는 정적 분석, 테스트, 수동 검증을 수행합니다.
 - 테스트를 시작하기 전에 최신 승인 `Requirement Baseline`과 `Requirements Sync Status`를 확인합니다. 기준선이 비었거나 sync 상태가 `In Sync`가 아니면 Planner로 되돌립니다.
 - packaged app, mobile app, browser integration, 외부 시스템 연동처럼 환경 의존 검증이 있으면 `정적 / 자동 검증`과 `수동 / 실환경 검증`을 분리해 기록합니다.
+- 웹앱 또는 브라우저 렌더 결과가 핵심인 scope면 API check나 unit test만으로 pass를 닫지 말고 browser-rendered smoke를 수행합니다.
+- Agent가 브라우저를 직접 구동하지 못하면 local preview를 열고 사용자의 실제 브라우저 확인 결과를 raw report로 받아 manual/environment gate에 연결합니다.
 - 사용자가 직접 테스트하는 경우 Tester는 `Manual Test Checklist`와 `Feedback Capture Plan`을 먼저 준비하고, 사용자가 화면/흐름별로 상세 피드백을 남기도록 유도합니다.
 - 사용자 raw feedback는 `WALKTHROUGH.md`에 원문 위치와 상세 메모 형태로 먼저 보존하고, 그 다음에만 Tester 해석과 판정을 덧붙입니다.
 - 관련 요구사항 표를 펼쳐야 할 만큼 정보가 부족할 때만 `REQUIREMENTS.md` 상세 섹션을 읽습니다.

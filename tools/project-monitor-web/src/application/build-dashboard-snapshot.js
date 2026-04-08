@@ -185,7 +185,8 @@ function buildDocumentHealth(
   implementationPlan,
   healthSnapshot,
   governanceControls,
-  optionalSources
+  optionalSources,
+  riskSignals
 ) {
   const items = HEALTH_PANEL_FIELDS.map((key) => ({
     key,
@@ -203,9 +204,19 @@ function buildDocumentHealth(
       path: governanceControls.path,
       validatorProfile: governanceControls.validatorProfile,
       protectedPathCount: governanceControls.protectedPaths.length,
+      sensitivePathCount: governanceControls.sensitivePaths.length,
       humanReviewScopeCount: governanceControls.humanReviewRequiredScopes.length,
       criticalDomainCount: governanceControls.criticalDomains.length,
+      toolAllowlistCount: governanceControls.toolAllowlist.length,
+      toolDenylistCount: governanceControls.toolDenylist.length,
+      exfiltrationClassCount:
+        governanceControls.exfiltrationSensitiveInputClasses.length,
       sandboxMode: governanceControls.sandboxPolicy.mode || "unspecified"
+    },
+    riskSignals: riskSignals.signals,
+    signalSummary: {
+      active: riskSignals.active.length,
+      watch: riskSignals.watch.length
     },
     optionalSources,
     healthSnapshot: {
@@ -243,6 +254,181 @@ function buildSourceLinks(paths) {
       })),
     (item) => item.path
   );
+}
+
+function normalizeSignalText(...values) {
+  return values
+    .flat(Infinity)
+    .map((value) => String(value || "").trim().toLowerCase())
+    .filter(Boolean)
+    .join(" ");
+}
+
+function includesAny(text, patterns) {
+  return patterns.some((pattern) => text.includes(pattern));
+}
+
+function buildRiskSignals({
+  currentState,
+  taskList,
+  implementationPlan,
+  governanceControls,
+  blockers,
+  teamRegistry
+}) {
+  const blockerText = normalizeSignalText(
+    blockers.map((item) => [
+      item.id,
+      item.label,
+      item.value,
+      item.observedSymptom,
+      item.nextEscalation
+    ])
+  );
+  const handoffText = normalizeSignalText(
+    currentState.latestHandoffSummary.map((entry) => entry.value),
+    taskList.handoffLog.map((entry) => entry.message)
+  );
+  const gateText = normalizeSignalText(
+    currentState.snapshot.review_gate,
+    currentState.snapshot.manual_environment_gate,
+    currentState.snapshot.dependency_compliance_gate,
+    implementationPlan.validationGates
+  );
+  const searchText = normalizeSignalText(blockerText, handoffText, gateText);
+  const governedActive =
+    (teamRegistry.activePacks || []).includes("enterprise_governed") ||
+    /governed/i.test(teamRegistry.activeProfile || "");
+
+  const signals = [
+    {
+      id: "context_miss",
+      label: "Context Miss",
+      status: includesAny(searchText, [
+        "맥락 상실",
+        "아키텍처 표류",
+        "context miss",
+        "architecture drift"
+      ])
+        ? "active"
+        : "clear",
+      detail: includesAny(searchText, [
+        "맥락 상실",
+        "아키텍처 표류",
+        "context miss",
+        "architecture drift"
+      ])
+        ? "handoff 또는 blocker에 전역 맥락 상실이나 구조 표류 징후가 기록됐다."
+        : "현재 blocker와 handoff에서는 전역 맥락 상실 징후가 명시되지 않았다.",
+      sourceLinks: buildSourceLinks([
+        ".agents/artifacts/CURRENT_STATE.md",
+        ".agents/artifacts/TASK_LIST.md",
+        ".agents/artifacts/IMPLEMENTATION_PLAN.md"
+      ])
+    },
+    {
+      id: "review_reopen",
+      label: "Review Reopen",
+      status: includesAny(searchText, [
+        "review reopen",
+        "reopen",
+        "changes requested",
+        "재오픈"
+      ])
+        ? "active"
+        : "clear",
+      detail: includesAny(searchText, [
+        "review reopen",
+        "reopen",
+        "changes requested",
+        "재오픈"
+      ])
+        ? "review 재오픈이나 changes requested 신호가 현재 artifact에 남아 있다."
+        : "현재 artifact에는 review reopen 신호가 없다.",
+      sourceLinks: buildSourceLinks([
+        ".agents/artifacts/CURRENT_STATE.md",
+        ".agents/artifacts/REVIEW_REPORT.md"
+      ])
+    },
+    {
+      id: "evidence_stale",
+      label: "Evidence Stale",
+      status: includesAny(searchText, ["evidence stale", "stale evidence"])
+        ? "active"
+        : [
+              currentState.snapshot.review_gate,
+              currentState.snapshot.manual_environment_gate,
+              currentState.snapshot.dependency_compliance_gate
+            ].some((value) => /not started|open/i.test(String(value || "")))
+          ? "watch"
+          : "clear",
+      detail: includesAny(searchText, ["evidence stale", "stale evidence"])
+        ? "artifact에 stale evidence 신호가 직접 기록됐다."
+        : [
+              currentState.snapshot.review_gate,
+              currentState.snapshot.manual_environment_gate,
+              currentState.snapshot.dependency_compliance_gate
+            ].some((value) => /not started|open/i.test(String(value || "")))
+          ? "review/manual/dependency gate가 아직 열려 있어 close evidence가 더 필요하다."
+          : "현재 open gate 기준으로 stale evidence 신호는 없다.",
+      sourceLinks: buildSourceLinks([
+        ".agents/artifacts/CURRENT_STATE.md",
+        ".agents/artifacts/DEPLOYMENT_PLAN.md",
+        ".agents/artifacts/REVIEW_REPORT.md"
+      ])
+    },
+    {
+      id: "repeat_issue",
+      label: "Repeat Issue",
+      status: includesAny(searchText, ["repeat issue", "재발", "반복"])
+        ? "active"
+        : "clear",
+      detail: includesAny(searchText, ["repeat issue", "재발", "반복"])
+        ? "handoff 또는 blocker에 반복 이슈 신호가 기록됐다."
+        : "현재 artifact에는 반복 이슈 신호가 직접 기록되지 않았다.",
+      sourceLinks: buildSourceLinks([
+        ".agents/artifacts/TASK_LIST.md",
+        ".agents/artifacts/CURRENT_STATE.md",
+        ".agents/artifacts/PROJECT_HISTORY.md"
+      ])
+    },
+    {
+      id: "guardrail_gap",
+      label: "Guardrail Gap",
+      status: governedActive &&
+        (governanceControls.protectedPaths.length === 0 ||
+          governanceControls.humanReviewRequiredScopes.length === 0)
+        ? "active"
+        : governedActive &&
+            governanceControls.sensitivePaths.length === 0 &&
+            governanceControls.toolAllowlist.length === 0 &&
+            governanceControls.toolDenylist.length === 0 &&
+            governanceControls.exfiltrationSensitiveInputClasses.length === 0
+          ? "watch"
+          : "clear",
+      detail: governedActive &&
+        (governanceControls.protectedPaths.length === 0 ||
+          governanceControls.humanReviewRequiredScopes.length === 0)
+        ? "governed profile 또는 pack이 활성인데 protected path 또는 human review scope가 비어 있다."
+        : governedActive &&
+            governanceControls.sensitivePaths.length === 0 &&
+            governanceControls.toolAllowlist.length === 0 &&
+            governanceControls.toolDenylist.length === 0 &&
+            governanceControls.exfiltrationSensitiveInputClasses.length === 0
+          ? "governed profile은 맞지만 optional guardrail field는 아직 placeholder 수준이다."
+          : "현재 profile 기준에서 guardrail gap 신호는 없다.",
+      sourceLinks: buildSourceLinks([
+        ".agents/runtime/governance_controls.json",
+        ".agents/artifacts/ARCHITECTURE_GUIDE.md"
+      ])
+    }
+  ];
+
+  return {
+    signals,
+    active: signals.filter((signal) => signal.status === "active"),
+    watch: signals.filter((signal) => signal.status === "watch")
+  };
 }
 
 function buildActivity(taskList, historyEntries) {
@@ -296,7 +482,8 @@ function buildOverview({
   summary,
   blockers,
   historyEntries,
-  boardTasks
+  boardTasks,
+  riskSignals
 }) {
   const recentHistory = historyEntries.slice(0, 4);
   const primaryIssues = blockers.slice(0, 3).map((item) => ({
@@ -337,6 +524,7 @@ function buildOverview({
       activeTaskCount: boardTasks.filter((task) => task.status !== "done").length
     },
     majorIssues: primaryIssues,
+    riskSignals: [...riskSignals.active, ...riskSignals.watch],
     recentHistory
   };
 }
@@ -424,7 +612,8 @@ function buildDecisionPackets({
   taskList,
   requirements,
   implementationPlan,
-  historyEntries
+  historyEntries,
+  riskSignals
 }) {
   const packets = [];
   const currentStateMap = toEntryMap(currentState.latestHandoffSummary);
@@ -451,6 +640,7 @@ function buildDecisionPackets({
         ".agents/artifacts/TASK_LIST.md",
         ".agents/artifacts/REQUIREMENTS.md"
       ]),
+      riskSignals: [...riskSignals.active, ...riskSignals.watch],
       recentHistoryContext: historyContext(historyEntries),
       whatHappensIfDelayed:
         currentStateMap.first_next_action ||
@@ -493,6 +683,7 @@ function buildDecisionPackets({
         ".agents/artifacts/CURRENT_STATE.md",
         ".agents/artifacts/IMPLEMENTATION_PLAN.md"
       ]),
+      riskSignals: [...riskSignals.active, ...riskSignals.watch],
       recentHistoryContext: historyContext(historyEntries),
       whatHappensIfDelayed:
         blocker.impact || "current iteration의 다음 단계로 넘어갈 근거가 부족해집니다.",
@@ -538,6 +729,7 @@ function buildDecisionPackets({
         ".agents/artifacts/IMPLEMENTATION_PLAN.md",
         PROJECT_HISTORY_PATH
       ]),
+      riskSignals: [...riskSignals.active, ...riskSignals.watch],
       recentHistoryContext: historyContext(historyEntries),
       whatHappensIfDelayed:
         "요구사항 기준선이 열린 상태로 남아 downstream implementation과 review 판단이 흔들립니다.",
@@ -676,12 +868,21 @@ export async function buildDashboardSnapshot(repoRoot, options = {}) {
   const historyEntries = buildHistoryView(history.entries).sort((left, right) =>
     String(right.date).localeCompare(String(left.date))
   );
+  const riskSignals = buildRiskSignals({
+    currentState,
+    taskList,
+    implementationPlan,
+    governanceControls,
+    blockers,
+    teamRegistry
+  });
   const decisionPackets = buildDecisionPackets({
     currentState,
     taskList,
     requirements,
     implementationPlan,
-    historyEntries
+    historyEntries,
+    riskSignals
   });
 
   const warnings = [
@@ -741,7 +942,8 @@ export async function buildDashboardSnapshot(repoRoot, options = {}) {
       summary,
       blockers,
       historyEntries,
-      boardTasks
+      boardTasks,
+      riskSignals
     }),
     currentStateView: {
       snapshot: currentState.snapshot,
@@ -760,7 +962,8 @@ export async function buildDashboardSnapshot(repoRoot, options = {}) {
       implementationPlan,
       healthSnapshot,
       governanceControls,
-      optionalSources
+      optionalSources,
+      riskSignals
     ),
     teamDirectory: teamRegistry.members,
     teamRegistry: {
@@ -773,8 +976,13 @@ export async function buildDashboardSnapshot(repoRoot, options = {}) {
       path: governanceControls.path,
       validatorProfile: governanceControls.validatorProfile,
       protectedPaths: governanceControls.protectedPaths,
+      sensitivePaths: governanceControls.sensitivePaths,
       humanReviewRequiredScopes: governanceControls.humanReviewRequiredScopes,
       criticalDomains: governanceControls.criticalDomains,
+      toolAllowlist: governanceControls.toolAllowlist,
+      toolDenylist: governanceControls.toolDenylist,
+      exfiltrationSensitiveInputClasses:
+        governanceControls.exfiltrationSensitiveInputClasses,
       sandboxPolicy: governanceControls.sandboxPolicy
     },
     operationalProfiles: requirements.operationalProfiles,

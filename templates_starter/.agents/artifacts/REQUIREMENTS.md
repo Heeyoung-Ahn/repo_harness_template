@@ -5,8 +5,8 @@
 
 ## Quick Read
 - 이 starter baseline의 핵심 목표: `one core, multiple profiles`를 유지한 채 optional `enterprise_governed` pack, `governance_controls.json`, optional `.omx/*` compatibility, rollout defer policy를 함께 쓸 수 있는 표준 출발점을 제공한다.
-- 이 starter가 기본으로 담고 있는 것: ① `solo/team/large/governed` 운영 프로필 ② `team.json` + optional `governance_controls.json` 계약 ③ `enterprise_governed` placeholder 문서 ④ optional `.omx/*` not-truth 원칙 ⑤ actual rollout 전 dry-run/reporting 우선 원칙
-- 이 starter가 기본으로 하지 않는 것: `.omx/*` truth 승격, starter 기본 orchestration dependency, write action monitor, completion review 전 operating-project actual rollout, default sandbox/runtime 강제
+- 이 starter가 기본으로 담고 있는 것: ① `solo/team/large/governed` 운영 프로필 ② `team.json` + optional `governance_controls.json` 계약 ③ `enterprise_governed` placeholder 문서 ④ optional `.omx/*` not-truth 원칙 ⑤ actual rollout 전 dry-run/reporting 우선 원칙 ⑥ task packet context/invariant/evidence contract ⑦ day-wrap recurrence review ⑧ AI-specific review checklist baseline ⑨ 웹앱 / browser-facing UI scope의 browser-based test gate
+- 이 starter가 기본으로 하지 않는 것: `.omx/*` truth 승격, starter 기본 orchestration dependency, write action monitor, completion review 전 operating-project actual rollout, default sandbox/runtime 강제, 별도 누적 회고 artifact 생성
 - 이 starter를 새 프로젝트에 적용한 뒤 가장 먼저 정할 것: greenfield인지 기존 운영 프로젝트 표준화인지, `enterprise_governed` pack이 필요한지, self-hosting visibility tool이 필요한지
 - 현재 starter baseline: `Hybrid Harness Template v0.1`
 - 다음 역할이 꼭 읽어야 할 포인트: `.agents/*`와 runtime contract가 계속 truth이고, optional sidecar와 rollout은 항상 그 바깥층으로 다룬다.
@@ -16,8 +16,8 @@
 - Owner: Planner
 - Current Requirement Baseline: Hybrid Harness Template v0.1
 - Requirements Sync Status: In Sync
-- Last Requirement Change At: 2026-04-07 15:09
-- Last Updated At: 2026-04-07 15:09
+- Last Requirement Change At: 2026-04-08 13:30
+- Last Updated At: 2026-04-08 13:30
 - Last Approved By: [Set on project approval]
 - Last Approved At: [Set on approval]
 
@@ -37,6 +37,8 @@
 ## Changelog
 - [2026-04-06] Template Maintainer: profile/runtime/monitor boundary를 담을 starter baseline 골격을 추가했다.
 - [2026-04-07] Template Maintainer: `enterprise_governed`, `governance_controls.json`, optional `.omx/*` compatibility, rollout defer 기본 원칙을 starter baseline에 반영했다.
+- [2026-04-08] Template Maintainer: AI coding critique reinforcement을 반영해 task packet context contract, recurrence review, AI-specific review checklist, optional governance guardrail field, read-only risk signal baseline을 starter source에 추가했다.
+- [2026-04-08] Template Maintainer: 웹앱 / browser-facing UI scope는 browser-based test evidence로 manual/environment gate를 닫도록 starter baseline에 추가했다.
 
 ## Product Goal
 - 이 starter가 해결하려는 문제:
@@ -72,6 +74,10 @@
 - optional `.omx/*` compatibility와 not-truth boundary
 - self-hosting visibility / monitor를 붙일 때의 read-only boundary
 - 기존 운영 프로젝트 표준화 시 dry-run/reporting을 먼저 요구하는 배포 정책
+- `Task Packet` 기본 필드(`Required Context Inputs`, `Architecture Invariants`, `Known Traps`, `Do-Not-Break Paths`, `Evidence Required Before Close`)
+- `day_wrap_up`의 recurrence review와 preventive action routing
+- shared review checklist의 AI-specific 구조/증빙 점검
+- optional governance layer의 guardrail field 확장
 
 ## Out of Scope
 - `.omx/*`를 truth나 write path로 사용하는 구조
@@ -79,6 +85,7 @@
 - write action monitor, approval action UI, watcher / scheduler / registry 기본 포함
 - container/read-only sandbox 기본 강제
 - completion review와 dry-run/reporting 전 actual rollout 실행
+- issue가 없어도 별도 회고 artifact를 새로 만드는 것
 
 ## Functional Requirements
 
@@ -87,10 +94,16 @@
 | FR-01 | 템플릿은 `solo`, `team`, `large/governed` 운영 프로필을 정의해야 한다. | High | 프로필별 required field와 handoff/gate 규칙이 문서에 고정된다. |
 | FR-02 | 모든 프로필은 공용 governance core schema를 공유해야 한다. | High | `task`, `lock`, `owner`, `role`, `gate`, `handoff` 의미가 일관되고 parser가 core field를 읽을 수 있다. |
 | FR-03 | 팀 구성은 `.agents/runtime/team.json`으로 선언적으로 관리해야 한다. | High | `schema_version`, `active_profile`, `members`가 top-level 필수이고 `active_packs`로 overlay를 켤 수 있다. |
-| FR-04 | `enterprise_governed`는 optional overlay로만 동작해야 한다. | High | pack identifier, required docs, `approval_authority`, `governance_controls.json` prerequisite가 고정된다. |
+| FR-04 | `enterprise_governed`는 optional overlay로만 동작해야 한다. | High | pack identifier, required docs, `approval_authority`, `governance_controls.json` prerequisite가 고정된다. optional guardrail field는 pack이나 governed project에서만 강한 의미를 가진다. |
 | FR-05 | optional self-hosting visibility / monitor를 붙이더라도 read-only boundary가 유지되어야 한다. | High | write path가 없고 artifact/runtime contract가 truth로 남는다. |
 | FR-06 | optional `.omx/*` sidecar가 있더라도 truth를 대체하면 안 된다. | High | `.agents/*`와 runtime contract가 authoritative state로 유지된다. |
 | FR-07 | 기존 운영 프로젝트 표준화가 필요할 때는 actual rollout 전에 dry-run/reporting gate를 먼저 닫아야 한다. | High | deployment/review artifact에 defer policy와 dry-run/reporting evidence가 기록된다. |
+| FR-08 | `Task Packet` 실행 계약은 전역 맥락 필드를 기본 포함해야 한다. | High | `IMPLEMENTATION_PLAN.md > Task Packet Ledger` 또는 동등 계약에 context, invariant, trap, do-not-break, close evidence 필드가 존재한다. |
+| FR-09 | `requirements_deep_interview`는 기능 요구 외에 architecture invariant와 failure mode도 수집해야 한다. | High | cross-module invariant, backward compatibility, forbidden shortcut, sensitive path, review/test evidence가 interview 기본 질문에 포함된다. |
+| FR-10 | `day_wrap_up`은 recurrence review를 수행하고 repeat issue를 follow-up으로 승격해야 한다. | High | 세 issue class를 `없음 | 징후 있음 | 확인됨`으로 점검하고, repeat issue는 task/rule/skill/checklist update target으로 연결한다. |
+| FR-11 | shared review checklist는 AI-generated delta 전용 리스크를 기본 포함해야 한다. | High | 구조 일관성 파괴, duplication/abstraction debt, evidence gap, boundary drift가 reviewer checklist에 포함된다. |
+| FR-12 | optional visibility가 있으면 recurrence/guardrail/evidence signal을 read-only로 보여줄 수 있어야 한다. | Medium | `context miss`, `review reopen`, `evidence stale`, `repeat issue`, `guardrail gap` 같은 signal을 읽을 수 있지만 control plane은 추가하지 않는다. |
+| FR-13 | 웹앱 또는 브라우저 렌더 결과가 핵심인 scope는 browser-based test evidence로 manual/environment gate를 닫아야 한다. | High | browser-rendered smoke, user browser raw report, 또는 동등한 브라우저 기반 증거가 `TST-*`, `REL-*`, `WALKTHROUGH.md` 또는 동등 artifact에 남고, API-only / unit-only evidence만으로는 gate를 닫지 않는다. backend-only scope는 예외다. |
 
 ## Non-Functional Requirements
 
@@ -101,6 +114,9 @@
 | NFR-03 | enterprise burden은 opt-in pack으로만 격리되어야 한다. | High | pack 미활성 상태에서도 core flow와 validator 기본 경로가 유지된다. |
 | NFR-04 | rollout 전 completion evidence는 self-hosting repo 안에서 재현 가능해야 한다. | High | dry-run/reporting, validator, optional visibility evidence를 local-first로 남길 수 있다. |
 | NFR-05 | `.omx/*`는 auxiliary state여야 한다. | High | validator/workflow가 `.omx/*`를 authoritative truth로 다루지 않는다. |
+| NFR-06 | context/invariant 계약은 같은 요구를 다른 phrasing으로 받아도 안정적으로 유지돼야 한다. | High | task packet과 discovery contract가 request phrasing 차이로 do-not-break path를 잃지 않는다. |
+| NFR-07 | recurrence review는 재발 방지에는 충분히 강하지만 artifact noise는 최소화해야 한다. | High | issue나 preventive action이 있을 때만 current-state/handoff/follow-up을 남기고, `없음` 판정은 문서에 남기지 않는다. |
+| NFR-08 | optional governance extension과 read-only signal 강화는 starter 기본 경로를 무겁게 만들지 않아야 한다. | High | extra guardrail field와 signal은 optional이고 local-first이며 control plane을 만들지 않는다. |
 
 ## Constraints
 - 기술 제약: source of truth는 markdown artifact와 runtime contract이며, starter/reset source split과 validator 규칙을 깨지 않아야 한다.
@@ -127,6 +143,8 @@
 |---|---|---|---|---|---|
 | TEMPLATE-01 | 2026-04-06 | profile/runtime/monitor boundary starter baseline 추가 | FR-01~FR-05, NFR-01~NFR-03 | Architecture / Plan / Task / Review / Deploy | In Sync |
 | TEMPLATE-02 | 2026-04-07 | enterprise pack, optional `.omx/*`, rollout defer / dry-run defaults 반영 | FR-03~FR-07, NFR-03~NFR-05 | Architecture / Plan / Review / Deploy | In Sync |
+| TEMPLATE-03 | 2026-04-08 | task packet context contract, recurrence review, AI-specific review checklist, optional governance guardrail field, read-only risk signal baseline 반영 | FR-04, FR-08~FR-12, NFR-06~NFR-08 | Architecture / Plan / Starter Skills / Runtime / Review / Deploy | In Sync |
+| TEMPLATE-04 | 2026-04-08 | 웹앱 / browser-facing UI scope의 browser-based test gate 반영 | FR-13 | Architecture / Plan / Test Workflow / Deploy | In Sync |
 
 ## Pending Change Requests
 
@@ -137,3 +155,5 @@
 ## Approval History
 - 2026-04-06 Template Maintainer: profile/runtime/monitor starter baseline 반영
 - 2026-04-07 Template Maintainer: enterprise pack, `.omx/*`, rollout defer starter baseline 반영
+- 2026-04-08 Template Maintainer: recurrence review와 AI coding critique reinforcement starter baseline 반영
+- 2026-04-08 Template Maintainer: 웹앱 / browser-facing UI scope의 browser-based test gate starter baseline 반영

@@ -7,9 +7,9 @@
 - 이번 문서의 핵심 목표: current `v0.3` contract와 preview evidence를 바탕으로 hybrid harness를 `준운영 수준`의 rollout-ready 완성본까지 self-hosting 템플릿 안에서 마무리한다.
 - 이번 버전의 꼭 필요한 결과: ① root self-hosting hybrid runtime reference / HUD / runbook 정리 ② `enterprise_governed` activation guide + governed fixture + validator regression baseline ③ `Project Monitor Web` hybrid visibility, artifact-aware project overview, rollout readiness summary, multi-project selector 구현 ④ local preview 재검증 + review closure + actual rollout 없는 dry-run/reporting evidence ⑤ starter generic / `.omx` optional / truth boundary 유지 ⑥ mandatory deep-interview requirements discovery + mockup-first PMW intake ⑦ append-only `PROJECT_HISTORY.md` artifact 추가 ⑧ self-hosting convenience shell 관점의 icon / exit affordance 정리 ⑨ `Approval Queue -> 상세 결정 패킷` read-only view 추가
 - 이번 버전에서 하지 않을 것: operating-project actual rollout, OMX truth 승격, starter 기본 orchestration 의존, write action monitor, default container/read-only sandbox, public exposure 확대, PMW usability delta를 mockup 승인 없이 바로 구현
-- 사용자가 현재 턴에서 확정한 방향: completion 기준은 `local preview 재검증 + review closure + dry-run/reporting evidence`, governed 범위는 `activation guide + fixture + validator regression`, monitor 범위는 `밝은 색감 + 상단 프로젝트 요약 + 프로젝트 선택 + 좌측 메뉴 + 우측 상단 대시보드 + 우측 하단 콘텐츠 영역`을 기본으로 한다. `Project History`는 전용 조회 대상으로 두고, `tools/project-monitor-web` 아래에 launcher icon과 server stop icon을 제공하는 방향으로 승인했다. `Approval Queue -> 상세 결정 패킷`은 승인된 read-only 기준선으로 구현됐고, Planner는 요구사항 작성 전에 internalized deep-interview skill을 반드시 수행한다.
-- 현재 draft 기준선과 변경 요약: `Hybrid Harness Completion v0.1` 유지. `CR-03` 승인 baseline 위에 `CR-04` decision-packet view를 승인했고, 현재 self-hosting PMW 구현까지 반영됐다.
-- 현재 남아 있는 큰 질문: PMW information architecture 기준선은 닫혔고, 열린 requirement question은 없다. 다음 execution focus는 `TST-02` preview regression, `REV-01` / `REV-02` review closure, `REL-01` / `REL-02` evidence capture다.
+- 사용자가 현재 턴에서 확정한 방향: completion 기준은 `local preview 재검증 + review closure + dry-run/reporting evidence`, governed 범위는 `activation guide + fixture + validator regression`, monitor 범위는 `밝은 색감 + 상단 프로젝트 요약 + 프로젝트 선택 + 좌측 메뉴 + 우측 상단 대시보드 + 우측 하단 콘텐츠 영역`을 기본으로 한다. `Project History`는 전용 조회 대상으로 두고, `tools/project-monitor-web` 아래에 launcher icon과 server stop icon을 제공하는 방향으로 승인했다. `Approval Queue -> 상세 결정 패킷`은 승인된 read-only 기준선으로 구현됐고, Planner는 요구사항 작성 전에 internalized deep-interview skill을 반드시 수행한다. 웹앱 또는 브라우저 렌더 결과가 핵심인 범위는 브라우저 기반 테스트를 수동/환경 gate의 기본 증거로 남긴다.
+- 현재 draft 기준선과 변경 요약: `Hybrid Harness Completion v0.1` 유지. `CR-03` 승인 baseline 위에 `CR-04` decision-packet view, `CR-05 Hybrid Harness Reinforcement + Day Wrap Up Recurrence Gate`, `CR-06 Web Browser-Based Test Contract`를 승인했고, 이제 context/invariant/evidence contract, recurrence gate, governance guardrail contract, PMW risk signal, browser-based web test gate 기준선까지 포함한다.
+- 현재 남아 있는 큰 질문: PMW information architecture 기준선은 닫혔고, 열린 requirement question은 없다. 다음 execution focus는 `CR-06` sync를 닫은 뒤 `DEV-01` / `DEV-02` / `TST-01` / `REV-01` / `REV-02` / `REL-01` / `REL-02` evidence path를 이어가는 것이다.
 - 다음 역할이 꼭 읽어야 할 포인트: `.agents/*`와 runtime contract가 계속 truth이며, `.omx/*`는 self-hosting optional sidecar일 뿐이다. PMW는 read-only operator workspace이고 decision packet도 여전히 Codex 밖에서 승인 action을 수행하지 않는다.
 
 ## Status
@@ -17,10 +17,10 @@
 - Owner: Planner
 - Current Requirement Baseline: Hybrid Harness Completion v0.1
 - Requirements Sync Status: In Sync
-- Last Requirement Change At: 2026-04-08 01:24
-- Last Updated At: 2026-04-08 01:35
-- Last Approved By: User (`CR-04 decision packet + PMW implementation entry`)
-- Last Approved At: 2026-04-08 01:24
+- Last Requirement Change At: 2026-04-08 13:30
+- Last Updated At: 2026-04-08 13:30
+- Last Approved By: User (`CR-06 web browser-based test contract`)
+- Last Approved At: 2026-04-08 13:30
 
 ## Open Questions
 - 현재 PMW workspace / decision packet IA 기준선에서 열린 질문 없음.
@@ -44,6 +44,8 @@
 - [2026-04-08] Planner: user 승인에 따라 `Project History` 전용 조회, launcher/stop icon, top-bar `Exit`, approved PMW workspace baseline을 `CR-03` 요구사항으로 확정했다.
 - [2026-04-08] Planner: user 지시에 따라 `Approval Queue -> 상세 결정 패킷` view를 `CR-04` draft로 열고, monitor 안에서 의사결정 맥락을 먼저 읽는 흐름을 requirements에 추가했다.
 - [2026-04-08] Developer: `CR-04` 승인 반영 후 PMW workspace, decision packet, project selector, history view, launcher/stop assets를 실제 구현에 반영했다.
+- [2026-04-08] Planner / Developer: user 승인에 따라 `CR-05 Hybrid Harness Reinforcement + Day Wrap Up Recurrence Gate`를 requirements baseline에 반영하고, task packet context contract, recurrence review, AI-specific review checklist, governance guardrail extension, PMW risk signal을 같은 턴에 동기화하기로 했다.
+- [2026-04-08] Planner: user 지시에 따라 `CR-06 Web Browser-Based Test Contract`를 승인하고, 웹앱 / browser-facing UI 범위는 브라우저 기반 테스트를 수동 / 실환경 gate의 기본 증거로 반영했다.
 
 ## Product Goal
 - 이 프로젝트가 해결하려는 문제:
@@ -118,6 +120,11 @@
 - `Approval Queue -> 상세 결정 패킷` read-only projection과 decision context summary 정의
 - append-only `PROJECT_HISTORY.md` artifact 정의
 - self-hosting preview 재검증, review closure, operating-project mutation 없는 rollout-ready dry-run/reporting completion evidence 기준 정의
+- `Task Packet` 기본 필드에 `Required Context Inputs`, `Architecture Invariants`, `Known Traps`, `Do-Not-Break Paths`, `Evidence Required Before Close`를 추가하는 공통 실행 계약
+- `day_wrap_up`의 `Issue Pattern Review`를 통한 일일 재발 감지와 preventive action routing
+- AI-generated delta에 대한 구조 일관성, duplication/abstraction debt, evidence gap, boundary drift review 기준 강화
+- optional governance layer의 Shadow AI / guardrail 대응 필드와 read-only monitor signal 강화
+- PMW의 `context miss`, `review reopen`, `evidence stale`, `repeat issue`, `guardrail gap` visibility 추가
 
 ## Out of Scope
 - 실시간 이벤트 스트리밍, WebSocket 기반 live monitor, push 알림
@@ -132,6 +139,7 @@
 - PMW usability feedback을 intake 없이 추측으로 구현하거나 mockup 승인 없이 바로 code path를 여는 것
 - 긴 세로 스크롤 나열형 화면을 primary information architecture로 고정하는 것
 - monitor 안에서 approval/write action을 직접 수행하게 만드는 것
+- issue 발견 여부와 무관하게 별도 누적 회고 artifact를 새로 만드는 것
 
 ## Functional Requirements
 
@@ -147,7 +155,7 @@
 | FR-08 | 향후 이벤트 기반 확장을 위한 hook point가 예약되어야 한다. | Medium | ① 구현 계획과 아키텍처에 future hook point가 명시된다. ② Phase 1에서는 event stream을 실제로 수집, 저장, 전송하지 않는다. |
 | FR-09 | 구현 경로는 self-hosting only 웹앱과 downstream 공통 템플릿 경계를 보존해야 한다. | High | ① `Project Monitor Web` 코드는 starter에 포함되지 않는다. ② `team.json`, `governance_controls.json`, artifact schema contract는 starter에 반영될 수 있다. ③ 경계가 architecture/plan에 명시된다. |
 | FR-10 | `enterprise_governed` optional pack은 `large/governed` 위에만 opt-in overlay로 동작해야 한다. | High | ① pack identifier는 `enterprise_governed`로 고정된다. ② `team.json > active_packs`에 pack이 명시되어야 활성화된다. ③ pack 활성 시 enterprise 문서 5종 위치가 고정된다. ④ core profile을 별도 fork하지 않고 overlay로만 동작한다. |
-| FR-11 | 고위험 도메인은 `.agents/runtime/governance_controls.json`으로 protected path와 human gate를 선언해야 한다. | High | ① 파일 경로가 `.agents/runtime/governance_controls.json`으로 고정된다. ② `protected_paths`, `human_review_required_scopes`, `validator_profile`, `critical_domains`, `sandbox_policy` 필드가 문서화된다. ③ `team`에서는 optional, `large/governed + enterprise_governed`에서는 required다. |
+| FR-11 | 고위험 도메인은 `.agents/runtime/governance_controls.json`으로 protected path와 human gate를 선언해야 한다. | High | ① 파일 경로가 `.agents/runtime/governance_controls.json`으로 고정된다. ② `protected_paths`, `human_review_required_scopes`, `validator_profile`, `critical_domains`, `sandbox_policy` 필드가 문서화된다. ③ optional governance 확장 시 `sensitive_paths`, `tool_allowlist`, `tool_denylist`, `exfiltration_sensitive_input_classes`를 같은 계약 안에서 선언할 수 있다. ④ `team`에서는 optional, `large/governed + enterprise_governed`에서는 required다. |
 | FR-12 | OMX 연동은 workflow compatibility로만 허용되어야 한다. | Medium | ① `Discovery -> $deep-interview`, `Planning -> $ralplan`, `parallel implementation -> $team`, `persistent completion/verification -> $ralph` 매핑이 workflow 문서에 반영된다. ② starter 기본 실행은 OMX가 없어도 동일하게 유지된다. ③ `.omx/*`가 truth로 취급되지 않는다. |
 | FR-13 | critical domain에서는 generator와 reviewer/verifier lane이 분리되어야 한다. | High | ① enterprise pack이 활성화된 승인/예산/감사 도메인에서는 skeptical evaluator lane이 필수다. ② mutation/property/edge-case verification gate가 requirement trace와 연결된다. ③ auto-merge보다 HITL escalation이 기본값이다. |
 | FR-14 | hybrid harness completion 버전은 root self-hosting용 runtime reference / HUD / runbook을 제공해야 한다. | High | ① `.omx/*`, runtime contract, local preview/runbook, HUD/visibility surface의 역할이 root self-hosting 기준으로 문서화된다. ② 운영자는 read-only operator surface에서 runtime/HUD summary를 바로 보고 completion 판단에 필요한 현재 상태를 확인할 수 있다. ③ optional sidecar visibility는 허용되지만 truth를 대체하지 않는다. ④ starter 기본 동작은 여전히 unchanged다. |
@@ -161,6 +169,12 @@
 | FR-22 | self-hosting `Project Monitor Web`는 여러 로컬 프로젝트 사이를 전환할 수 있는 project selector를 제공해야 한다. | Medium | ① 상단 영역에 현재 보고 있는 프로젝트를 명시하는 selector가 있다. ② selector는 미리 구성된 로컬 프로젝트 집합 안에서 context만 전환하고 artifact를 수정하지 않는다. ③ 각 프로젝트는 동일한 read-only projection contract로 표시된다. ④ current project와 다른 project의 상태가 섞이지 않는다. |
 | FR-23 | self-hosting `Project Monitor Web`는 app identity와 종료 affordance를 제공해야 한다. | Medium | ① `tools/project-monitor-web` 아래에 PMW 식별용 icon asset과 launcher entry가 존재한다. ② launcher는 local server 구동과 PMW 열기 경로를 제공한다. ③ UI 상단에는 host mode에 맞는 `Exit` 또는 `Close` affordance가 존재한다. ④ in-app `Exit`가 server process를 닫지 않는다면 `tools/project-monitor-web` 아래에 별도 stop icon/entry를 제공한다. ⑤ 모든 shell affordance는 artifact/governance write action과 혼동되지 않게 분리된다. |
 | FR-24 | `Project Monitor Web`는 `Approval Queue`에서 선택한 항목에 대해 read-only `Decision Packet` view를 제공해야 한다. | High | ① packet에는 `무엇을 결정해야 하는지`, `왜 지금 필요한지`, `권장 기본안`, `선택지와 영향`, `관련 blocker/gate`, `관련 artifact/source link`, `recent history context`, `next step`이 포함된다. ② packet은 `CURRENT_STATE.md`, `TASK_LIST.md`, `REQUIREMENTS.md`, `IMPLEMENTATION_PLAN.md`, `PROJECT_HISTORY.md`에서 정보를 조합해 만든다. ③ packet은 content pane에서 먼저 읽고 필요 시 drawer/source link로 더 깊게 들어간다. ④ packet은 read-only이며 실제 승인 입력은 Codex 또는 기존 artifact 경로에서 처리된다. |
+| FR-25 | `Task Packet` 실행 계약은 AI가 로컬 최적화로 구조를 무너뜨리지 않도록 전역 맥락 필드를 기본 포함해야 한다. | High | ① `IMPLEMENTATION_PLAN.md > Task Packet Ledger` 또는 동등 계약에 `Required Context Inputs`, `Architecture Invariants`, `Known Traps`, `Do-Not-Break Paths`, `Evidence Required Before Close`가 포함된다. ② `DEV-*`, `TST-*`, `REV-*`, `REL-*` 태스크는 최소한 어떤 전역 맥락과 어떤 금지 경로를 보존해야 하는지 추적 가능하다. ③ task phrasing이 바뀌어도 invariant와 close evidence 조건이 유지된다. |
+| FR-26 | `requirements_deep_interview`는 기능 요구 수집을 넘어서 전역 설계 제약과 실패 모드를 구조화해야 한다. | High | ① interview output은 goal/scope/evidence 외에 cross-module invariant, backward compatibility, forbidden shortcut, sensitive path, failure mode, review/test evidence를 묻는다. ② Planner는 결과를 `REQUIREMENTS.md`의 FR/NFR, constraints, open question, acceptance에 흡수한다. ③ raw note나 free-form 메모는 여전히 truth가 아니다. |
+| FR-27 | `day_wrap_up`은 매일 `Issue Pattern Review`를 수행해 반복되는 AI 코딩 리스크를 preventive action으로 연결해야 한다. | High | ① 검토 항목은 `전역 맥락 상실과 아키텍처 표류`, `무통제 재생성으로 인한 중복/추상화 부채`, `검증·보안 가드레일 부족으로 인한 런타임 불안정`으로 고정된다. ② 각 항목은 `없음 | 징후 있음 | 확인됨`으로 판정한다. ③ `징후 있음` 이상이면 증거, 영향 범위, 반복 여부, 원인 분류, preventive action을 `CURRENT_STATE.md`와 `TASK_LIST.md > Handoff Log` 또는 follow-up task에 연결한다. ④ 같은 release에서 같은 issue class가 2회 이상 반복되면 follow-up task가 강제된다. |
+| FR-28 | shared review 기준은 AI-generated delta에 특화된 구조 리스크를 기본 점검해야 한다. | High | ① `code_review_checklist`는 전역 구조 일관성 파괴, 중복 코드와 불필요한 추상화, 국소 수정의 비관련 회귀 위험, evidence 없는 승인과 verification debt, read-only/write boundary drift를 기본 항목으로 가진다. ② review 결과는 단순 코드 결함과 운영 gate 리스크를 구분해 기록한다. ③ release-ready 승인 전에 evidence gap이 남으면 blocker 또는 제한 승인으로 남긴다. |
+| FR-29 | `Project Monitor Web`는 recurrence와 guardrail 상태를 read-only risk signal로 보여줘야 한다. | High | ① document health 또는 first-view summary에 `context miss`, `review reopen`, `evidence stale`, `repeat issue`, `guardrail gap`이 표시된다. ② decision packet은 관련 signal과 affected evidence/context를 함께 보여준다. ③ signal은 artifact와 runtime contract에서 파생되며 write/control plane을 추가하지 않는다. |
+| FR-30 | 웹앱 또는 브라우저 렌더링 결과가 사용자 가치에 직접 연결되는 범위는 테스트 시 브라우저 기반 검증을 거쳐야 한다. | High | ① 해당 scope의 `TST-*`, `REL-*`, `WALKTHROUGH.md` 또는 동등 artifact에는 browser-rendered smoke, user browser raw report, 또는 동등한 브라우저 기반 증거가 남는다. ② API-only / unit-only / static file check만으로는 manual/environment gate를 닫지 않는다. ③ Agent가 브라우저를 직접 구동하지 못하면 local preview를 열고 사용자 브라우저 확인 결과를 raw report로 연결한다. ④ backend-only 또는 브라우저 UI가 없는 scope는 이 요구를 적용하지 않는다. |
 
 ## Non-Functional Requirements
 
@@ -181,6 +195,9 @@
 | NFR-13 | deep-interview discovery output은 advisory input이며 artifact truth를 대체할 수 없어야 한다. | High | ① discovery notes나 `.omx/*` sidecar는 승인이나 truth artifact로 간주되지 않는다. ② 최종 합의는 항상 `REQUIREMENTS.md`와 downstream synced docs에 남는다. ③ 같은 질문 체계를 반복 적용해도 결과 정리는 artifact schema에 맞춰야 한다. |
 | NFR-14 | PMW 기본 시각 언어는 어두운 모니터 톤보다 밝고 읽기 쉬운 operator workspace를 우선해야 한다. | High | ① 기본 화면은 밝은 배경과 높은 가독성 대비를 사용한다. ② 상태 강조는 연한 표면 위의 신호색으로 구분한다. ③ dark-heavy palette에 의존하지 않아도 current stage, warning, blocker를 빠르게 식별할 수 있다. |
 | NFR-15 | decision packet은 사용자가 여러 artifact를 직접 찾아다니지 않아도 의사결정에 필요한 핵심 맥락을 first view에서 파악하게 해야 한다. | High | ① packet first view만으로도 결정 제목, urgency, recommendation, impact, 근거 경로를 이해할 수 있다. ② 추가 문서 탐색은 선택 사항이어야 한다. ③ packet은 장식적 요약이 아니라 실제 결정에 필요한 context compression을 제공해야 한다. |
+| NFR-16 | context/invariant 계약은 같은 요구를 다른 phrasing으로 받아도 전역 설계 의도를 안정적으로 보존해야 한다. | High | ① task packet과 discovery contract는 요청 표현이 달라도 같은 architecture invariant와 do-not-break path를 유지한다. ② local implementation delta가 전역 설계 의도를 잃지 않도록 close evidence 조건이 함께 전달된다. |
+| NFR-17 | recurrence review는 재발 방지에는 충분히 강해야 하지만 artifact noise는 최소화해야 한다. | High | ① `없음` 판정은 매일 수행하되 artifact에는 문제나 조치가 있을 때만 기록한다. ② repeat issue가 아니고 예방 조치가 없으면 새 문서를 만들지 않는다. ③ 같은 release에서 반복된 이슈는 follow-up task와 rule/skill/checklist update target 없이 닫히지 않는다. |
+| NFR-18 | governance extension과 PMW signal 강화는 optional/local-first 성질을 깨지 않아야 한다. | High | ① extra governance field는 optional governance layer에서만 강하게 요구된다. ② core/starter default는 계속 generic하고, read-only monitor signal이 control plane으로 확장되지 않는다. ③ 네트워크나 외부 telemetry 없이도 signal derivation과 validator regression을 재현할 수 있다. |
 
 ## Constraints
 - 기술 제약: source of truth는 markdown artifact와 runtime contract이며, starter/reset source split과 validator 규칙을 깨지 않아야 한다.
@@ -188,6 +205,7 @@
 - 설계 제약: `Project Monitor Web`은 artifact와 runtime contract에 대해 read-only다. 정보 수정은 항상 기존 artifact 편집 경로에서 수행한다.
 - shell 제약: project selector, icon, exit 같은 local shell affordance는 허용하되, artifact/governance mutation control로 확장하지 않는다.
 - decision 제약: decision packet은 read-only context surface이며 approval submit, lock mutation, direct artifact edit를 포함하지 않는다.
+- 회고 제약: recurrence review는 `CURRENT_STATE.md`, `TASK_LIST.md`, follow-up task, relevant rule/skill/checklist에 흡수되며 별도 top-level retrospective truth를 만들지 않는다.
 - 설계 원칙: 단기 편의보다 장기 운영 비용 절감을 우선하며, 나중에 바꾸기 비싼 계약은 지금 더 명시적으로 고정한다.
 - 일정 제약: Phase 1은 정적 모니터 MVP와 pack/runtime contract까지이며, container/read-only sandbox 실험과 이벤트 기반 확장은 Phase 2 이후로 미룬다.
 - 릴리즈 제약: actual operating-project rollout은 local preview 재검증, review closure, self-hosting revalidation, dry-run/reporting gate가 모두 닫힐 때까지 미룬다.
@@ -213,6 +231,7 @@
 - HUD는 별도 control plane이 아니라 operator visibility surface를 뜻한다.
 - critical-domain urgency 표현은 requirement에서 과도하게 세분화하지 않고 review/test/deploy gate에서 구체화한다.
 - mandatory deep-interview skill은 shared planner process로 쓰되, 결과 자체는 artifact sync 전까지 초안 입력일 뿐이다.
+- recurrence review에서 잡힌 issue class는 재발 방지 조치를 해당 truth artifact나 shared skill/rule/checklist에 연결해야 같은 실수를 줄일 수 있다.
 
 ## Approved Change Log
 
@@ -222,6 +241,7 @@
 | CR-02 | 2026-04-07 10:33 | enterprise-governed pack, `governance_controls.json`, optional `.omx` sidecar compatibility, critical-domain skeptical evaluator gate를 추가하고 starter/reset source로 확장 | FR-03, FR-09~FR-13, NFR-02, NFR-04, NFR-05, NFR-08, NFR-09 | Architecture / Plan / Task / Current State / Starter / Reset / Validator / Workflow | In Sync |
 | CR-03 | 2026-04-08 00:32 | hybrid harness completion의 approved PMW workspace baseline을 확정. `Project History` 전용 조회, project selector, launcher/stop icon, top-bar `Exit`, mockup-first gate를 승인 | FR-14~FR-23, NFR-10~NFR-14 | Architecture / Plan / Task / UI Design / Current State / History | In Sync |
 | CR-04 | 2026-04-08 01:24 | `Approval Queue -> 상세 결정 패킷` read-only view를 승인하고, PMW가 recommendation / impact / source link / recent context를 content pane first 구조로 제공하도록 구현 기준선과 live code를 동기화 | FR-24, NFR-15 | Architecture / Plan / Task / UI Design / Current State / History / PMW | In Sync |
+| CR-05 | 2026-04-08 09:47 | AI 코딩 비판에서 드러난 구조 표류, 중복/추상화 부채, 검증/보안 가드레일 부재를 줄이기 위해 task packet context contract, deep-interview 확장, day-wrap recurrence gate, AI-specific review checklist, optional governance guardrail fields, PMW risk signal을 공통 기준선에 추가 | FR-11, FR-19, FR-25~FR-29, NFR-16~NFR-18 | Architecture / Plan / Task / Current State / History / Shared Skills / Starter / Runtime / PMW | In Sync |
 
 ## Pending Change Requests
 현재 열려 있는 change request 없음.
@@ -236,3 +256,5 @@
 - 2026-04-08 00:32 User: `Project History` 전용 조회, project selector, launcher icon, top-bar `Exit`, 별도 server stop icon 방향과 revised PMW wireframe / requirements 반영본을 일단 승인했다
 - 2026-04-08 00:42 User: `CR-04`를 먼저 진행하고, approval 요청의 세부 맥락을 PMW 안에서 보는 `Decision Packet` 뷰를 먼저 설계하라고 지시했다
 - 2026-04-08 01:24 User: `CR-04` 승인 이후 바로 진행하라고 했고, 이에 따라 PMW workspace / decision packet / history / launcher-stop 자산 구현을 진행했다
+- 2026-04-08 09:35 User: AI 코딩 한계 비판을 하이브리드 하네스에 흡수하는 `Hybrid Harness Reinforcement From AI-Coding Critique` 계획과 `Day Wrap Up` recurrence gate 방향을 함께 승인했다
+- 2026-04-08 09:47 User: `CR-05 Hybrid Harness Reinforcement + Day Wrap Up Recurrence Gate` 구현을 지시했고, 공통 기본값과 starter mirror까지 같은 턴에 반영하기로 했다

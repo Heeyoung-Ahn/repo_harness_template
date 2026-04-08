@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project Monitor Web</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="ambient-grid" aria-hidden="true"></div>
+    <div class="ambient-orb ambient-orb-left" aria-hidden="true"></div>
+    <div class="ambient-orb ambient-orb-right" aria-hidden="true"></div>
+
+    <main class="shell">
+      <header class="app-header card" id="app-header">
+    <div class="brand-strip">
+      <div class="brand-mark">
+        <img src="/favicon.svg" alt="PMW">
+      </div>
+      <div class="brand-copy">
+        <p class="eyebrow">Project Monitor Web</p>
+        <h1>repo_harness_template</h1>
+        <p class="header-goal">current `v0.3` contract와 preview evidence를 바탕으로 hybrid harness를 `준운영 수준`의 rollout-ready 완성본까지 self-hosting 템플릿 안에서 마무리한다.</p>
+      </div>
+    </div>
+    <div class="header-controls">
+      <label class="project-picker">
+        <span>Project</span>
+        <select id="project-selector">
+          
+                <option value="self-hosting-template" selected="">
+                  repo_harness_template
+                </option>
+              
+        </select>
+      </label>
+      <div class="header-actions">
+        <button class="ghost-button" type="button" data-refresh="true">Refresh</button>
+        <button class="ghost-button ghost-button-strong" type="button" data-exit="true">Exit</button>
+      </div>
+    </div>
+    <div class="headline-strip">
+      <div class="headline-primary">
+        <span class="headline-label">One-line status</span>
+        <strong>`TST-02` local preview regression과 dry-run smoke는 끝났다. 다음 단계는 `DEV-01`, `DEV-02`, `TST-01`, `REV-01` / `REV-02`, `REL-01` / `REL-02`다</strong>
+      </div>
+      <div class="headline-secondary">
+        <span class="headline-label">Next action</span>
+        <span>`.omx/README.md`와 governed pack source, validator contract를 다시 읽고 `DEV-01`, `DEV-02` 최소 baseline을 구현한다.</span>
+      </div>
+      <div class="headline-meta">
+        <span class="status-chip">Development and Test Loop</span>
+        <span class="muted-label">solo</span>
+        <span class="muted-label">2026-04-08T04:03:13.769Z</span>
+      </div>
+    </div>
+  </header>
+      <section class="warning-stack" id="warnings"></section>
+
+      <section class="workspace">
+        <aside class="workspace-sidebar" id="navigation">
+    <div class="nav-card">
+      <p class="eyebrow">Workspace Menu</p>
+      <div class="nav-list">
+        
+            <button type="button" class="nav-button is-active" data-view="overview">
+              Project Overview
+            </button>
+          
+            <button type="button" class="nav-button" data-view="current-state">
+              Current State
+            </button>
+          
+            <button type="button" class="nav-button" data-view="board">
+              Project Board
+            </button>
+          
+            <button type="button" class="nav-button" data-view="task-detail">
+              Task Detail
+            </button>
+          
+            <button type="button" class="nav-button" data-view="blockers">
+              Blocker / Approval Queue
+            </button>
+          
+            <button type="button" class="nav-button" data-view="activity">
+              Recent Activity
+            </button>
+          
+            <button type="button" class="nav-button" data-view="history">
+              Project History
+            </button>
+          
+            <button type="button" class="nav-button" data-view="health">
+              Document Health
+            </button>
+          
+            <button type="button" class="nav-button" data-view="team">
+              Team Registry
+            </button>
+          
+      </div>
+    </div>
+  </aside>
+
+        <section class="workspace-main">
+          <section class="dashboard-grid" id="dashboard">
+        <button type="button" class="dashboard-card" data-view="current-state">
+          <span class="dashboard-label">Current Stage</span>
+          <strong class="dashboard-value">Development and Test Loop</strong>
+          <span class="dashboard-meta">`TST-02` preview regression은 완료됐다. 다음 단계는 `DEV-01`, `DEV-02`, `TST-01`, `REV-01` / `REV-02`, `REL-01` / `REL-02` 순으로 completion path를 닫는 것이다</span>
+        </button>
+      
+        <button type="button" class="dashboard-card" data-view="board">
+          <span class="dashboard-label">Open Tasks</span>
+          <strong class="dashboard-value">10</strong>
+          <span class="dashboard-meta">0 active locks</span>
+        </button>
+      
+        <button type="button" class="dashboard-card" data-view="blockers">
+          <span class="dashboard-label">Attention Queue</span>
+          <strong class="dashboard-value">2</strong>
+          <span class="dashboard-meta">0 approvals / manual gates</span>
+        </button>
+      
+        <button type="button" class="dashboard-card is-active" data-view="overview">
+          <span class="dashboard-label">Progress</span>
+          <strong class="dashboard-value">64%</strong>
+          <span class="dashboard-meta">18 / 28 complete</span>
+        </button>
+      
+        <button type="button" class="dashboard-card" data-view="current-state">
+          <span class="dashboard-label">Current Agent</span>
+          <strong class="dashboard-value">Developer</strong>
+          <span class="dashboard-meta">`TST-02` smoke가 끝났고, 다음 병목은 optional runtime boundary와 governed fixture baseline을 정리하는 `DEV-01`, `DEV-02`다.</span>
+        </button>
+      
+        <button type="button" class="dashboard-card" data-view="task-detail">
+          <span class="dashboard-label">Current Task</span>
+          <strong class="dashboard-value">PLN-01</strong>
+          <span class="dashboard-meta">`CR-03 Hybrid Harness Completion` 요구사항 초안과 rollout defer policy 정리</span>
+        </button>
+      
+        <button type="button" class="dashboard-card" data-view="current-state">
+          <span class="dashboard-label">Next Action</span>
+          <strong class="dashboard-value">Review</strong>
+          <span class="dashboard-meta">`.omx/README.md`와 governed pack source, validator contract를 다시 읽고 `DEV-01`, `DEV-02` 최소 baseline을 구현한다.</span>
+        </button>
+      
+        <button type="button" class="dashboard-card" data-view="health">
+          <span class="dashboard-label">Document Health</span>
+          <strong class="dashboard-value">`CR-05` baseline sync와 `TST-02` preview smoke를 마쳤다. 다음은 `DEV-01`, `DEV-02`, `TST-01`, `REV-01` / `REV-02`, `REL-01` / `REL-02`다</strong>
+          <span class="dashboard-meta">validator core</span>
+        </button>
+      </section>
+
+          <section class="content-shell card">
+            <div class="content-head">
+              <div>
+                <p class="eyebrow">Content Area</p>
+                <h2 id="content-heading">Project Overview</h2>
+              </div>
+              <p class="content-meta" id="content-meta">프로젝트 목표, 질문, 요약, 진척률을 한 화면에서 봅니다.</p>
+            </div>
+            <div class="content-scroll" id="content">
+    <div class="overview-grid">
+      <section class="content-card hero-summary">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Project Summary</p>
+            <h3>repo_harness_template</h3>
+          </div>
+          <div class="summary-stat">
+            <span>Progress</span>
+            <strong>64%</strong>
+          </div>
+        </div>
+        <p class="lead-copy">current `v0.3` contract와 preview evidence를 바탕으로 hybrid harness를 `준운영 수준`의 rollout-ready 완성본까지 self-hosting 템플릿 안에서 마무리한다.</p>
+        <div class="pill-row">
+          <span class="info-pill">solo</span>
+          
+          <span class="info-pill">Open Tasks 10</span>
+        </div>
+      </section>
+
+      <section class="content-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Product Goal</p>
+            <h3>What This Project Must Solve</h3>
+          </div>
+          <div><a class="source-link" href="/api/file?project=self-hosting-template&amp;path=.agents%2Fartifacts%2FREQUIREMENTS.md" target="_blank" rel="noreferrer">REQUIREMENTS.md</a></div>
+        </div>
+        <ol class="ordered-list"><li>이 프로젝트가 해결하려는 문제:</li><li>solo 중심 governance harness가 팀 단위 개발, 승인 체계가 강한 대규모 운영, 감사/예산/결재 같은 고위험 도메인까지 확장될 때 생기는 ownership, approval, audit trace, handoff, 동시 작업 관리 공백을 줄인다.</li><li>프로젝트 현황이 여러 markdown artifact에 분산되어 있어 전체 상태를 머릿속에서 조합해야 하는 비용을 줄인다.</li><li>optional orchestration runtime을 붙이더라도 repo artifact truth와 review/test gate를 흔들리지 않게 유지한다.</li><li>최종 사용자: maintainer, planner, developer, tester, reviewer, devops, 팀 리드, 프로젝트 운영자, governance-heavy enterprise domain owner</li><li>성공 기준:</li><li>하나의 template에서 solo 경량 운영과 team/large 통제 운영을 모두 지원한다.</li><li>enterprise 규율이 필요한 프로젝트는 core template를 깨지 않고 `enterprise_governed` pack만 opt-in 한다.</li><li>orchestration compatibility를 도입해도 source of truth는 계속 artifact와 runtime contract에 남는다.</li><li>운영자는 `Project Monitor Web` 또는 root self-hosting HUD read-only surface에서 프로젝트명, 목표, open question, 현재 상태, 현재 작업, blocker, readiness, next action을 30초 안에 파악할 수 있다.</li><li>operating-project rollout 전에 self-hosting repo 안에서 local preview 재검증, review closure, dry-run/reporting completion evidence를 재현할 수 있다.</li><li>Planner는 같은 질문 체계를 반복 적용하는 discovery skill을 통해 요구사항 누락과 UI 재작업을 줄일 수 있다.</li><li>사용자 또는 운영자는 승인 요청이 생기면 PMW의 decision packet에서 이유, 추천안, 영향, 근거 문서를 먼저 읽고 Codex로 돌아와 결정을 내릴 수 있다.</li></ol>
+      </section>
+
+      <section class="content-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Open Questions</p>
+            <h3>What Still Needs a Decision</h3>
+          </div>
+          <div><a class="source-link" href="/api/file?project=self-hosting-template&amp;path=.agents%2Fartifacts%2FREQUIREMENTS.md" target="_blank" rel="noreferrer">Open Questions</a></div>
+        </div>
+        <ul class="bullet-list"><li>현재 PMW workspace / decision packet IA 기준선에서 열린 질문 없음.</li></ul>
+      </section>
+
+      <section class="content-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Architecture</p>
+            <h3>Guide Summary</h3>
+          </div>
+          <div><a class="source-link" href="/api/file?project=self-hosting-template&amp;path=.agents%2Fartifacts%2FARCHITECTURE_GUIDE.md" target="_blank" rel="noreferrer">ARCHITECTURE_GUIDE.md</a></div>
+        </div>
+        <ul class="bullet-list"><li>아키텍처 스타일: truth layer와 projection/orchestration layer를 분리한 local-first layered architecture</li><li>주요 도메인: Governance Core, Profile Contract, Enterprise Governance Pack, Hybrid Runtime Reference, Parser &amp; Projection, Project Monitor Web, Integration Adapters</li><li>핵심 설계 원칙</li></ul>
+      </section>
+
+      <section class="content-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Implementation</p>
+            <h3>Plan Summary</h3>
+          </div>
+          <div><a class="source-link" href="/api/file?project=self-hosting-template&amp;path=.agents%2Fartifacts%2FIMPLEMENTATION_PLAN.md" target="_blank" rel="noreferrer">IMPLEMENTATION_PLAN.md</a></div>
+        </div>
+        <ul class="bullet-list"><li>이번 버전의 목표: current `v0.3` contract와 preview evidence를 기반으로 hybrid harness를 `준운영 수준`의 rollout-ready 완성본까지 self-hosting 템플릿 안에서 마무리한다</li><li>현재 stage: Development and Test Loop</li><li>현재 iteration: `Iteration 2` Completion Gate and Preview Evidence</li><li>이번 iteration의 주요 Task ID: `PLN-08`, `DEV-06`, `TST-03`, `TST-02`, `REV-01`, `REV-02`, `REL-01`, `REL-02`, `REL-03`</li><li>이번 iteration의 Requirement IDs: `FR-16`, `FR-17`, `FR-24`, `FR-25`~`FR-29`, `NFR-11`, `NFR-15`, `NFR-16`~`NFR-18`</li><li>현재 구현 기준 Requirement Baseline: Hybrid Harness Completion v0.1</li><li>지금 바로 필요한 검증: task packet context contract sync, recurrence gate artifact routing, governance guardrail contract, PMW risk signal projection, local preview regression, `/api/projects`와 decision packet projection, launcher/stop shell affordance boundary, dry-run/reporting output, review closure readiness</li><li>남아 있는 release gate (manual / dependency / compliance): `manual/environment`, `dependency/compliance` 모두 open</li><li>optional self-hosting tool boundary check: `.omx/*`와 monitor delta는 root self-hosting only로 유지한다</li><li>enterprise-governed pack / governance control check: pack은 optional overlay를 유지하되 governed fixture와 activation guide는 rollout-ready 수준으로 끌어올린다</li><li>현재 green level target: `Targeted`</li><li>branch freshness precheck: 새 버전 draft는 `v0.3` archive 이후 clean baseline에서 시작한다</li><li>user-captured manual test expected: optional local browser smoke during `TST-02`</li><li>다음 역할이 꼭 알아야 할 위험: operating-project rollout은 current version 범위 밖이며 `preview revalidation + review closure + dry-run/reporting` completion gate 전에는 열지 않는다. `CR-05` reinforcement sync가 닫히기 전에는 recurrence gate / governance guardrail / PMW risk signal을 부분 반영 상태로 남기지 않는다.</li></ul>
+      </section>
+
+      <section class="content-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Design Mockup</p>
+            <h3>UI Baseline</h3>
+          </div>
+          <div><a class="source-link" href="/api/file?project=self-hosting-template&amp;path=.agents%2Fartifacts%2FUI_DESIGN.md" target="_blank" rel="noreferrer">UI_DESIGN.md</a></div>
+        </div>
+        <ul class="bullet-list"><li>이번 범위의 UI 목표: 분산 artifact를 머릿속에서 조합하지 않고도 프로젝트 현재 상태와 승인 결정 맥락을 한 화면에서 판단할 수 있는 `Project Monitor Web`을 설계한다.</li><li>현재 설계 대상 화면: project selector가 있는 operator workspace + decision packet content pane + task/detail drawer</li><li>current `CR-04` delta는 `Approval Queue -&gt; 상세 결정 패킷`을 PMW 안에서 먼저 읽게 하는 방향으로 승인됐고, live PMW code에 반영됐다.</li><li>이번 문서에서 꼭 지켜야 할 흐름: 사용자는 먼저 상단 요약과 주요 카드에서 현재 결정을 파악하고, `Approval Queue`에서 선택한 항목의 decision packet을 우측 콘텐츠 영역에서 읽은 뒤 필요할 때만 drawer와 source link로 내려간다.</li><li>금지된 UI 해석 또는 생략: 실시간처럼 보이는 가짜 애니메이션, inline edit, write action, raw log stream, decorative chart 추가</li><li>테스트 때 놓치면 안 되는 포인트: 수동 새로고침 semantics, project selector context 분리, blocker/gate 구분, source artifact 링크, team/solo/large 필터 동작, decision packet 정보 압축 품질, launcher/stop affordance 경계</li><li>다음 역할이 읽어야 할 범위: `Current UI Scope`, `Must Preserve Interactions`, `Screen Specs`, `Developer Notes`</li></ul>
+      </section>
+
+      <section class="content-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Task Progress</p>
+            <h3>Overall Workload</h3>
+          </div>
+          <button type="button" class="link-button" data-view="board">Open Board</button>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:64%"></div>
+        </div>
+        <div class="metric-row">
+          <div><span>Open</span><strong>10</strong></div>
+          <div><span>Done</span><strong>18</strong></div>
+          <div><span>Total</span><strong>28</strong></div>
+        </div>
+      </section>
+
+      <section class="content-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Major Issues</p>
+            <h3>Attention Points</h3>
+          </div>
+          <button type="button" class="link-button" data-view="blockers">Open Queue</button>
+        </div>
+        <div class="stack-list">
+                    <article class="list-card compact">
+                      <strong>Dependency / compliance gate</strong>
+                      <div class="subtle">not started for this version</div>
+                    </article>
+                  
+                    <article class="list-card compact">
+                      <strong>Document / harness maintenance</strong>
+                      <div class="subtle">`CR-05` reinforcement debt와 `TST-02` smoke는 닫혔다. 이후 `DEV-01 -&gt; DEV-02 -&gt; TST-01 -&gt; REV/REL` completion path를 이어간다</div>
+                    </article>
+                  </div>
+      </section>
+
+      <section class="content-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Risk Signals</p>
+            <h3>Recurrence and Guardrail Watch</h3>
+          </div>
+          <button type="button" class="link-button" data-view="health">Open Health</button>
+        </div>
+        <div class="stack-list">
+        <article class="list-card compact">
+          <div class="queue-item-header">
+            <span class="info-pill">Evidence Stale</span>
+            <span class="subtle">Watch</span>
+          </div>
+          <div class="subtle">review/manual/dependency gate가 아직 열려 있어 close evidence가 더 필요하다.</div>
+          <div class="source-stack"><a class="source-link" href="/api/file?project=self-hosting-template&amp;path=.agents%2Fartifacts%2FCURRENT_STATE.md" target="_blank" rel="noreferrer">CURRENT_STATE.md</a><a class="source-link" href="/api/file?project=self-hosting-template&amp;path=.agents%2Fartifacts%2FDEPLOYMENT_PLAN.md" target="_blank" rel="noreferrer">DEPLOYMENT_PLAN.md</a><a class="source-link" href="/api/file?project=self-hosting-template&amp;path=.agents%2Fartifacts%2FREVIEW_REPORT.md" target="_blank" rel="noreferrer">REVIEW_REPORT.md</a></div>
+        </article>
+      </div>
+      </section>
+
+      <section class="content-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Recent History</p>
+            <h3>Milestones and Decisions</h3>
+          </div>
+          <button type="button" class="link-button" data-view="history">Open History</button>
+        </div>
+        <div class="timeline-list">
+                    <button type="button" class="timeline-item" data-open-detail="history" data-detail-id="history-entry-8">
+                      <span class="timeline-date">2026-04-08</span>
+                      <strong>HIST-20260408-01 Design</strong>
+                      <div class="subtle">user feedback에 따라 `Project Monitor Web`를 밝은 operator workspace로 재정의하고 low-fi wireframe을 작성했다.</div>
+                    </button>
+                  
+                    <button type="button" class="timeline-item" data-open-detail="history" data-detail-id="history-entry-9">
+                      <span class="timeline-date">2026-04-08</span>
+                      <strong>HIST-20260408-02 Approval</strong>
+                      <div class="subtle">user가 revised PMW workspace baseline을 승인했다.</div>
+                    </button>
+                  
+                    <button type="button" class="timeline-item" data-open-detail="history" data-detail-id="history-entry-10">
+                      <span class="timeline-date">2026-04-08</span>
+                      <strong>HIST-20260408-03 Planning</strong>
+                      <div class="subtle">user 지시에 따라 `CR-04`로 `Approval Queue -&gt; 상세 결정 패킷` view를 먼저 열었다.</div>
+                    </button>
+                  
+                    <button type="button" class="timeline-item" data-open-detail="history" data-detail-id="history-entry-11">
+                      <span class="timeline-date">2026-04-08</span>
+                      <strong>HIST-20260408-04 Implementation</strong>
+                      <div class="subtle">approved `CR-04` baseline에 따라 PMW workspace, decision packet, project selector, history view, launcher/stop assets를 실제 구현했다.</div>
+                    </button>
+                  </div>
+      </section>
+    </div>
+  </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <aside class="drawer" id="drawer" aria-hidden="true" data-open="false">
+      <div class="drawer-scrim" data-close-drawer="true"></div>
+      <div class="drawer-panel">
+        <button class="drawer-close" type="button" data-close-drawer="true">
+          Close
+        </button>
+        <p class="eyebrow drawer-eyebrow">Detail Drawer</p>
+        <h2 class="drawer-title" id="drawer-title">Detail</h2>
+        <div id="drawer-content"></div>
+      </div>
+    </aside>
+
+    <script type="module" src="/app.js"></script>
+  
+
+</body></html>

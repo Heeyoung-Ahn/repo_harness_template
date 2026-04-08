@@ -99,6 +99,7 @@
 - [ ] 대상 버전과 커밋 범위 확인
 - [ ] 환경 변수 / 비밀값 설정 확인
 - [ ] 수동 / 실환경 검증 상태 확인
+- [ ] 웹앱 / browser-facing UI scope면 browser-rendered smoke 또는 user browser raw report를 확보
 - [ ] 사용자 실기기 / 브라우저 raw report와 Tester 최종 판정이 서로 모순되지 않음
 - [ ] dependency / compliance triage 확인
 - [ ] optional runtime / visibility가 read-only boundary를 유지하고 truth를 대체하지 않음

@@ -10,6 +10,9 @@
 - [2026-04-08] Planner / Designer: user feedback을 `DSG-01` 입력으로 반영하고, PMW lighter palette, project selector, artifact-aware overview, workspace wireframe 기준안을 `CR-03` draft에 동기화했다.
 - [2026-04-08] Planner: user가 revised PMW workspace baseline을 승인했고, `Project History` 전용 조회와 launcher/stop affordance를 구현 입력으로 고정했다.
 - [2026-04-08] Planner / Designer: user 지시에 따라 `CR-04` decision-packet draft를 열고, approval queue의 상세 결정 패킷 IA / wireframe을 planning artifacts에 반영했다.
+- [2026-04-08] Planner / Developer: user가 `CR-05 Hybrid Harness Reinforcement + Day Wrap Up Recurrence Gate` 구현을 승인했고, requirements/architecture/plan baseline sync, shared skill/rule 강화, governance contract 보강, PMW signal 추가를 같은 턴에 반영한다.
+- [2026-04-08] Planner / Developer / Tester: `CR-05` reinforcement contract를 live/starter/runtime/PMW에 반영했고, root/starter validator, PMW test, Korean mojibake check로 회귀를 검증했다.
+- [2026-04-08] Planner: user 지시에 따라 `CR-06 Web Browser-Based Test Contract`를 승인하고, 웹앱 / browser-facing UI scope의 브라우저 기반 테스트 규칙을 live/starter/reset baseline에 반영한다.
 
 ## Usage Rules
 - 상태는 `[ ]`, `[-]`, `[x]`, `[!]`만 사용합니다.
@@ -36,7 +39,7 @@
 ## Current Release Target
 - Version / Milestone: Hybrid Harness Completion
 - Current Stage: Development and Test Loop
-- Current Focus: `PLN-04`로 completion gate와 rollout entry criteria를 live deployment 문서까지 고정했다. 다음 단계는 `TST-02` preview regression, `REV-01` / `REV-02` review closure, `REL-01` / `REL-02` evidence capture다
+- Current Focus: `PLN-09` browser-based web test contract sync는 완료됐다. 다음 단계는 `DEV-01`, `DEV-02`, `TST-01`, `REV-01` / `REV-02`, `REL-01` / `REL-02` 순으로 completion path를 닫는 것이다
 - Current Release Goal: self-hosting 템플릿 안에서 hybrid harness를 완성하고, rollout은 completion gate가 닫힌 뒤에만 연다
 - Current Green Level: Targeted
 - Branch Freshness: Start of `Hybrid Harness Completion v0.1`
@@ -62,6 +65,8 @@
 - [x] PLN-05 shared `requirements_deep_interview` skill draft와 starter mirror 추가 — Scope: `.agents/skills/requirements_deep_interview/*`, `templates_starter/.agents/skills/requirements_deep_interview/*`
 - [x] PLN-06 `PROJECT_HISTORY.md` artifact contract과 live/starter/reset source 추가 — Scope: `.agents/artifacts/PROJECT_HISTORY.md`, `templates_starter/.agents/artifacts/PROJECT_HISTORY.md`, `templates/version_reset/artifacts/PROJECT_HISTORY.md`
 - [x] PLN-07 `CR-04` decision-packet view requirement / architecture / plan sync — Scope: `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`, `CURRENT_STATE.md`, `TASK_LIST.md`
+- [x] PLN-08 `CR-05` reinforcement contract sync — Scope: `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`, `CURRENT_STATE.md`, `TASK_LIST.md`, starter mirror artifacts
+- [x] PLN-09 `CR-06` web browser-based test contract sync — Scope: `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`, `.agents/workflows/test.md`, `DEPLOYMENT_PLAN.md`, `CURRENT_STATE.md`, `TASK_LIST.md`, starter/reset mirror artifacts
 
 ## Workflow Stage: Design Gate
 - [x] DSG-01 current `Project Monitor Web` usability feedback intake — Scope: user test feedback, `REQUIREMENTS.md`, `UI_DESIGN.md`
@@ -81,7 +86,9 @@
 ### Iteration 2
 - [x] DEV-03 approved `Project Monitor Web` workspace + pending decision packet view + history view + launcher/stop affordance 구현 — Scope: `tools/project-monitor-web/*`
 - [ ] DEV-04 rollout-ready dry-run/reporting hardening without downstream mutation — Scope: `.agents/scripts/sync_template_docs.ps1`, deployment/defer evidence
-- [ ] TST-02 local preview revalidation과 dry-run evidence 검증 — Scope: preview smoke, monitor regression, dry-run/report outputs
+- [x] DEV-06 reinforcement contract reflection across shared skills / governance contract / PMW signals — Scope: `.agents/skills/{day_wrap_up,requirements_deep_interview,code_review_checklist}/*`, `templates_starter/.agents/skills/*`, `.agents/runtime/governance_controls.json`, `templates_starter/.agents/runtime/governance_controls.json`, `tools/project-monitor-web/*`
+- [x] TST-02 local preview revalidation과 dry-run evidence 검증 — Scope: preview smoke, monitor regression, dry-run/report outputs
+- [x] TST-03 reinforcement validator and regression verification — Scope: root/starter harness validator, PMW parser/projection regression, mojibake check
 - [x] DEV-05 shared standard template reflection and docs alignment — Scope: `templates_starter/*`, `templates/version_reset/artifacts/*`, `README.md`, `templates_starter/PROJECT_WORKFLOW_MANUAL.md`
 
 ## Workflow Stage: Review Gate
@@ -103,8 +110,8 @@
 |---|---|---|---|---|---|
 
 ## Handoff Log
+- [2026-04-08 13:30] `PLN-09` completed. user 지시에 따라 `CR-06 Web Browser-Based Test Contract`를 live/starter/reset baseline에 반영했고, 웹앱 / browser-facing UI scope는 API-only evidence로 manual/environment gate를 닫지 않도록 `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`, `test/deploy` artifact/template source를 동기화했다. 다음 agent는 Developer이며 `DEV-01 -> DEV-02 -> TST-01` 순으로 completion path를 이어가고, user는 local PMW를 브라우저에서 보며 후속 UI 코멘트를 줄 수 있다.
+- [2026-04-08 12:08] `TST-02` completed. local PMW preview를 `127.0.0.1:4173`에 올려 `/`, `/app.js`, `/styles.css`, `/favicon.svg`, `/api/projects`, `/api/snapshot`, `/api/file` allow/block 경계를 smoke했고 project selector context, decision packet 2건, history entry 13건, risk signal 5건 노출을 확인했다. `sync_template_docs.ps1 -WhatIf`를 temp target에 실행해 no-mutation dry-run 경로도 확인했다. 다음 agent는 Developer이며 `DEV-01 -> DEV-02 -> TST-01` 순으로 optional runtime boundary와 governed fixture baseline을 이어간다.
+- [2026-04-08 10:57] `PLN-08`, `DEV-06`, `TST-03` completed. `CR-05` reinforcement contract를 live/starter/runtime/PMW에 반영했고 root/starter validator, `node --test`, `node --check "src/presentation/app.js"`, Korean mojibake check를 통과했다. 다음 agent는 Tester이며 `DEPLOYMENT_PLAN.md` Quick Read + Preflight Checklist를 다시 읽고 `cd "C:\Newface\30 Github\repo_harness_template\tools\project-monitor-web"; npm start` 후 `http://127.0.0.1:4173`에서 `/api/projects`, decision packet, history, risk signal, launcher/stop affordance까지 포함한 `TST-02` local preview smoke를 수행한다. 그 다음 순서는 `DEV-01 -> DEV-02 -> TST-01 -> REV-01/REV-02 -> REL-01/REL-02`다.
 - [2026-04-08 01:47] Day Wrap Up completed. `PLN-04` completion gate sync 완료 상태를 lock truth와 맞추고 stale active lock을 제거했다. 다음 session의 Tester는 `DEPLOYMENT_PLAN.md` Quick Read + Preflight Checklist를 다시 읽고 `cd "C:\Newface\30 Github\repo_harness_template\tools\project-monitor-web"; npm start` 후 `http://127.0.0.1:4173`에서 `/api/projects`, decision packet, history view, launcher/stop affordance까지 포함한 `TST-02` smoke를 수행한다. 남은 open gate는 `TST-02`, `REV-01`, `REV-02`, `REL-01`, `REL-02`, `REL-03`이며 operating-project rollout은 계속 defer 상태다.
 - [2026-04-08] `PLN-04` completed. completion gate와 post-completion rollout entry criteria를 `REQUIREMENTS.md`, `IMPLEMENTATION_PLAN.md`, `DEPLOYMENT_PLAN.md`에 같은 문장으로 고정했고 `BLK-02`를 제거했다. 다음 agent는 Tester이며 `TST-02` preview regression과 dry-run evidence 검증을 수행한다.
-- [2026-04-08] `DSG-06`, `DEV-03` completed. user 승인 기준에 따라 PMW workspace / decision packet / project selector / history view / launcher-stop assets를 구현했고 `node --test`, `node --check src/presentation/app.js`, `node --check server.js`를 통과했다. 다음 agent는 Planner 또는 Tester이며 `PLN-04` completion gate sync와 `TST-02` preview regression을 이어간다.
-- [2026-04-08] `DSG-03` completed. user가 revised PMW workspace baseline을 승인했고 `Project History` view, project selector, launcher/stop affordance를 구현 입력으로 확정했다. 다음 agent는 Developer 또는 Planner이며 `DEV-03`과 `PLN-04`를 이어간다.
-- [2026-04-08] `PLN-07`, `DSG-05` completed. `CR-04` decision-packet draft와 wireframe을 requirements / architecture / implementation plan / UI design에 동기화했다. 다음 agent는 User이며 `DSG-06` approval을 수행한다.

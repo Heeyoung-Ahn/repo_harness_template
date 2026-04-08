@@ -28,6 +28,7 @@ test("dashboard snapshot exposes the approved Phase 1 panels", async () => {
   assert.ok(Array.isArray(snapshot.recentActivity));
   assert.ok(Array.isArray(snapshot.teamDirectory));
   assert.ok(snapshot.documentHealth.summary);
+  assert.ok(Array.isArray(snapshot.documentHealth.riskSignals));
   assert.equal(
     snapshot.documentHealth.healthSnapshot.path,
     ".agents/runtime/health_snapshot.json"
@@ -109,6 +110,17 @@ test("snapshot exposes decision packet and multi-project metadata", async () => 
   assert.ok(Array.isArray(snapshot.overview.productGoal));
   assert.ok(Array.isArray(snapshot.documentHealth.optionalSources));
   assert.ok(Array.isArray(snapshot.governance.protectedPaths));
+  assert.ok(Array.isArray(snapshot.governance.sensitivePaths));
+  assert.ok(Array.isArray(snapshot.governance.toolAllowlist));
+  assert.ok(Array.isArray(snapshot.governance.toolDenylist));
+  assert.ok(
+    Array.isArray(snapshot.governance.exfiltrationSensitiveInputClasses)
+  );
+  assert.ok(
+    snapshot.documentHealth.riskSignals.some(
+      (signal) => signal.id === "evidence_stale"
+    )
+  );
 });
 
 test("future hook and promotion boundary contracts are exposed in the snapshot", async () => {
