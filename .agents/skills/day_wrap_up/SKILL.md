@@ -1,6 +1,6 @@
 ---
 name: Day Wrap Up
-description: 오늘 하루 진행했던 업무 내용을 검토하여 물리적 아티팩트 문서들을 정리하고 하루 일과를 마무리하는 스킬. 특히 active lock이 남아 있는 다중 Agent 작업, 실기기 검증 대기, dependency audit 후속 조치, 부분 승인 상태를 다음 세션으로 정확히 넘겨야 할 때 반드시 사용한다.
+description: 오늘 하루 진행했던 업무 내용을 검토하여 물리적 아티팩트 문서들을 정리하고 하루 일과를 마무리하는 스킬. 특히 active lock이 남아 있는 다중 Agent 작업, 실기기 검증 대기, dependency audit 후속 조치, 부분 승인 상태를 다음 세션으로 정확히 넘겨야 할 때 반드시 사용한다. 사용자가 `오늘 작업은 여기까지`, `오늘은 마무리`, `내일 이어서 보자`, `day wrap up`처럼 오늘 세션을 닫고 다음 진입점을 남기려는 표현을 쓰면 바로 이 스킬을 사용한다.
 ---
 
 # Day Wrap Up Skill
@@ -66,10 +66,22 @@ description: 오늘 하루 진행했던 업무 내용을 검토하여 물리적 
 - `없음` 판정은 내부적으로 수행하되 artifact에는 남기지 않는다.
 - 새 top-level 회고 문서는 만들지 않는다.
 - 다음 세션이 바로 알아야 하는 내용은 `CURRENT_STATE.md`와 `TASK_LIST.md > Handoff Log`에 남긴다.
+- confirmed repeat issue가 preventive rule로 승격됐거나 승격이 필요하면 `.agents/artifacts/PREVENTIVE_MEMORY.md`를 함께 갱신한다.
 - 구조적 예방 조치가 필요하면 `TASK_LIST.md`에 follow-up task를 만든다.
 - 기준선이나 규칙이 바뀌면 관련 `rule`, `skill`, `checklist`, `contract`를 직접 수정 대상으로 연결한다.
 - 같은 release에서 같은 issue class가 2회 이상 보이면 handoff note로 끝내지 말고 follow-up task와 update target을 함께 남긴다.
 - 검증·보안 가드레일 부족이 `확인됨`이면 preventive action이 정리되기 전까지 blocker 또는 open gate로 남긴다.
+
+### `PREVENTIVE_MEMORY.md`에 남길 기준
+
+- `확인됨`: 같은 issue class가 반복됐고 재발 방지 규칙과 검사 방법이 분명하면 `## Active Preventive Rules`에 즉시 승격한다.
+- `징후 있음`: 증거는 있으나 아직 rule/check method가 덜 구체적이면 `## Promotion Candidates`에 남긴다.
+- 승격할 때는 최소한 아래 4개를 함께 적는다.
+  - `Repeated Mistake / Trigger`
+  - `Preventive Rule`
+  - `Check Method`
+  - `Source / Evidence`
+- preventive rule이 새 `rule`, `skill`, `checklist`, `validator`를 만들거나 바꾸는 경우 해당 수정 경로를 같은 턴에 연결한다.
 
 ## 3단계: 오늘 완료 / 미완료를 분리한다
 
@@ -114,6 +126,7 @@ description: 오늘 하루 진행했던 업무 내용을 검토하여 물리적 
 - 진행 상태 / lock / handoff / follow-up: `TASK_LIST.md`
 - 최신 추천 역할 / open blocker / 다음 진입점: `CURRENT_STATE.md`
 - 장기 이력 / 주요 결정 / 큰 진척: `PROJECT_HISTORY.md`
+- 반복 실수 -> 예방 규칙 -> 검사 방법: `PREVENTIVE_MEMORY.md`
 - 테스트 결과: `WALKTHROUGH.md`
 - 리뷰 상태: `REVIEW_REPORT.md`
 - 배포 준비 상태: `DEPLOYMENT_PLAN.md`
@@ -146,6 +159,7 @@ description: 오늘 하루 진행했던 업무 내용을 검토하여 물리적 
 - blocker, manual gate, dependency gate가 있으면 첫 순서 전에 적혀 있다.
 - green level, branch freshness, blocker category 중 다음 세션 판단에 필요한 것이 적혀 있다.
 - recurrence follow-up이나 preventive action이 있으면 다음 순서와 함께 적혀 있다.
+- `PREVENTIVE_MEMORY.md`를 갱신했으면 관련 rule ID 또는 candidate ID가 적혀 있다.
 - "필요 시"가 아니라 구체적인 순서가 적혀 있다.
 
 ## 8단계: `CURRENT_STATE.md`를 마지막에 맞춘다

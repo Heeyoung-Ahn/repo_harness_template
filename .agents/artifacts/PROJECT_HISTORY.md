@@ -102,3 +102,17 @@
 - Why: AI 코딩 비판에서 반복적으로 지적되는 전역 맥락 상실, 중복/추상화 부채, 검증·보안 가드레일 부재를 하네스 공통 기본값에서 줄이기 위해서다.
 - Impact: task packet context contract, deep-interview 확장, recurrence review, AI-specific review checklist, optional governance guardrail field, PMW risk signal이 shared baseline이 됐다. root/starter validator와 PMW test, Korean mojibake check도 통과했다.
 - Related: `CR-05`, `PLN-08`, `DEV-06`, `TST-03`, `FR-25`~`FR-29`, `NFR-16`~`NFR-18`
+
+#### HIST-20260408-07 Maintenance
+- Summary: starter/reset artifact source를 clean scaffold로 초기화하고 `PREVENTIVE_MEMORY.md`를 추가했다.
+- Why: template source에 live 운영 내용이 섞이는 실수를 장기 기억만으로 두지 않고 rule/skill/validator 가드레일로 승격해야 했기 때문이다.
+- Impact: `PM-001` preventive rule이 생겼고, day_start/day_wrap_up, root/starter validator, workspace/template 규칙이 preventive memory를 읽고 강제하도록 확장됐다.
+- Related: `DOC-03`, `PM-001`
+
+### 2026-04-09
+
+#### HIST-20260409-01 Maintenance
+- Summary: `BACKLOG-01` rollout dry-run 결과 current `sync_template_docs.ps1`로는 이번 preventive-memory delta를 안전하게 부분 rollout할 수 없다고 확인하고, actual downstream mutation은 defer했다.
+- Why: current script가 `templates_starter/*` 전체를 복사해 unrelated dirty source를 함께 전파할 수 있고, preserve mode에서는 대상 live `.agents/artifacts/PREVENTIVE_MEMORY.md`를 생성하지 못하기 때문이다.
+- Impact: 운영 repo rollout은 `sync_template_docs.ps1` selective path filter / live artifact allowlist 정리가 끝난 뒤 재개한다. main hybrid harness path의 다음 첫 작업은 계속 `TST-02` user PMW feedback이다.
+- Related: `BACKLOG-01`, `PM-001`, `TST-02`

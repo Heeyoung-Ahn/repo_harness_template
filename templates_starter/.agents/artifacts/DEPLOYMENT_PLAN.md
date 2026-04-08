@@ -8,14 +8,14 @@
 - 작업 중간 상태나 handoff 메모는 `CURRENT_STATE.md`와 `TASK_LIST.md`에서 관리합니다.
 - 이 문서는 배포 직전 gate 판단과 배포 직후 결과 기록만 담당합니다.
 - harness 정비나 artifact schema debt는 현재 배포를 막는 경우에만 release blocker로 올리고, 아니면 별도 follow-up으로 분리합니다.
-- optional runtime / visibility, `enterprise_governed`, rollout defer 같은 hybrid harness 경계는 배포 직전에 다시 확인합니다.
+- optional runtime, pack, manual/environment gate, rollout defer 같은 경계는 배포 직전에 다시 확인합니다.
 
 ## Quick Read
 - 이번 배포 대상:
 - 현재 배포 상태:
 - 배포 기준 Requirement Baseline / sync gate:
 - current green level / branch freshness / GitHub release gate:
-- optional runtime / visibility boundary:
+- optional runtime / boundary:
 - enterprise-governed / critical-domain gate:
 - dry-run / reporting 상태:
 - actual rollout mutation decision:
@@ -52,7 +52,7 @@
 - 롤백 첫 단계:
 
 ## Changelog
-- [2026-04-07] Template Maintainer: hybrid / governed / rollout defer deployment gate baseline을 반영했다.
+- [YYYY-MM-DD] DevOps: initial draft
 
 ## Release Target
 - Version:
@@ -74,7 +74,7 @@
 - Fallback When No Dedicated Skill:
 - Rollout strategy:
 - Dry-run / reporting strategy:
-- Actual rollout mutation policy: reviewed scope와 dry-run/reporting evidence가 닫히기 전에는 defer
+- Actual rollout mutation policy:
 
 ## Build Artifact Decision
 - Existing build / package reusable: Yes / No / N/A
@@ -85,8 +85,8 @@
 
 | Environment | Purpose | URL / Store / Target | Notes |
 |---|---|---|---|
-| Preview | [목적] | [대상] | optional visibility / dry-run evidence를 확인할 수 있는 환경 |
-| Production | [목적] | [대상] | actual rollout mutation은 승인 후에만 수행 |
+| Preview | [목적] | [대상] | [메모] |
+| Production | [목적] | [대상] | [메모] |
 
 ## Preflight Checklist
 - [ ] `REVIEW_REPORT.md` 승인 완료
@@ -99,13 +99,9 @@
 - [ ] 대상 버전과 커밋 범위 확인
 - [ ] 환경 변수 / 비밀값 설정 확인
 - [ ] 수동 / 실환경 검증 상태 확인
-- [ ] 웹앱 / browser-facing UI scope면 browser-rendered smoke 또는 user browser raw report를 확보
-- [ ] 사용자 실기기 / 브라우저 raw report와 Tester 최종 판정이 서로 모순되지 않음
 - [ ] dependency / compliance triage 확인
-- [ ] optional runtime / visibility가 read-only boundary를 유지하고 truth를 대체하지 않음
-- [ ] `.omx/*` 또는 sidecar state가 review / test / deploy artifact gate를 대체하지 않음
-- [ ] `enterprise_governed` pack이 활성화된 경우 `governance_controls.json`, protected path, HITL, critical-domain verification을 확인
-- [ ] 기존 운영 프로젝트 표준화면 dry-run/reporting evidence를 남기고 actual rollout mutation decision을 문서화
+- [ ] optional runtime / boundary가 truth를 대체하지 않음
+- [ ] dry-run / reporting evidence가 필요한 범위면 결과를 확보
 - [ ] 롤백 경로 확인
 - [ ] 릴리즈 노트 준비
 
@@ -130,7 +126,7 @@
 - 요구사항 변경 반영 상태:
 - branch freshness 판단:
 - GitHub release path 확인 결과:
-- optional runtime / visibility boundary:
+- optional runtime / boundary:
 - enterprise-governed / critical-domain gate:
 - deployment provider / skill routing 판단:
 - dry-run / reporting status:

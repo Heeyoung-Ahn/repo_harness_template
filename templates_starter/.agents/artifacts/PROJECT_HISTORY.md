@@ -8,7 +8,7 @@
 - 이 문서가 다루는 것: 주요 의사결정, 기준선 변경, 구현 완료, gate closure, 다음 버전으로 넘긴 핵심 이유.
 - 이 문서가 대체하지 않는 것: current task/lock truth, raw handoff, turn-by-turn 작업 메모, 세부 diff log.
 - 기본 update trigger: major `CR-*` 승인/변경, day wrap up, version closeout, review/deploy closure.
-- future use: `Project Monitor Web` timeline 또는 recent history source 후보로 활용할 수 있다.
+- future use: 프로젝트가 timeline UI나 recent history surface를 정의하면 이 문서가 source가 될 수 있다.
 
 ## Usage Rules
 - append-only로 유지한다. 기존 항목을 지우지 말고, 정정이 필요하면 새 항목으로 남긴다.

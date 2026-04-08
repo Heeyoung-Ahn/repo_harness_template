@@ -6,6 +6,7 @@
                 'C:\Newface\10 Antigravity\04 WATV Auto Login'
                 'C:\Newface\10 Antigravity\10 AI Video Creator'
                 'C:\Newface\10 Antigravity\11 Daily English Spark'
+                'C:\Newface\10 Antigravity\12 Bible Spark'
             )
         }
     }

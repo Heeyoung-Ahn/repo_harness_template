@@ -227,6 +227,32 @@ function Validate-RecommendedArtifactShape {
     }
 }
 
+function Validate-TemplateArtifactScaffold {
+    param(
+        [Parameter(Mandatory = $true)][string]$Text,
+        [Parameter(Mandatory = $true)][string]$Path,
+        [string[]]$NonConcreteFields = @(),
+        [string[]]$ForbiddenPatterns = @()
+    )
+
+    foreach ($field in $NonConcreteFields) {
+        $value = Get-LineFieldValue -Text $Text -Label $field
+        if (Is-ConcreteValue $value) {
+            Add-Finding -Severity 'ERROR' -Path $Path -Message ('Template artifact field must stay generic: {0}={1}' -f $field, $value)
+        }
+    }
+
+    if ([regex]::IsMatch($Text, '(?m)^- \[(?:19|20)\d{2}-\d{2}-\d{2}(?: \d{2}:\d{2})?\]')) {
+        Add-Finding -Severity 'ERROR' -Path $Path -Message 'Template artifact must not contain concrete changelog or approval dates.'
+    }
+
+    foreach ($pattern in $ForbiddenPatterns) {
+        if ([regex]::IsMatch($Text, $pattern)) {
+            Add-Finding -Severity 'ERROR' -Path $Path -Message ('Template artifact contains a forbidden live-project marker: {0}' -f $pattern)
+        }
+    }
+}
+
 $labelUserConfirmPending = U '\uC0AC\uC6A9\uC790 \uB2F5\uBCC0 / \uD655\uC778 \uB300\uAE30'
 $placeholderScope = '[' + (U '\uAE30\uB2A5/\uB3C4\uBA54\uC778 \uBC94\uC704 \uC791\uC131') + ']'
 $placeholderRequirement = '[' + (U '\uC694\uAD6C\uC0AC\uD56D') + ']'
@@ -240,6 +266,7 @@ $planQuestionPhrase = U '\uC9C8\uBB38\uC774'
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $pathMap = @{
     CurrentState       = Join-Path $repoRoot '.agents\artifacts\CURRENT_STATE.md'
+    PreventiveMemory   = Join-Path $repoRoot '.agents\artifacts\PREVENTIVE_MEMORY.md'
     ProjectHistory     = Join-Path $repoRoot '.agents\artifacts\PROJECT_HISTORY.md'
     HandoffArchive     = Join-Path $repoRoot '.agents\artifacts\HANDOFF_ARCHIVE.md'
     TaskList           = Join-Path $repoRoot '.agents\artifacts\TASK_LIST.md'
@@ -264,6 +291,7 @@ $pathMap = @{
 
 $templateArtifactMap = @{
     CurrentState       = Join-Path $repoRoot 'templates\version_reset\artifacts\CURRENT_STATE.md'
+    PreventiveMemory   = Join-Path $repoRoot 'templates\version_reset\artifacts\PREVENTIVE_MEMORY.md'
     ProjectHistory     = Join-Path $repoRoot 'templates\version_reset\artifacts\PROJECT_HISTORY.md'
     HandOffArchive     = Join-Path $repoRoot 'templates\version_reset\artifacts\HANDOFF_ARCHIVE.md'
     TaskList           = Join-Path $repoRoot 'templates\version_reset\artifacts\TASK_LIST.md'
@@ -316,6 +344,7 @@ $utf8 = [System.Text.Encoding]::UTF8
 $culture = [System.Globalization.CultureInfo]::InvariantCulture
 
 $currentStateText = [System.IO.File]::ReadAllText($pathMap.CurrentState, $utf8)
+$preventiveMemoryText = [System.IO.File]::ReadAllText($pathMap.PreventiveMemory, $utf8)
 $projectHistoryText = [System.IO.File]::ReadAllText($pathMap.ProjectHistory, $utf8)
 $currentStateLines = [System.IO.File]::ReadAllLines($pathMap.CurrentState, $utf8)
 $taskListText = [System.IO.File]::ReadAllText($pathMap.TaskList, $utf8)
@@ -334,6 +363,7 @@ $testWorkflowText = [System.IO.File]::ReadAllText($pathMap.TestWorkflow, $utf8)
 $handoffWorkflowText = [System.IO.File]::ReadAllText($pathMap.HandoffWorkflow, $utf8)
 $expoDeviceSkillText = [System.IO.File]::ReadAllText($pathMap.ExpoDeviceSkill, $utf8)
 $templateCurrentStateText = [System.IO.File]::ReadAllText($templateArtifactMap.CurrentState, $utf8)
+$templatePreventiveMemoryText = [System.IO.File]::ReadAllText($templateArtifactMap.PreventiveMemory, $utf8)
 $templateProjectHistoryText = [System.IO.File]::ReadAllText($templateArtifactMap.ProjectHistory, $utf8)
 $templateHandoffArchiveText = [System.IO.File]::ReadAllText($templateArtifactMap.HandOffArchive, $utf8)
 $templateTaskListText = [System.IO.File]::ReadAllText($templateArtifactMap.TaskList, $utf8)
@@ -471,6 +501,12 @@ $resetArtifactSchemas = @{
             }
         )
     }
+    PreventiveMemory = [pscustomobject]@{
+        ExpectedTitle    = 'Preventive Memory'
+        RequiredSections = @('## Quick Read', '## Usage Rules', '## Active Preventive Rules', '## Promotion Candidates', '## Update Log')
+        RequiredFields   = @('Preventive Rule', 'Check Method', 'Status')
+        ForbiddenChecks  = @()
+    }
     ProjectHistory = [pscustomobject]@{
         ExpectedTitle    = 'Project History'
         RequiredSections = @('## Quick Read', '## Usage Rules', '## Timeline')
@@ -542,6 +578,7 @@ $liveArtifactSchemas = @{
         RequiredFields   = @('Review Gate', 'Requirement Baseline', 'Requirements Sync Check', $labelUserConfirmPending)
         ForbiddenChecks  = $resetArtifactSchemas.CurrentState.ForbiddenChecks
     }
+    PreventiveMemory = $resetArtifactSchemas.PreventiveMemory
     ProjectHistory = $resetArtifactSchemas.ProjectHistory
     HandOffArchive = $resetArtifactSchemas.HandOffArchive
     TaskList = [pscustomobject]@{
@@ -577,6 +614,7 @@ $liveArtifactSchemas = @{
 }
 
 Validate-ArtifactSchema -Text $currentStateText -Path '.agents/artifacts/CURRENT_STATE.md' -Schema $liveArtifactSchemas.CurrentState
+Validate-ArtifactSchema -Text $preventiveMemoryText -Path '.agents/artifacts/PREVENTIVE_MEMORY.md' -Schema $liveArtifactSchemas.PreventiveMemory
 Validate-ArtifactSchema -Text $projectHistoryText -Path '.agents/artifacts/PROJECT_HISTORY.md' -Schema $liveArtifactSchemas.ProjectHistory
 Validate-ArtifactSchema -Text $handoffArchiveText -Path '.agents/artifacts/HANDOFF_ARCHIVE.md' -Schema $liveArtifactSchemas.HandOffArchive
 Validate-ArtifactSchema -Text $taskListText -Path '.agents/artifacts/TASK_LIST.md' -Schema $liveArtifactSchemas.TaskList
@@ -585,6 +623,7 @@ Validate-ArtifactSchema -Text $walkthroughText -Path '.agents/artifacts/WALKTHRO
 Validate-ArtifactSchema -Text $reviewReportText -Path '.agents/artifacts/REVIEW_REPORT.md' -Schema $liveArtifactSchemas.ReviewReport
 Validate-ArtifactSchema -Text $deploymentPlanText -Path '.agents/artifacts/DEPLOYMENT_PLAN.md' -Schema $liveArtifactSchemas.DeploymentPlan
 Validate-ArtifactSchema -Text $templateCurrentStateText -Path 'templates/version_reset/artifacts/CURRENT_STATE.md' -Schema $resetArtifactSchemas.CurrentState
+Validate-ArtifactSchema -Text $templatePreventiveMemoryText -Path 'templates/version_reset/artifacts/PREVENTIVE_MEMORY.md' -Schema $resetArtifactSchemas.PreventiveMemory
 Validate-ArtifactSchema -Text $templateProjectHistoryText -Path 'templates/version_reset/artifacts/PROJECT_HISTORY.md' -Schema $resetArtifactSchemas.ProjectHistory
 Validate-ArtifactSchema -Text $templateHandoffArchiveText -Path 'templates/version_reset/artifacts/HANDOFF_ARCHIVE.md' -Schema $resetArtifactSchemas.HandOffArchive
 Validate-ArtifactSchema -Text $templateTaskListText -Path 'templates/version_reset/artifacts/TASK_LIST.md' -Schema $resetArtifactSchemas.TaskList
@@ -592,6 +631,23 @@ Validate-ArtifactSchema -Text $templateImplementationPlanText -Path 'templates/v
 Validate-ArtifactSchema -Text $templateWalkthroughText -Path 'templates/version_reset/artifacts/WALKTHROUGH.md' -Schema $resetArtifactSchemas.Walkthrough
 Validate-ArtifactSchema -Text $templateReviewReportText -Path 'templates/version_reset/artifacts/REVIEW_REPORT.md' -Schema $resetArtifactSchemas.ReviewReport
 Validate-ArtifactSchema -Text $templateDeploymentPlanText -Path 'templates/version_reset/artifacts/DEPLOYMENT_PLAN.md' -Schema $resetArtifactSchemas.DeploymentPlan
+
+$templateForbiddenPatterns = @(
+    '(?i)Project Monitor Web',
+    '(?i)https?://(?:127\.0\.0\.1|localhost)',
+    '(?i)Hybrid Harness Completion',
+    '(?i)Hybrid Harness Template v\d',
+    '(?i)Template Maintainer'
+)
+
+Validate-TemplateArtifactScaffold -Text $templateCurrentStateText -Path 'templates/version_reset/artifacts/CURRENT_STATE.md' -NonConcreteFields @('Version / Milestone', 'Current Stage', 'Current Focus', 'Current Release Goal', 'Last Synced From Task / Handoff', 'Sync Checked At', 'Last Updated By / At') -ForbiddenPatterns $templateForbiddenPatterns
+Validate-TemplateArtifactScaffold -Text $templateTaskListText -Path 'templates/version_reset/artifacts/TASK_LIST.md' -NonConcreteFields @('Version / Milestone', 'Current Stage', 'Current Focus', 'Current Release Goal') -ForbiddenPatterns $templateForbiddenPatterns
+Validate-TemplateArtifactScaffold -Text $templatePreventiveMemoryText -Path 'templates/version_reset/artifacts/PREVENTIVE_MEMORY.md' -ForbiddenPatterns $templateForbiddenPatterns
+Validate-TemplateArtifactScaffold -Text $templateImplementationPlanText -Path 'templates/version_reset/artifacts/IMPLEMENTATION_PLAN.md' -NonConcreteFields @('Requirement Baseline', 'Last Updated At') -ForbiddenPatterns $templateForbiddenPatterns
+Validate-TemplateArtifactScaffold -Text $templateProjectHistoryText -Path 'templates/version_reset/artifacts/PROJECT_HISTORY.md' -ForbiddenPatterns $templateForbiddenPatterns
+Validate-TemplateArtifactScaffold -Text $templateReviewReportText -Path 'templates/version_reset/artifacts/REVIEW_REPORT.md' -NonConcreteFields @('Requirement Baseline Reviewed', 'Reviewed At') -ForbiddenPatterns $templateForbiddenPatterns
+Validate-TemplateArtifactScaffold -Text $templateDeploymentPlanText -Path 'templates/version_reset/artifacts/DEPLOYMENT_PLAN.md' -NonConcreteFields @('Requirement Baseline for Release', 'Last Updated At') -ForbiddenPatterns $templateForbiddenPatterns
+Validate-TemplateArtifactScaffold -Text $templateWalkthroughText -Path 'templates/version_reset/artifacts/WALKTHROUGH.md' -NonConcreteFields @('Requirement Baseline Tested', 'Last Updated At') -ForbiddenPatterns $templateForbiddenPatterns
 
 Validate-RecommendedArtifactShape -Text $currentStateText -Path '.agents/artifacts/CURRENT_STATE.md' -RecommendedFields @('Current Green Level', 'Branch Freshness', 'First Next Action')
 Validate-RecommendedArtifactShape -Text $taskListText -Path '.agents/artifacts/TASK_LIST.md' -RecommendedFields @('Current Green Level', 'Branch Freshness')
@@ -832,6 +888,26 @@ if ((Is-ConcreteValue $currentRequirementBaseline) -and (Is-ConcreteValue $requi
     Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('Requirement baseline mismatch. CURRENT_STATE={0} / REQUIREMENTS={1}' -f $currentRequirementBaseline, $requirementsBaseline)
 }
 
+$requirementsNeedsApproval = $requirementsStatus -ne 'Approved'
+
+if ($requirementsNeedsApproval) {
+    if ($requirementsSyncStatus -eq 'In Sync') {
+        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/REQUIREMENTS.md' -Message 'REQUIREMENTS is not Approved but Requirements Sync Status=In Sync.'
+    }
+    if ((Is-ConcreteValue $currentRequirementsSync) -and $currentRequirementsSync -eq 'In Sync') {
+        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/CURRENT_STATE.md' -Message 'REQUIREMENTS is not Approved but CURRENT_STATE Requirements Sync Check=In Sync.'
+    }
+    if ((Is-ConcreteValue $architectureChangeSync) -and @('Synced', 'No Architecture Change') -contains $architectureChangeSync) {
+        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/ARCHITECTURE_GUIDE.md' -Message ('REQUIREMENTS is not Approved but Architecture Change Sync Check={0}.' -f $architectureChangeSync)
+    }
+    if ((Is-ConcreteValue $planChangeSync) -and $planChangeSync -eq 'Synced') {
+        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/IMPLEMENTATION_PLAN.md' -Message 'REQUIREMENTS is not Approved but Plan Change Sync Check=Synced.'
+    }
+    if ($planStatus -eq 'Ready for Execution') {
+        Add-Finding -Severity 'ERROR' -Path '.agents/artifacts/IMPLEMENTATION_PLAN.md' -Message 'REQUIREMENTS is not Approved but IMPLEMENTATION_PLAN is Ready for Execution.'
+    }
+}
+
 if ((Is-ConcreteValue $requirementsSyncStatus) -and $requirementsSyncStatus -eq 'In Sync') {
     if ((Is-ConcreteValue $currentRequirementsSync) -and $currentRequirementsSync -ne 'In Sync') {
         Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/CURRENT_STATE.md' -Message ('REQUIREMENTS sync is In Sync but CURRENT_STATE Requirements Sync Check={0}.' -f $currentRequirementsSync)
@@ -969,6 +1045,9 @@ if (-not $workspaceText.Contains('Requirement Trace')) {
 if (-not $workspaceText.Contains('REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the mandatory 3-document requirement-change sync rule.'
 }
+if (-not $workspaceText.Contains('discovery-only') -or -not $workspaceText.Contains('Pending Requirement Approval')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing the discovery-only or pending-approval planning guardrail.'
+}
 if (-not $workspaceText.Contains('manual gate pending') -or -not $workspaceText.Contains('user decision pending')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing stale-lock stop tokens.'
 }
@@ -990,6 +1069,9 @@ if (-not $planWorkflowText.Contains('No Architecture Change')) {
 }
 if (-not $planWorkflowText.Contains('$deep-interview') -or -not $planWorkflowText.Contains('$ralplan')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the optional OMX discovery/planning compatibility mapping.'
+}
+if (-not $planWorkflowText.Contains('interview snapshot') -or -not $planWorkflowText.Contains('Pending Requirement Approval')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the interview snapshot or pending-approval planning guardrail.'
 }
 if (-not $reviewWorkflowText.Contains('code_review_checklist')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/review.md' -Message 'review.md is missing the code_review_checklist skill reference.'

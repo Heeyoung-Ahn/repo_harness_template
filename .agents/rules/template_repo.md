@@ -11,6 +11,7 @@
 - 새 프로젝트 시작용 assembled starter root: `templates_starter/`
 - starter root 문서: `templates_starter/AGENTS.md`, `templates_starter/PROJECT_WORKFLOW_MANUAL.md`
 - starter `.agents` 문서: `templates_starter/.agents/rules/*`, `templates_starter/.agents/workflows/*`, `templates_starter/.agents/scripts/*`, `templates_starter/.agents/skills/*`, `templates_starter/.agents/artifacts/*`
+- starter/reset artifact source는 항상 clean scaffold여야 하며, live 프로젝트 이름, 실제 진행 상태, concrete baseline, 실제 날짜/승인 이력, local URL, handoff 원문을 담지 않습니다.
 - optional enterprise pack placeholder: `templates_starter/.agents/artifacts/enterprise_governed/*`, `templates_starter/.agents/runtime/governance_controls.json`
 - version closeout canonical reset template: root `templates/version_reset/artifacts/*.md`
 - optional enterprise pack reset mirror: root `templates/version_reset/artifacts/enterprise_governed/*`
@@ -31,6 +32,7 @@
 - 운영 프로젝트 집합이 바뀌면 script를 수정하는 대신 preset 파일의 target 목록을 먼저 갱신합니다.
 - 기존 운영 프로젝트에 rollout할 때 `sync_template_docs.ps1`는 기본적으로 대상 repo의 live `.agents/artifacts/*`를 보존합니다.
 - live artifact까지 template starter로 덮어써야 하는 특수 migration이 아니면 `.agents/artifacts/*`는 별도 판단 없이 overwrite하지 않습니다.
+- template source에서 concrete 운영 내용이 발견되면 canonical source를 먼저 clean scaffold로 되돌리고, 같은 턴에 validator/checklist/rule 중 최소 하나를 강화해 재발을 막습니다.
 - sync 후에는 가능하면 대상 repo에서 `check_harness_docs.ps1`를 다시 실행합니다.
 
 ## 5. Stop Conditions

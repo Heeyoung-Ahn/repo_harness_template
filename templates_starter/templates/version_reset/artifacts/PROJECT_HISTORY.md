@@ -8,7 +8,7 @@
 - 이 문서가 다루는 것: 주요 의사결정, 기준선 변경, 구현 완료, gate closure, 다음 버전으로 넘긴 핵심 이유.
 - 이 문서가 대체하지 않는 것: current task/lock truth, raw handoff, turn-by-turn 작업 메모, 세부 diff log.
 - 기본 update trigger: major `CR-*` 승인/변경, day wrap up, version closeout, review/deploy closure.
-- version reset rule: 이 문서는 프로젝트 전체 이력이라 버전 closeout 때 reset 대상으로 덮어쓰지 않는다.
+- future use: 프로젝트가 timeline UI나 recent history surface를 정의하면 이 문서가 source가 될 수 있다.
 
 ## Usage Rules
 - append-only로 유지한다. 기존 항목을 지우지 말고, 정정이 필요하면 새 항목으로 남긴다.

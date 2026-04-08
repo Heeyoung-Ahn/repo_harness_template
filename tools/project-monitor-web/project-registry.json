@@ -5,6 +5,11 @@
       "id": "self-hosting-template",
       "label": "repo_harness_template",
       "repoRoot": "../.."
+    },
+    {
+      "id": "bible-spark",
+      "label": "Bible Spark",
+      "repoRoot": "../../../../10 Antigravity/12 Bible Spark"
     }
   ]
 }

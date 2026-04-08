@@ -25,6 +25,8 @@ description: 다음 날 업무 시작 전, 현재 상태 요약과 최신 블로
 - fresh하면 `TASK_LIST.md > ## Active Locks`, 관련 Task row, 최신 relevant handoff까지만 먼저 확인하고 시작합니다.
 - `Must Read Next`에 적힌 문서를 읽되, `TASK_LIST.md > ## Active Locks`와 관련 Task row 확인은 항상 포함합니다.
 - 보통은 `REQUIREMENTS.md`, `IMPLEMENTATION_PLAN.md`, `TASK_LIST.md` 중 오늘 역할에 필요한 범위만 읽으면 충분해야 합니다.
+- `.agents/artifacts/PREVENTIVE_MEMORY.md > ## Active Preventive Rules`를 확인해 오늘 범위와 직접 맞닿는 active preventive rule이 있는지 본다.
+- active preventive rule이 현재 Task ID, 현재 문서 종류, 현재 검증 흐름과 맞닿으면 첫 write 전에 해당 rule의 `Preventive Rule`과 `Check Method`를 작업 메모에 고정한다.
 - `HANDOFF_ARCHIVE.md`는 기본적으로 읽지 않습니다.
 - `WALKTHROUGH.md`, `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`는 현재 task와 직접 연결된 blocker, gate, 또는 실환경 검증이 있을 때만 추가로 읽습니다.
 
@@ -36,4 +38,5 @@ description: 다음 날 업무 시작 전, 현재 상태 요약과 최신 블로
 ### 4단계: 오늘의 작업 범위 고정
 - 오늘 수행할 Task ID 1~3개와 Scope를 정합니다.
 - 첫 Task ID와 첫 문서 또는 첫 명령을 작업 시작 전에 스스로 한 줄로 확정합니다.
+- active preventive rule이 있으면 첫 체크도 함께 적습니다.
 - 실제 작업 시작 전에는 `workspace.md`의 `pre-write refresh` 규칙에 따라 `CURRENT_STATE.md`, `TASK_LIST.md`, 대상 파일을 다시 확인합니다.

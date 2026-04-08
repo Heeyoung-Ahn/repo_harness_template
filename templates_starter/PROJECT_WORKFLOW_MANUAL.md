@@ -56,6 +56,42 @@
 - `templates_starter/`는 self-hosting 템플릿 저장소 안에서만 쓰는 assembled starter root 이름입니다.
 - 실제 운영 프로젝트로 복사된 뒤에는 `templates_starter/` 폴더가 남는 것이 아니라, 그 내부 내용이 프로젝트 root로 들어갑니다.
 
+### 완전히 새 프로젝트에 처음 템플릿을 넣는 방법
+신규 프로젝트는 기존 운영 프로젝트 rollout과 다르게, 처음 한 번 starter 전체를 seed해야 합니다.
+
+권장 순서:
+1. self-hosting 템플릿 저장소 `repo_harness_template`를 workspace root로 엽니다.
+2. 새 프로젝트를 앞으로 공통 rollout 대상에도 포함하려면 `.agents/runtime/downstream_target_presets.psd1`의 `active_operating_projects`에 경로를 추가합니다.
+3. `Project Monitor Web`에서 프로젝트 selector로 보려면 `tools/project-monitor-web/project-registry.json`에도 entry를 추가합니다. rollout truth는 preset이고, registry는 PMW 노출용입니다.
+4. 첫 적용은 preset 전체가 아니라 새 프로젝트 하나만 직접 지정해서 dry-run을 먼저 봅니다.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ".agents/scripts/sync_template_docs.ps1" `
+  -TargetRepo "C:\Path\To\New Project" `
+  -IncludeLiveArtifacts `
+  -WhatIf
+```
+
+5. 결과가 맞으면 `-WhatIf`를 빼고 실제 적용합니다.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ".agents/scripts/sync_template_docs.ps1" `
+  -TargetRepo "C:\Path\To\New Project" `
+  -IncludeLiveArtifacts
+```
+
+6. 적용 직후에는 새 프로젝트 root에서 validator를 실행합니다.
+
+```powershell
+cd "C:\Path\To\New Project"
+powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1"
+```
+
+기억할 점:
+- `-IncludeLiveArtifacts`는 `.agents/artifacts/*`가 아직 없는 **신규 프로젝트 bootstrap용**입니다.
+- 이미 운영 중인 프로젝트에 같은 옵션을 쓰면 live artifact를 덮어쓸 수 있으니, 기존 운영 프로젝트 rollout에는 기본 보존 모드를 사용합니다.
+- 새 프로젝트를 preset에 등록한 직후 `-Preset active_operating_projects`를 바로 실행하면 기존 운영 프로젝트도 함께 반영될 수 있으므로, 초기 주입은 `-TargetRepo`로 분리하는 편이 안전합니다.
+
 ---
 
 ## 1. AI 개발이란 무엇인가

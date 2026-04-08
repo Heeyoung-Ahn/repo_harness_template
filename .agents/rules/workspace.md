@@ -28,6 +28,7 @@ trigger: always_on
 - 실제 프로젝트 상태의 단일 진실 공급원은 `.agents/artifacts/` 아래 문서입니다.
 - `.agents/runtime/*`는 parser-friendly machine-readable contract이며, optional `.omx/*` sidecar보다 항상 우선하는 truth layer입니다.
 - `CURRENT_STATE.md`는 day-start용 resume router, `TASK_LIST.md`는 task / lock truth, `TASK_LIST.md > ## Handoff Log`는 최신 delta, `HANDOFF_ARCHIVE.md`는 오래된 원문 보관입니다.
+- `PREVENTIVE_MEMORY.md`는 반복 실수 -> 예방 규칙 -> 검사 방법을 누적하는 얇은 canonical artifact이며, 현재 scope와 직접 맞닿는 active rule이 있을 때 읽습니다.
 - 역할 문서는 기본적으로 `Quick Read`, `Current Iteration`, `Latest Result`, `Approval Status`, `Must Read Next`에 적힌 범위만 읽습니다.
 - `README.md`와 `templates_starter/PROJECT_WORKFLOW_MANUAL.md`는 설명용 문서이며, 운영 규칙과 live state 문서의 정본이 아닙니다.
 - downstream 기본 동작을 바꾸는 변경이면 대응하는 `templates_starter/*` source와 필요 시 `templates/version_reset/artifacts/*`를 같은 턴에 갱신하고, root live 문서를 그대로 downstream으로 복사하지 않습니다.
@@ -45,7 +46,10 @@ trigger: always_on
 
 ## 4. Requirement and Release Gates
 - 필수 3문서 sync 기준: `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`
-- 요구사항이나 완료 기준이 바뀌면 Planner가 먼저 `REQUIREMENTS.md`를 갱신하고, 같은 턴에 `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`를 같은 기준선으로 맞춥니다.
+- 사용자가 `deep interview`나 discovery만 요청한 turn은 discovery-only다. 질문 패킷과 interview snapshot까지만 진행하고 planning artifact drafting/sync로 자동 승격하지 않는다.
+- 요구사항이나 완료 기준이 바뀌면 Planner가 먼저 `REQUIREMENTS.md`를 갱신한다.
+- 요구사항이 아직 `Draft`, `Needs User Answers`, `Ready for Approval`이면 `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`, `CURRENT_STATE.md`는 새 기준선을 `In Sync`로 주장하지 않고 `Pending Requirement Approval` 상태로 남긴다.
+- `REQUIREMENTS.md`가 `Approved`가 된 same turn에만 `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`를 같은 기준선으로 맞춘다.
 - `IMPLEMENTATION_PLAN.md > Requirement Trace`는 승인된 `FR-*`, `NFR-*`와 active task를 연결합니다.
 - 위 동기화가 끝나기 전에는 review gate와 deployment gate를 닫지 않습니다.
 - release 가능 여부와 문서 체계 완성도는 같은 gate가 아닙니다. harness debt는 별도 maintenance follow-up으로 분리합니다.
@@ -81,6 +85,7 @@ repo-tracked 파일을 수정하기 직전 아래를 다시 확인합니다.
 - `version_closeout`으로 새 버전을 시작할 때는 자유서술 새 Draft 문서를 쓰지 말고 `powershell -ExecutionPolicy Bypass -File ".agents/scripts/reset_version_artifacts.ps1"`로 reset 대상 문서를 복원한 뒤 starter content만 채웁니다.
 - artifact harness 오류는 별도 정비 작업으로 분리하고, release blocker인지 아닌지를 명시합니다.
 - downstream 템플릿 source를 바꿨다면 `templates_starter/*`, `templates/version_reset/artifacts/*`, `.agents/scripts/sync_template_docs.ps1` 기준도 함께 확인합니다.
+- 반복 실수나 오염 패턴을 발견하면 `PROJECT_HISTORY.md`나 handoff에만 남기지 말고, 같은 종류의 문제가 다시 생기지 않도록 rule / checklist / validator 중 최소 하나로 승격합니다.
 - `AGENTS.md`, `.agents/rules/*.md`, `.agents/workflows/*.md`, `.agents/artifacts/*.md`를 수정했다면 handoff 전에 아래 validator를 실행합니다.
 
 ```powershell
@@ -119,6 +124,7 @@ powershell -ExecutionPolicy Bypass -File ".agents/scripts/check_harness_docs.ps1
 - self-hosting 전용 규칙, validator, handoff, 운영 메모는 root에만 남기고 template source로 되밀지 않습니다.
 - downstream 공통 동작 중 starter 문서/workflow/skill/script는 `templates_starter/*` source에서, version close reset template는 root `templates/version_reset/*`에서 canonical하게 관리합니다.
 - artifact schema나 starter content를 바꾸면 `templates/version_reset/artifacts/*`, `templates_starter/.agents/artifacts/*`, `templates_starter/templates/version_reset/artifacts/*`, 관련 reset/validator/sync 경로와 필요한 downstream sync 절차를 함께 갱신합니다.
+- starter/reset artifact source는 clean scaffold를 유지해야 하며, live 프로젝트의 실제 진행 상태, concrete baseline, 실제 날짜/승인 이력, local URL, handoff 원문을 담지 않습니다.
 
 ## 12. Self-Hosting Standard Template Operations
 - self-hosting 표준 템플릿 운영은 기본적으로 `AGENTS.md`, `workspace.md`, `template_repo.md`, `CURRENT_STATE.md`, `TASK_LIST.md`만으로 재현 가능해야 합니다.

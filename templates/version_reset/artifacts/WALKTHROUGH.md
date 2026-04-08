@@ -9,7 +9,7 @@
 - 검증 기준 Requirement Baseline:
 - 문서/디자인 기준 사용자 기대 결과:
 - 현재 green level과 branch freshness:
-- optional runtime / visibility boundary 결과:
+- optional runtime / boundary 결과:
 - enterprise-governed verification gate:
 - 남아 있는 release gate와 빌드 / 실행물 판단:
 - dry-run / reporting evidence status:
@@ -61,7 +61,7 @@
 - Raw feedback preservation plan:
 
 ## Changelog
-- [2026-04-07] Template Maintainer: hybrid / governed / rollout defer validation baseline을 반영했다.
+- [YYYY-MM-DD] Tester: initial draft
 
 ## Environment
 
@@ -72,7 +72,7 @@
 ## Build / Runtime Decision
 - Existing build / artifact reusable: Yes / No / N/A
 - New build / package required: Yes / No / N/A
-- Optional runtime / visibility reused: Yes / No / N/A
+- Optional runtime / boundary reused: Yes / No / N/A
 - Basis:
 
 ## Branch Freshness
@@ -96,7 +96,7 @@
 ## Automated Test Results
 - Result: Pass / Fail / Partial
 - Details:
-- Optional runtime / visibility boundary:
+- Optional runtime / boundary:
 - Enterprise / critical-domain verification:
 - Dry-run / reporting verification:
 

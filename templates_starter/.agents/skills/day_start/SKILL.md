@@ -12,7 +12,6 @@ description: 다음 날 업무 시작 전, 현재 상태 요약과 최신 블로
 ### 1단계: `CURRENT_STATE.md`부터 확인
 - `.agents/artifacts/CURRENT_STATE.md`를 가장 먼저 읽습니다.
 - `Next Recommended Agent`, `Must Read Next`, `Open Decisions / Blockers`, `Latest Handoff Summary`를 기준으로 오늘의 시작 지점을 잡습니다.
-- `Latest Handoff Summary`에서는 열린 gate, 현재 green level, branch freshness, blocker category, `First Next Action`을 먼저 확인합니다.
 - 이 문서는 resume router입니다. task / lock의 실제 기준은 `TASK_LIST.md`에서 다시 확인합니다.
 - 아래 조건 중 하나라도 맞으면 `CURRENT_STATE.md`를 stale로 봅니다.
   - `Sync Checked At`이 최신 relevant handoff보다 과거
@@ -26,16 +25,18 @@ description: 다음 날 업무 시작 전, 현재 상태 요약과 최신 블로
 - fresh하면 `TASK_LIST.md > ## Active Locks`, 관련 Task row, 최신 relevant handoff까지만 먼저 확인하고 시작합니다.
 - `Must Read Next`에 적힌 문서를 읽되, `TASK_LIST.md > ## Active Locks`와 관련 Task row 확인은 항상 포함합니다.
 - 보통은 `REQUIREMENTS.md`, `IMPLEMENTATION_PLAN.md`, `TASK_LIST.md` 중 오늘 역할에 필요한 범위만 읽으면 충분해야 합니다.
+- `.agents/artifacts/PREVENTIVE_MEMORY.md > ## Active Preventive Rules`를 확인해 오늘 범위와 직접 맞닿는 active preventive rule이 있는지 본다.
+- active preventive rule이 현재 Task ID, 현재 문서 종류, 현재 검증 흐름과 맞닿으면 첫 write 전에 해당 rule의 `Preventive Rule`과 `Check Method`를 작업 메모에 고정한다.
 - `HANDOFF_ARCHIVE.md`는 기본적으로 읽지 않습니다.
 - `WALKTHROUGH.md`, `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`는 현재 task와 직접 연결된 blocker, gate, 또는 실환경 검증이 있을 때만 추가로 읽습니다.
 
 ### 3단계: lock / blocker / 실패 기록 점검
 - `TASK_LIST.md > ## Active Locks`를 확인해 남아 있는 점유 상태를 봅니다.
 - `CURRENT_STATE.md > Open Decisions / Blockers`와 필요 시 `WALKTHROUGH.md`, `REVIEW_REPORT.md`의 최근 결과를 확인합니다.
-- blocker가 있으면 category, impact, attempted recovery가 이미 적혀 있는지 보고 같은 복구를 반복하지 않습니다.
 - 해결되지 않은 치명적 버그나 stale lock이 있으면 새 기능보다 먼저 다룹니다.
 
 ### 4단계: 오늘의 작업 범위 고정
 - 오늘 수행할 Task ID 1~3개와 Scope를 정합니다.
 - 첫 Task ID와 첫 문서 또는 첫 명령을 작업 시작 전에 스스로 한 줄로 확정합니다.
+- active preventive rule이 있으면 첫 체크도 함께 적습니다.
 - 실제 작업 시작 전에는 `workspace.md`의 `pre-write refresh` 규칙에 따라 `CURRENT_STATE.md`, `TASK_LIST.md`, 대상 파일을 다시 확인합니다.

@@ -8,15 +8,15 @@
 - 이 문서는 리뷰 종료 시점의 판단만 기록합니다.
 - release blocker와 document / harness debt는 같은 표로 섞지 않습니다.
 - harness 정비가 필요하지만 현재 release를 막지 않으면 별도 follow-up으로 분리합니다.
-- optional runtime / visibility, `enterprise_governed`, rollout defer 같은 hybrid harness 경계는 finding 또는 residual risk로 명시합니다.
+- optional runtime, pack, rollout defer, manual/environment gate 같은 경계는 finding 또는 residual risk로 명시합니다.
 
 ## Quick Read
 - 정적 코드 리뷰 상태 / 릴리즈 준비 상태:
 - 이번 리뷰 대상 범위:
 - 이번 리뷰 기준 Requirement Baseline / sync 결과:
 - reviewed green level / branch freshness:
-- optional runtime / visibility boundary finding:
-- enterprise-governed / skeptical evaluator / HITL 상태:
+- optional runtime / boundary finding:
+- critical-domain / HITL 상태:
 - 가장 큰 리스크:
 - 즉시 재작업이 필요한 항목:
 - 남아 있는 release gate (manual / runtime / dependency):
@@ -42,7 +42,7 @@
 - [핵심 finding 3]
 
 ## Changelog
-- [2026-04-07] Template Maintainer: hybrid / governed / rollout defer review baseline을 반영했다.
+- [YYYY-MM-DD] Reviewer: initial draft
 
 ## Review Scope
 - Target version / milestone:
@@ -59,7 +59,7 @@
 
 ## Residual Release Risks
 - Manual / environment-specific verification:
-- Optional runtime / visibility boundary:
+- Optional runtime / boundary:
 - Enterprise / critical-domain gate:
 - Dependency / compliance gate:
 - Requirement / artifact sync gate:
@@ -74,20 +74,20 @@
 - [ ] `ARCHITECTURE_GUIDE.md`의 도메인 경계를 준수한다.
 - [ ] 계층 책임이 무너지지 않았다.
 - [ ] 승인되지 않은 구조 예외가 없다.
-- [ ] optional visibility / `.omx/*` state가 truth를 대체하지 않는다.
-- [ ] `enterprise_governed` activation rule과 runtime contract가 서로 모순되지 않는다.
+- [ ] truth layer와 derived state가 뒤섞이지 않았다.
+- [ ] 외부/민감 도메인 경계가 문서와 구현에서 일치한다.
 
 ## Security Checklist
 - [ ] 비밀값 하드코딩이 없다.
 - [ ] 민감 로그 노출이 없다.
 - [ ] 사용자 데이터 처리 규칙을 위반하지 않는다.
-- [ ] `enterprise_governed`가 활성화된 범위에서는 protected path와 HITL 요구사항을 우회하지 않는다.
+- [ ] human gate / protected path / approval 요구사항을 우회하지 않는다.
 
 ## Quality / Release Risk
 - 성능 리스크:
 - 유지보수 리스크:
-- rollout defer / dry-run-reporting 리스크:
 - 배포 차단 요소:
+- 장기 follow-up:
 
 ## Required Follow-ups
 - [재작업이 필요하면 작성]
@@ -95,7 +95,7 @@
 ## Evidence Used
 - 정적 검증:
 - 수동 / 실환경 검증:
-- optional runtime / visibility evidence:
+- optional runtime / boundary evidence:
 - enterprise / critical-domain evidence:
 - dry-run / reporting evidence:
 - 사용자 원문 실기기 / 브라우저 리포트:

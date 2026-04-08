@@ -17,6 +17,7 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 
 ## Requirements Discovery / OMX / Enterprise Pack Notes
 - Planner는 `REQUIREMENTS.md`를 새로 쓰거나 수정하기 전에 항상 shared `requirements_deep_interview` skill을 먼저 수행합니다.
+- 사용자가 `deep interview`나 discovery만 요청한 turn은 discovery-only입니다. 질문 패킷과 interview snapshot까지만 진행하고 `REQUIREMENTS.md` drafting이나 downstream sync로 자동 승격하지 않습니다.
 - 이 skill은 OMX `deep-interview` 아이디어를 내부화한 절차이며, raw OMX script/runtime 의존이나 `.omx/*` truth 승격을 뜻하지 않습니다.
 - workflow compatibility만 허용합니다. `Discovery -> $deep-interview`, `Planning -> $ralplan`
 - OMX 결과나 `.omx/*` sidecar는 보조 입력일 뿐이며, Planner는 항상 `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`에 정본을 동기화해야 합니다.
@@ -35,8 +36,11 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 
 ### Step 2: 요구사항 정렬과 사용자 대화
 - `requirements_deep_interview` skill로 goal, actor, in-scope, out-of-scope, workflow, constraints, evidence, acceptance, open question을 먼저 구조화합니다.
+- deep interview 첫 turn에서는 최소한 goal/actor, scope/preserve, evidence/approval, forbidden shortcut/sensitive path/failure mode를 각각 질문하거나 기존 답으로 닫았는지 확인합니다.
 - UI/operator-facing delta가 있으면 information hierarchy, pain point, must-see signal, test task까지 discovery에 포함합니다.
+- 사용자가 `deep interview만` 요청했다면 현재 turn 출력은 질문 패킷과 interview snapshot까지만 허용합니다. 이 경우 `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`를 수정하지 않습니다.
 - 사용자의 요구사항, 보류 항목, 정책 선택지를 `REQUIREMENTS.md`에 반영합니다.
+- 질문 응답이 모이면 먼저 `Known / Needs User Answer / Do Not Infer` snapshot으로 되돌려 확인하고, 사용자가 draft/update를 명시적으로 요청했을 때만 `REQUIREMENTS.md`를 갱신합니다.
 - 사용자의 프롬프트에 직접 질문이 섞여 있으면, 그 질문에 대한 답변 또는 확인 상태를 먼저 정리합니다.
 - 승인 후 범위나 완료 기준이 바뀌면 기존 합의를 덮어쓰지 말고, `Current Requirement Baseline`, `Requirements Sync Status`, `Approved Change Log`를 먼저 갱신합니다.
 - 중간 변경이 승인되면 `CR-*` ID를 부여하고 해당 변경이 건드린 `FR-*`, `NFR-*`, acceptance criteria, `In Scope`, `Out of Scope`를 같은 턴에 함께 고칩니다.
@@ -48,6 +52,7 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
   - `Approved`
 - 미결정 제품 항목이 남아 있으면 handoff하지 말고 사용자와 추가 대화를 계속합니다.
 - 사용자의 세부 답변만으로 전체 승인으로 간주하지 않습니다. 최신 문서 기준 명시적 승인 전까지 다음 단계로 넘어가지 않습니다.
+- `REQUIREMENTS.md`가 아직 `Draft`, `Needs User Answers`, `Ready for Approval`이면 `Requirements Sync Status`와 `CURRENT_STATE.md > Requirements Sync Check`를 `Pending Requirement Approval`로 두고, `ARCHITECTURE_GUIDE.md`와 `IMPLEMENTATION_PLAN.md`를 새 기준선으로 sync하지 않습니다.
 - downstream 문서가 아직 새 기준선을 반영하지 못했으면 `Requirements Sync Status`를 `Downstream Update Required`로 두고 Review / Deploy로 넘기지 않습니다.
 - low-risk harness maintenance와 read-only validation은 사용자 승인 없이 바로 적용하고 결과만 요약합니다.
 - 짧은 정책 선택지가 즉시 필요하면 artifact에 먼저 기록하고 현재 세션의 로컬 사용자 응답 대기로 유지합니다.
@@ -55,6 +60,7 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 
 ### Step 3: 아키텍처 계약 수립
 - `REQUIREMENTS.md`가 `Approved`일 때만 `ARCHITECTURE_GUIDE.md`를 작성하거나 갱신합니다.
+- 요구사항이 미승인 상태면 `ARCHITECTURE_GUIDE.md`는 기존 승인 기준선을 유지하거나 `Change Sync Check`를 `Pending Requirement Approval`로 두고 멈춥니다.
 - `ARCHITECTURE_GUIDE.md > Status`는 `Draft / Ready for Approval / Approved`로 관리합니다.
 - 요구사항이 승인 후 바뀌면 `ARCHITECTURE_GUIDE.md`도 같은 턴에 다시 열어 `Requirement Baseline`, `Change Sync Check`, `Requirement Change Sync`를 갱신합니다.
 - 구조 영향이 없더라도 `No Architecture Change`로 명시해 최신 요구사항 기준선을 검토했다는 흔적을 남깁니다.
@@ -63,6 +69,7 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 
 ### Step 4: 구현 계획과 작업 목록 정리
 - `IMPLEMENTATION_PLAN.md`를 작성하고 `Status`를 `Draft / Ready for Execution`으로 관리합니다.
+- `REQUIREMENTS.md`가 미승인 상태면 `IMPLEMENTATION_PLAN.md`를 새 기준선으로 sync하지 않고 `Change Sync Check`를 `Pending Requirement Approval`로 둡니다.
 - 현재 iteration, 주요 Task ID, 검증 명령을 채웁니다.
 - 승인된 `FR-*`, `NFR-*` ID가 어떤 Task ID로 구현/검증되는지 `IMPLEMENTATION_PLAN.md > Requirement Trace`에 적습니다.
 - 릴리즈 범위 또는 cross-role handoff가 있는 `DEV-*`, `TST-*`, `REV-*`, `REL-*` task는 `IMPLEMENTATION_PLAN.md > Task Packet Ledger`에 `Objective`, `In Scope / Out of Scope`, `Acceptance Checks`, `Artifacts To Update`, `Escalate When`을 적습니다.

@@ -11,7 +11,7 @@
 
 ## Quick Read
 - 이번 배포 대상: `Hybrid Harness Completion v0.1`의 self-hosting completion evidence와 local preview 재검증 결과
-- 현재 배포 상태: `TST-02` local preview smoke는 닫혔고, actual rollout은 defer 상태다. 다음 실행 게이트는 `REV-01` / `REV-02`, `REL-01`, `REL-02`다
+- 현재 배포 상태: `TST-02` local preview smoke 1차 검증은 끝났지만 user PMW browser feedback이 아직 없어 최종 closure는 보류 중이다. actual rollout은 계속 defer 상태다
 - 배포 기준 Requirement Baseline / sync gate: `Hybrid Harness Completion v0.1` / Closed
 - current green level / branch freshness / GitHub release gate: `Targeted` / Start of `Hybrid Harness Completion v0.1` / Open
 - GitHub release path / source -> target: current version에서는 GitHub release path를 열지 않는다. `REL-03` 전까지 target branch도 고정하지 않는다
@@ -37,7 +37,7 @@
 - Target Branch for Release: Not selected; rollout decision deferred until `REL-03`
 - Deployment Provider: Developer PC local self-hosting preview
 - Selected Deployment Skill: N/A (local preview + dry-run evidence)
-- Last Updated At: 2026-04-08 13:30
+- Last Updated At: 2026-04-08 13:39
 
 ## Rollback Snapshot
 - 롤백 조건: preview smoke 실패, non-loopback exposure, write path 감지, dry-run이 downstream mutation을 유발하는 경우
@@ -47,6 +47,7 @@
 ## Changelog
 - [2026-04-08] Planner: `PLN-04`를 반영해 completion gate와 post-completion rollout entry criteria를 live deployment 문서로 고정했다.
 - [2026-04-08] Tester: `TST-02` local preview smoke를 수행해 `127.0.0.1:4173` loopback bind, static asset, browser-rendered home/workspace smoke, `/api/projects`, `/api/snapshot`, `/api/file` allow/block, decision packet/history/risk signal 노출을 확인했고 `sync_template_docs.ps1 -WhatIf`로 no-mutation dry-run 경로를 점검했다.
+- [2026-04-08] Day Wrap Up: user 요청에 따라 `TST-02` 최종 closure를 보류하고 PMW browser feedback pending 상태를 manual/environment gate에 남겼다.
 
 ## Release Target
 - Version: Hybrid Harness Completion v0.1
