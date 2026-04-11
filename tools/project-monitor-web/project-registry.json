@@ -7,6 +7,11 @@
       "repoRoot": "../.."
     },
     {
+      "id": "daily-english-spark",
+      "label": "Daily English Spark",
+      "repoRoot": "../../../../10 Antigravity/11 Daily English Spark"
+    },
+    {
       "id": "bible-spark",
       "label": "Bible Spark",
       "repoRoot": "../../../../10 Antigravity/12 Bible Spark"

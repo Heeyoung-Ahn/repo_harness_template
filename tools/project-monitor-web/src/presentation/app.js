@@ -5,6 +5,7 @@ const MENU_ITEMS = [
   { id: "task-detail", label: "Task Detail" },
   { id: "blockers", label: "Blocker / Approval Queue" },
   { id: "activity", label: "Recent Activity" },
+  { id: "projects", label: "Project Registry" },
   { id: "history", label: "Project History" },
   { id: "health", label: "Document Health" },
   { id: "team", label: "Team Registry" }
@@ -66,15 +67,66 @@ function prettyCategory(value) {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function buildSourceLink(path, label = path) {
-  const projectQuery = state.currentProjectId
-    ? `project=${encodeURIComponent(state.currentProjectId)}&`
-    : "";
-  return `<a class="source-link" href="/api/file?${projectQuery}path=${encodeURIComponent(path)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`;
+function buildSourceLink(path, label = path, scope = "project") {
+  const scopeQuery = scope === "workspace" ? "scope=workspace&" : "";
+  const projectQuery =
+    scope === "workspace"
+      ? ""
+      : state.currentProjectId
+        ? `project=${encodeURIComponent(state.currentProjectId)}&`
+        : "";
+  return `<a class="source-link" href="/api/file?${scopeQuery}${projectQuery}path=${encodeURIComponent(path)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`;
 }
 
 function percentLabel(value) {
   return `${Number(value || 0)}%`;
+}
+
+function renderSourceHint(source, scope = "project") {
+  if (!source?.path || !source?.label) {
+    return "";
+  }
+
+  return `<div class="source-hint">Source ${buildSourceLink(source.path, source.label, scope)}</div>`;
+}
+
+async function requestJson(url, options = {}) {
+  const requestOptions = {
+    headers: {},
+    ...options
+  };
+
+  if (options.body && !requestOptions.headers["Content-Type"]) {
+    requestOptions.headers["Content-Type"] = "application/json";
+  }
+
+  const response = await fetch(url, requestOptions);
+  let payload = null;
+
+  try {
+    payload = await response.json();
+  } catch {
+    payload = null;
+  }
+
+  if (!response.ok) {
+    throw new Error(payload?.error || payload?.detail || `Request failed: ${response.status}`);
+  }
+
+  return payload;
+}
+
+async function copyToClipboard(text, successMessage) {
+  if (!navigator.clipboard?.writeText) {
+    throw new Error("Clipboard API is not available in this browser.");
+  }
+
+  await navigator.clipboard.writeText(text);
+  state.notice = successMessage;
+
+  if (state.snapshot) {
+    renderWarnings(state.snapshot);
+  }
 }
 
 function buildIndices(snapshot) {
@@ -151,50 +203,56 @@ function navClass(viewId) {
 
 function renderHeader(snapshot) {
   elements.appHeader.innerHTML = `
-    <div class="brand-strip">
-      <div class="brand-mark">
-        <img src="/favicon.svg" alt="PMW" />
-      </div>
+    <div class="header-main">
       <div class="brand-copy">
         <p class="eyebrow">Project Monitor Web</p>
         <h1>${escapeHtml(snapshot.projectContext.label)}</h1>
-        <p class="header-goal">${escapeHtml(snapshot.overview.goalSummary)}</p>
+        <p class="header-goal">${escapeHtml(snapshot.header.projectDescription)}</p>
+        ${renderSourceHint(snapshot.header.projectDescriptionSource)}
+      </div>
+
+      <div class="header-controls">
+        <div class="control-cluster">
+          <label class="project-picker">
+            <span>Project</span>
+            <select id="project-selector">
+              ${snapshot.projects
+                .map(
+                  (project) => `
+                    <option value="${escapeHtml(project.id)}"${project.isCurrent ? " selected" : ""}>
+                      ${escapeHtml(project.label)}
+                    </option>
+                  `
+                )
+                .join("")}
+            </select>
+          </label>
+          <div class="header-actions">
+            <button class="ghost-button" type="button" data-view="projects">Projects</button>
+            <button class="ghost-button" type="button" data-refresh="true">Refresh</button>
+            <button class="ghost-button" type="button" data-stop-server="true">Stop Server</button>
+            <button class="ghost-button ghost-button-strong" type="button" data-exit="true">Exit</button>
+          </div>
+        </div>
+        <div class="header-meta-row">
+          <span class="status-chip">${escapeHtml(snapshot.release.stage || "Unknown Stage")}</span>
+          <span class="muted-label">${escapeHtml(snapshot.activeProfile)}</span>
+          <span class="muted-label">${escapeHtml(snapshot.generatedAt)}</span>
+        </div>
       </div>
     </div>
-    <div class="header-controls">
-      <label class="project-picker">
-        <span>Project</span>
-        <select id="project-selector">
-          ${snapshot.projects
-            .map(
-              (project) => `
-                <option value="${escapeHtml(project.id)}"${project.isCurrent ? " selected" : ""}>
-                  ${escapeHtml(project.label)}
-                </option>
-              `
-            )
-            .join("")}
-        </select>
-      </label>
-      <div class="header-actions">
-        <button class="ghost-button" type="button" data-refresh="true">Refresh</button>
-        <button class="ghost-button ghost-button-strong" type="button" data-exit="true">Exit</button>
-      </div>
-    </div>
+
     <div class="headline-strip">
-      <div class="headline-primary">
+      <article class="headline-card">
         <span class="headline-label">One-line status</span>
         <strong>${escapeHtml(snapshot.header.oneLineStatus)}</strong>
-      </div>
-      <div class="headline-secondary">
+        ${renderSourceHint(snapshot.header.oneLineStatusSource)}
+      </article>
+      <article class="headline-card">
         <span class="headline-label">Next action</span>
-        <span>${escapeHtml(snapshot.header.nextAction || "다음 action이 아직 없습니다.")}</span>
-      </div>
-      <div class="headline-meta">
-        <span class="status-chip">${escapeHtml(snapshot.release.stage || "Unknown Stage")}</span>
-        <span class="muted-label">${escapeHtml(snapshot.activeProfile)}</span>
-        <span class="muted-label">${escapeHtml(snapshot.generatedAt)}</span>
-      </div>
+        <strong>${escapeHtml(snapshot.header.nextAction || "다음 action이 아직 없습니다.")}</strong>
+        ${renderSourceHint(snapshot.header.nextActionSource)}
+      </article>
     </div>
   `;
 }
@@ -281,14 +339,14 @@ function renderDashboard(snapshot) {
     },
     {
       title: "Next Action",
-      value: "Review",
-      meta: snapshot.header.nextAction || "Next action unavailable",
+      value: snapshot.header.nextAction || "None",
+      meta: snapshot.header.nextActionSource?.label || "Current State",
       view: "current-state"
     },
     {
       title: "Document Health",
       value: snapshot.documentHealth.summary || "Unknown",
-      meta: `validator ${snapshot.documentHealth.governance.validatorProfile}`,
+      meta: `${snapshot.documentHealth.signalSummary.active} active / ${snapshot.documentHealth.signalSummary.watch} watch`,
       view: "health"
     }
   ];
@@ -296,7 +354,7 @@ function renderDashboard(snapshot) {
   elements.dashboard.innerHTML = cards
     .map(
       (card) => `
-        <button type="button" class="${cardClass(state.activeView === card.view)}" data-view="${escapeHtml(card.view)}">
+        <button type="button" class="${cardClass(state.activeView === card.view)} dashboard-chip" data-view="${escapeHtml(card.view)}">
           <span class="dashboard-label">${escapeHtml(card.title)}</span>
           <strong class="dashboard-value">${escapeHtml(card.value)}</strong>
           <span class="dashboard-meta">${escapeHtml(card.meta)}</span>
@@ -361,6 +419,7 @@ function renderOverview(snapshot) {
           </div>
         </div>
         <p class="lead-copy">${escapeHtml(overview.goalSummary)}</p>
+        ${renderSourceHint(overview.goalSummarySource)}
         <div class="pill-row">
           <span class="info-pill">${escapeHtml(snapshot.activeProfile)}</span>
           ${snapshot.activePacks
@@ -519,6 +578,113 @@ function renderOverview(snapshot) {
                 .join("")}</div>`
             : `<div class="empty-state">프로젝트 이력이 아직 없습니다.</div>`
         }
+      </section>
+    </div>
+  `;
+}
+
+function renderProjects(snapshot) {
+  return `
+    <div class="two-column">
+      <section class="content-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Project Registry</p>
+            <h3>Monitored Projects</h3>
+          </div>
+          <div>${buildSourceLink(snapshot.projectRegistry.path, "project-registry.json", "workspace")}</div>
+        </div>
+        <div class="stack-list">
+          ${snapshot.projects
+            .map(
+              (project) => `
+                <article class="list-card registry-item">
+                  <div class="queue-item-header">
+                    <strong>${escapeHtml(project.label)}</strong>
+                    <div class="pill-row">
+                      ${project.isCurrent ? '<span class="info-pill">Current</span>' : ""}
+                      ${project.isDefault ? '<span class="info-pill">Default</span>' : ""}
+                      ${project.isWorkspace ? '<span class="info-pill">Workspace</span>' : ""}
+                    </div>
+                  </div>
+                  <div class="subtle mono">${escapeHtml(project.repoRoot)}</div>
+                  <div class="registry-actions">
+                    ${
+                      project.canDelete
+                        ? `<button type="button" class="inline-chip inline-chip-danger" data-delete-project="${escapeHtml(project.id)}">Remove</button>`
+                        : `<span class="subtle">workspace project는 삭제하지 않습니다.</span>`
+                    }
+                  </div>
+                </article>
+              `
+            )
+            .join("")}
+        </div>
+      </section>
+
+      <section class="content-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Add Project</p>
+            <h3>Register Another Workspace</h3>
+          </div>
+        </div>
+        <form class="project-form" id="project-registry-form">
+          <label>
+            <span>Project Label</span>
+            <input type="text" name="label" placeholder="Daily English Spark" />
+          </label>
+          <label>
+            <span>Repository Path</span>
+            <input
+              type="text"
+              name="repoRoot"
+              placeholder="C:\\Newface\\10 Antigravity\\11 Daily English Spark"
+              required
+            />
+          </label>
+          <div class="registry-actions">
+            <button type="submit" class="ghost-button ghost-button-strong">Add Project</button>
+          </div>
+        </form>
+        <p class="subtle">
+          PMW는 필수 artifact 파일이 있는 repo만 등록합니다. write 범위는
+          <code>project-registry.json</code> 한 파일로 제한됩니다.
+        </p>
+      </section>
+
+      <section class="content-card content-card-span">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Local Shell</p>
+            <h3>Start and Stop PMW</h3>
+          </div>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-card">
+            <strong>Launch Command</strong>
+            <div class="command-block">${escapeHtml(snapshot.localShell.launchCommand)}</div>
+            <div class="registry-actions">
+              <button type="button" class="inline-chip" data-copy-command="${escapeHtml(snapshot.localShell.launchCommand)}">Copy Command</button>
+              ${buildSourceLink(snapshot.localShell.launchScriptPath, "launch-project-monitor-web.ps1", "workspace")}
+            </div>
+          </div>
+          <div class="detail-card">
+            <strong>Stop Command</strong>
+            <div class="command-block">${escapeHtml(snapshot.localShell.stopCommand)}</div>
+            <div class="registry-actions">
+              <button type="button" class="inline-chip" data-copy-command="${escapeHtml(snapshot.localShell.stopCommand)}">Copy Command</button>
+              ${buildSourceLink(snapshot.localShell.stopScriptPath, "stop-project-monitor-web.ps1", "workspace")}
+            </div>
+          </div>
+          <div class="detail-card">
+            <strong>Stop Running Server</strong>
+            <div class="subtle">현재 열려 있는 PMW 서버를 로컬에서 종료합니다. 브라우저 탭은 자동으로 닫히지 않을 수 있습니다.</div>
+            <div class="registry-actions">
+              <button type="button" class="ghost-button" data-stop-server="true">Stop Server Now</button>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   `;
@@ -1254,6 +1420,7 @@ function renderContent(snapshot) {
     "task-detail": ["Task Detail", "현재 진행 중인 task와 상세 정보를 확인합니다."],
     blockers: ["Blocker / Approval Queue", "decision packet을 먼저 읽고 Codex로 돌아가 결정을 내립니다."],
     activity: ["Recent Activity", "최근 handoff와 history delta를 확인합니다."],
+    projects: ["Project Registry", "조회할 프로젝트 목록과 PMW start / stop shell affordance를 관리합니다."],
     history: ["Project History", "프로젝트 전체 의사결정과 구현 마일스톤을 조회합니다."],
     health: ["Document Health", "artifact sync와 governance summary를 확인합니다."],
     team: ["Team Registry", "active profile, pack, governance controls, member registry를 읽습니다."]
@@ -1278,6 +1445,9 @@ function renderContent(snapshot) {
       return;
     case "activity":
       elements.content.innerHTML = renderActivity(snapshot);
+      return;
+    case "projects":
+      elements.content.innerHTML = renderProjects(snapshot);
       return;
     case "history":
       elements.content.innerHTML = renderHistory(snapshot);
@@ -1551,19 +1721,82 @@ async function loadSnapshot(projectId = state.currentProjectId) {
   render(snapshot);
 }
 
+async function refreshProjectsView(nextProjectId = state.currentProjectId) {
+  await loadSnapshot(nextProjectId);
+  state.activeView = "projects";
+  if (state.snapshot) {
+    render(state.snapshot);
+  }
+}
+
 function openDetail(kind, id) {
   state.detail = { kind, id };
   renderDrawer();
 }
 
-function handleExit() {
-  window.close();
+async function handleProjectRegistrySubmit(form) {
+  const formData = new FormData(form);
+  const payload = {
+    label: String(formData.get("label") || "").trim(),
+    repoRoot: String(formData.get("repoRoot") || "").trim()
+  };
+
+  await requestJson("/api/projects", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+
+  form.reset();
+  state.notice = `프로젝트를 목록에 추가했습니다: ${payload.label || payload.repoRoot}`;
+  await refreshProjectsView();
+}
+
+async function handleProjectRemoval(projectId) {
+  const target = state.snapshot?.projects?.find((project) => project.id === projectId);
+  await requestJson(`/api/projects?projectId=${encodeURIComponent(projectId)}`, {
+    method: "DELETE"
+  });
+
+  state.notice = `${target?.label || projectId} 프로젝트를 목록에서 제거했습니다.`;
+  const nextProjectId = state.currentProjectId === projectId ? "" : state.currentProjectId;
+  await refreshProjectsView(nextProjectId);
+}
+
+async function handleStopServer() {
+  await requestJson("/api/server/stop", { method: "POST" });
   state.notice =
-    "브라우저 탭이 자동으로 닫히지 않으면 직접 닫거나 tools/project-monitor-web/stop-project-monitor-web.cmd 를 사용하세요.";
+    "PMW 서버 종료를 요청했습니다. 브라우저 탭은 자동으로 닫히지 않을 수 있습니다.";
+
   if (state.snapshot) {
     renderWarnings(state.snapshot);
   }
 }
+
+function handleExit() {
+  window.close();
+  state.notice =
+    "브라우저 탭이 자동으로 닫히지 않으면 직접 닫거나 Project Registry 화면의 Stop Server를 사용하세요.";
+  if (state.snapshot) {
+    renderWarnings(state.snapshot);
+  }
+}
+
+document.addEventListener("submit", async (event) => {
+  if (event.target.id !== "project-registry-form") {
+    return;
+  }
+
+  event.preventDefault();
+
+  try {
+    await handleProjectRegistrySubmit(event.target);
+  } catch (error) {
+    state.notice = error.message;
+    if (state.snapshot) {
+      renderWarnings(state.snapshot);
+    }
+  }
+});
 
 document.addEventListener("change", async (event) => {
   if (event.target.id === "project-selector") {
@@ -1644,6 +1877,47 @@ document.addEventListener("click", async (event) => {
   if (event.target.closest("[data-refresh]")) {
     state.notice = "";
     await loadSnapshot();
+    return;
+  }
+
+  const deleteProjectTrigger = event.target.closest("[data-delete-project]");
+  if (deleteProjectTrigger) {
+    try {
+      await handleProjectRemoval(deleteProjectTrigger.dataset.deleteProject);
+    } catch (error) {
+      state.notice = error.message;
+      if (state.snapshot) {
+        renderWarnings(state.snapshot);
+      }
+    }
+    return;
+  }
+
+  const copyTrigger = event.target.closest("[data-copy-command]");
+  if (copyTrigger) {
+    try {
+      await copyToClipboard(
+        copyTrigger.dataset.copyCommand,
+        "명령어를 클립보드에 복사했습니다."
+      );
+    } catch (error) {
+      state.notice = error.message;
+      if (state.snapshot) {
+        renderWarnings(state.snapshot);
+      }
+    }
+    return;
+  }
+
+  if (event.target.closest("[data-stop-server]")) {
+    try {
+      await handleStopServer();
+    } catch (error) {
+      state.notice = error.message;
+      if (state.snapshot) {
+        renderWarnings(state.snapshot);
+      }
+    }
     return;
   }
 

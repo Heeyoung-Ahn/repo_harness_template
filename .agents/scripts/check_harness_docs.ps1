@@ -248,6 +248,9 @@ $pathMap = @{
     CurrentState       = Join-Path $repoRoot '.agents\artifacts\CURRENT_STATE.md'
     PreventiveMemory   = Join-Path $repoRoot '.agents\artifacts\PREVENTIVE_MEMORY.md'
     ProjectHistory     = Join-Path $repoRoot '.agents\artifacts\PROJECT_HISTORY.md'
+    SystemContext      = Join-Path $repoRoot '.agents\artifacts\SYSTEM_CONTEXT.md'
+    DomainContext      = Join-Path $repoRoot '.agents\artifacts\DOMAIN_CONTEXT.md'
+    DecisionLog        = Join-Path $repoRoot '.agents\artifacts\DECISION_LOG.md'
     HandoffArchive     = Join-Path $repoRoot '.agents\artifacts\HANDOFF_ARCHIVE.md'
     TaskList           = Join-Path $repoRoot '.agents\artifacts\TASK_LIST.md'
     Requirements       = Join-Path $repoRoot '.agents\artifacts\REQUIREMENTS.md'
@@ -258,10 +261,12 @@ $pathMap = @{
     DeploymentPlan     = Join-Path $repoRoot '.agents\artifacts\DEPLOYMENT_PLAN.md'
     WorkspaceRule      = Join-Path $repoRoot '.agents\rules\workspace.md'
     PlanWorkflow       = Join-Path $repoRoot '.agents\workflows\plan.md'
+    DevWorkflow        = Join-Path $repoRoot '.agents\workflows\dev.md'
     DeployWorkflow     = Join-Path $repoRoot '.agents\workflows\deploy.md'
     ReviewWorkflow     = Join-Path $repoRoot '.agents\workflows\review.md'
     TestWorkflow       = Join-Path $repoRoot '.agents\workflows\test.md'
     HandoffWorkflow    = Join-Path $repoRoot '.agents\workflows\handoff.md'
+    CodeReviewChecklist = Join-Path $repoRoot '.agents\skills\code_review_checklist\SKILL.md'
     TemplateRepoRule   = Join-Path $repoRoot '.agents\rules\template_repo.md'
     ExpoDeviceSkill    = Join-Path $repoRoot '.agents\skills\expo_real_device_test\SKILL.md'
     TeamRegistry       = Join-Path $repoRoot '.agents\runtime\team.json'
@@ -281,6 +286,7 @@ $templateRuntimeMap = @{
     TemplateDevFlow       = Join-Path $repoRoot 'templates_starter\.agents\workflows\dev.md'
     TemplateTestFlow      = Join-Path $repoRoot 'templates_starter\.agents\workflows\test.md'
     TemplateReviewFlow    = Join-Path $repoRoot 'templates_starter\.agents\workflows\review.md'
+    TemplateReviewChecklist = Join-Path $repoRoot 'templates_starter\.agents\skills\code_review_checklist\SKILL.md'
     TemplateDeployFlow    = Join-Path $repoRoot 'templates_starter\.agents\workflows\deploy.md'
     TemplateDocuFlow      = Join-Path $repoRoot 'templates_starter\.agents\workflows\docu.md'
     TemplateHandoffFlow   = Join-Path $repoRoot 'templates_starter\.agents\workflows\handoff.md'
@@ -300,6 +306,9 @@ $starterArtifactMap = @{
     Architecture       = Join-Path $repoRoot 'templates_starter\.agents\artifacts\ARCHITECTURE_GUIDE.md'
     ImplementationPlan = Join-Path $repoRoot 'templates_starter\.agents\artifacts\IMPLEMENTATION_PLAN.md'
     ProjectHistory     = Join-Path $repoRoot 'templates_starter\.agents\artifacts\PROJECT_HISTORY.md'
+    SystemContext      = Join-Path $repoRoot 'templates_starter\.agents\artifacts\SYSTEM_CONTEXT.md'
+    DomainContext      = Join-Path $repoRoot 'templates_starter\.agents\artifacts\DOMAIN_CONTEXT.md'
+    DecisionLog        = Join-Path $repoRoot 'templates_starter\.agents\artifacts\DECISION_LOG.md'
     ReviewReport       = Join-Path $repoRoot 'templates_starter\.agents\artifacts\REVIEW_REPORT.md'
     DeploymentPlan     = Join-Path $repoRoot 'templates_starter\.agents\artifacts\DEPLOYMENT_PLAN.md'
     Walkthrough        = Join-Path $repoRoot 'templates_starter\.agents\artifacts\WALKTHROUGH.md'
@@ -397,6 +406,9 @@ $culture = [System.Globalization.CultureInfo]::InvariantCulture
 $currentStateText = [System.IO.File]::ReadAllText($pathMap.CurrentState, $utf8)
 $preventiveMemoryText = [System.IO.File]::ReadAllText($pathMap.PreventiveMemory, $utf8)
 $projectHistoryText = [System.IO.File]::ReadAllText($pathMap.ProjectHistory, $utf8)
+$systemContextText = [System.IO.File]::ReadAllText($pathMap.SystemContext, $utf8)
+$domainContextText = [System.IO.File]::ReadAllText($pathMap.DomainContext, $utf8)
+$decisionLogText = [System.IO.File]::ReadAllText($pathMap.DecisionLog, $utf8)
 $currentStateLines = [System.IO.File]::ReadAllLines($pathMap.CurrentState, $utf8)
 $liveAgentsText = [System.IO.File]::ReadAllText($pathMap.LiveAgents, $utf8)
 $taskListText = [System.IO.File]::ReadAllText($pathMap.TaskList, $utf8)
@@ -409,10 +421,12 @@ $reviewReportText = [System.IO.File]::ReadAllText($pathMap.ReviewReport, $utf8)
 $deploymentPlanText = [System.IO.File]::ReadAllText($pathMap.DeploymentPlan, $utf8)
 $workspaceText = [System.IO.File]::ReadAllText($pathMap.WorkspaceRule, $utf8)
 $planWorkflowText = [System.IO.File]::ReadAllText($pathMap.PlanWorkflow, $utf8)
+$devWorkflowText = [System.IO.File]::ReadAllText($pathMap.DevWorkflow, $utf8)
 $deployWorkflowText = [System.IO.File]::ReadAllText($pathMap.DeployWorkflow, $utf8)
 $reviewWorkflowText = [System.IO.File]::ReadAllText($pathMap.ReviewWorkflow, $utf8)
 $testWorkflowText = [System.IO.File]::ReadAllText($pathMap.TestWorkflow, $utf8)
 $handoffWorkflowText = [System.IO.File]::ReadAllText($pathMap.HandoffWorkflow, $utf8)
+$codeReviewChecklistText = [System.IO.File]::ReadAllText($pathMap.CodeReviewChecklist, $utf8)
 $expoDeviceSkillText = [System.IO.File]::ReadAllText($pathMap.ExpoDeviceSkill, $utf8)
 $syncTemplateDocsText = [System.IO.File]::ReadAllText($pathMap.SyncTemplateDocs, $utf8)
 $templateCurrentStateText = [System.IO.File]::ReadAllText($templateArtifactMap.CurrentState, $utf8)
@@ -431,6 +445,9 @@ $starterRequirementsText = [System.IO.File]::ReadAllText($starterArtifactMap.Req
 $starterArchitectureText = [System.IO.File]::ReadAllText($starterArtifactMap.Architecture, $utf8)
 $starterImplementationPlanText = [System.IO.File]::ReadAllText($starterArtifactMap.ImplementationPlan, $utf8)
 $starterProjectHistoryText = [System.IO.File]::ReadAllText($starterArtifactMap.ProjectHistory, $utf8)
+$starterSystemContextText = [System.IO.File]::ReadAllText($starterArtifactMap.SystemContext, $utf8)
+$starterDomainContextText = [System.IO.File]::ReadAllText($starterArtifactMap.DomainContext, $utf8)
+$starterDecisionLogText = [System.IO.File]::ReadAllText($starterArtifactMap.DecisionLog, $utf8)
 $starterReviewReportText = [System.IO.File]::ReadAllText($starterArtifactMap.ReviewReport, $utf8)
 $starterDeploymentPlanText = [System.IO.File]::ReadAllText($starterArtifactMap.DeploymentPlan, $utf8)
 $starterWalkthroughText = [System.IO.File]::ReadAllText($starterArtifactMap.Walkthrough, $utf8)
@@ -661,9 +678,33 @@ $resetArtifactSchemas = @{
     }
 }
 
+$supportArtifactSchemas = @{
+    SystemContext = [pscustomobject]@{
+        ExpectedTitle    = 'System Context'
+        RequiredSections = @('## Quick Read', '## Usage Rules', '## Subsystem Map', '## Shared Contracts and Integration Seams', '## Hotspots and Do-Not-Break Paths')
+        RequiredFields   = @()
+        ForbiddenChecks  = @()
+    }
+    DomainContext = [pscustomobject]@{
+        ExpectedTitle    = 'Domain Context'
+        RequiredSections = @('## Quick Read', '## Usage Rules', '## Domain Terms', '## Lifecycle and Invariants', '## Exception Rules and Maintenance Hotspots')
+        RequiredFields   = @()
+        ForbiddenChecks  = @()
+    }
+    DecisionLog = [pscustomobject]@{
+        ExpectedTitle    = 'Decision Log'
+        RequiredSections = @('## Quick Read', '## Usage Rules', '## Entries')
+        RequiredFields   = @('Status', 'Rollback / Retire Trigger', 'Related')
+        ForbiddenChecks  = @()
+    }
+}
+
 Validate-ArtifactSchema -Text $currentStateText -Path '.agents/artifacts/CURRENT_STATE.md' -Schema $resetArtifactSchemas.CurrentState
 Validate-ArtifactSchema -Text $preventiveMemoryText -Path '.agents/artifacts/PREVENTIVE_MEMORY.md' -Schema $resetArtifactSchemas.PreventiveMemory
 Validate-ArtifactSchema -Text $projectHistoryText -Path '.agents/artifacts/PROJECT_HISTORY.md' -Schema $resetArtifactSchemas.ProjectHistory
+Validate-ArtifactSchema -Text $systemContextText -Path '.agents/artifacts/SYSTEM_CONTEXT.md' -Schema $supportArtifactSchemas.SystemContext
+Validate-ArtifactSchema -Text $domainContextText -Path '.agents/artifacts/DOMAIN_CONTEXT.md' -Schema $supportArtifactSchemas.DomainContext
+Validate-ArtifactSchema -Text $decisionLogText -Path '.agents/artifacts/DECISION_LOG.md' -Schema $supportArtifactSchemas.DecisionLog
 Validate-ArtifactSchema -Text $handoffArchiveText -Path '.agents/artifacts/HANDOFF_ARCHIVE.md' -Schema $resetArtifactSchemas.HandOffArchive
 Validate-ArtifactSchema -Text $taskListText -Path '.agents/artifacts/TASK_LIST.md' -Schema $resetArtifactSchemas.TaskList
 Validate-ArtifactSchema -Text $implementationPlanText -Path '.agents/artifacts/IMPLEMENTATION_PLAN.md' -Schema $resetArtifactSchemas.ImplementationPlan
@@ -695,6 +736,12 @@ Validate-TemplateArtifactScaffold -Text $starterRequirementsText -Path 'template
 Validate-TemplateArtifactScaffold -Text $starterArchitectureText -Path 'templates_starter/.agents/artifacts/ARCHITECTURE_GUIDE.md' -NonConcreteFields @('Requirement Baseline', 'Last Requirement Sync At', 'Last Updated At', 'Last Approved By', 'Last Approved At') -ForbiddenPatterns $templateForbiddenPatterns
 Validate-TemplateArtifactScaffold -Text $starterImplementationPlanText -Path 'templates_starter/.agents/artifacts/IMPLEMENTATION_PLAN.md' -NonConcreteFields @('Requirement Baseline', 'Last Updated At') -ForbiddenPatterns $templateForbiddenPatterns
 Validate-TemplateArtifactScaffold -Text $starterProjectHistoryText -Path 'templates_starter/.agents/artifacts/PROJECT_HISTORY.md' -ForbiddenPatterns $templateForbiddenPatterns
+Validate-ArtifactSchema -Text $starterSystemContextText -Path 'templates_starter/.agents/artifacts/SYSTEM_CONTEXT.md' -Schema $supportArtifactSchemas.SystemContext
+Validate-ArtifactSchema -Text $starterDomainContextText -Path 'templates_starter/.agents/artifacts/DOMAIN_CONTEXT.md' -Schema $supportArtifactSchemas.DomainContext
+Validate-ArtifactSchema -Text $starterDecisionLogText -Path 'templates_starter/.agents/artifacts/DECISION_LOG.md' -Schema $supportArtifactSchemas.DecisionLog
+Validate-TemplateArtifactScaffold -Text $starterSystemContextText -Path 'templates_starter/.agents/artifacts/SYSTEM_CONTEXT.md' -ForbiddenPatterns $templateForbiddenPatterns
+Validate-TemplateArtifactScaffold -Text $starterDomainContextText -Path 'templates_starter/.agents/artifacts/DOMAIN_CONTEXT.md' -ForbiddenPatterns $templateForbiddenPatterns
+Validate-TemplateArtifactScaffold -Text $starterDecisionLogText -Path 'templates_starter/.agents/artifacts/DECISION_LOG.md' -ForbiddenPatterns $templateForbiddenPatterns
 Validate-TemplateArtifactScaffold -Text $starterReviewReportText -Path 'templates_starter/.agents/artifacts/REVIEW_REPORT.md' -NonConcreteFields @('Requirement Baseline Reviewed', 'Reviewed At') -ForbiddenPatterns $templateForbiddenPatterns
 Validate-TemplateArtifactScaffold -Text $starterDeploymentPlanText -Path 'templates_starter/.agents/artifacts/DEPLOYMENT_PLAN.md' -NonConcreteFields @('Requirement Baseline for Release', 'Last Updated At') -ForbiddenPatterns $templateForbiddenPatterns
 Validate-TemplateArtifactScaffold -Text $starterWalkthroughText -Path 'templates_starter/.agents/artifacts/WALKTHROUGH.md' -NonConcreteFields @('Requirement Baseline Tested', 'Last Updated At') -ForbiddenPatterns $templateForbiddenPatterns
@@ -1125,12 +1172,21 @@ if (-not $workspaceText.Contains('discovery-only') -or -not $workspaceText.Conta
 if (-not $workspaceText.Contains('manual gate pending') -or -not $workspaceText.Contains('user decision pending')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/rules/workspace.md' -Message 'workspace.md is missing stale-lock stop tokens.'
 }
+if (-not $implementationPlanText.Contains('Primary Change Type') -or -not $implementationPlanText.Contains('Self-Review Summary') -or -not $implementationPlanText.Contains('Impact Tier') -or -not $implementationPlanText.Contains('Decision Log Entry')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/artifacts/IMPLEMENTATION_PLAN.md' -Message 'IMPLEMENTATION_PLAN is missing the CR-08 change-governance task packet fields.'
+}
 
 if (-not $planWorkflowText.Contains($planQuestionPhrase)) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the user-question-first rule.'
 }
 if (-not $planWorkflowText.Contains('Requirement Trace')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the Requirement Trace rule.'
+}
+if (-not $planWorkflowText.Contains('Primary Change Type') -or -not $planWorkflowText.Contains('Impact Tier')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the change-type or impact-tier planning rule.'
+}
+if (-not $planWorkflowText.Contains('SYSTEM_CONTEXT.md') -or -not $planWorkflowText.Contains('DOMAIN_CONTEXT.md') -or -not $planWorkflowText.Contains('DECISION_LOG.md')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the context artifact or decision-log planning rule.'
 }
 if (-not $planWorkflowText.Contains('No Architecture Change')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the architecture-sync acknowledgement rule.'
@@ -1141,6 +1197,12 @@ if (-not $planWorkflowText.Contains('$deep-interview') -or -not $planWorkflowTex
 if (-not $planWorkflowText.Contains('interview snapshot') -or -not $planWorkflowText.Contains('Pending Requirement Approval')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/plan.md' -Message 'plan.md is missing the interview snapshot or pending-approval planning guardrail.'
 }
+if (-not $devWorkflowText.Contains('Self-Review Summary') -or -not $devWorkflowText.Contains('Impact Tier')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/dev.md' -Message 'dev.md is missing the self-review or impact-tier implementation rule.'
+}
+if (-not $devWorkflowText.Contains('SYSTEM_CONTEXT.md') -or -not $devWorkflowText.Contains('DOMAIN_CONTEXT.md') -or -not $devWorkflowText.Contains('DECISION_LOG.md')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/dev.md' -Message 'dev.md is missing the context artifact or decision-log implementation rule.'
+}
 if (-not $reviewWorkflowText.Contains('code_review_checklist')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/review.md' -Message 'review.md is missing the code_review_checklist skill reference.'
 }
@@ -1150,8 +1212,14 @@ if (-not $reviewWorkflowText.Contains('dependency_audit')) {
 if (-not $reviewWorkflowText.Contains('ARCHITECTURE_GUIDE.md') -or -not $reviewWorkflowText.Contains('Requirement Baseline Reviewed')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/review.md' -Message 'review.md is missing the requirement-baseline cross-check rule.'
 }
+if (-not $reviewWorkflowText.Contains('Self-Review Summary') -or -not $reviewWorkflowText.Contains('Impact Tier') -or -not $reviewWorkflowText.Contains('DECISION_LOG.md')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/workflows/review.md' -Message 'review.md is missing the change-governance review rule.'
+}
 if (-not $reviewWorkflowText.Contains('$ralph') -or -not $reviewWorkflowText.Contains('skeptical evaluator')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/review.md' -Message 'review.md is missing the optional OMX verification mapping or skeptical evaluator rule.'
+}
+if (-not $codeReviewChecklistText.Contains('Self-Review Summary') -or -not $codeReviewChecklistText.Contains('Impact Tier') -or -not $codeReviewChecklistText.Contains('DECISION_LOG.md')) {
+    Add-Finding -Severity 'WARNING' -Path '.agents/skills/code_review_checklist/SKILL.md' -Message 'code_review_checklist is missing the change-governance review checklist.'
 }
 if (-not $testWorkflowText.Contains('expo_real_device_test')) {
     Add-Finding -Severity 'WARNING' -Path '.agents/workflows/test.md' -Message 'test.md is missing the expo_real_device_test skill reference.'

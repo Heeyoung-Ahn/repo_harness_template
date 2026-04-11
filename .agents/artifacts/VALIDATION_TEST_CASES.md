@@ -7,7 +7,8 @@
 - 이 문서가 다루는 것: 테스트 케이스 정의, 각 케이스의 스트레스 포인트, 기대 동작, 수집해야 할 evidence, 주요 실패 신호.
 - 이 문서가 대체하지 않는 것: 실제 실행 로그, 리뷰 finding, deploy 결과 기록. 실행 후 근거는 계속 `CURRENT_STATE.md`, `TASK_LIST.md`, `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`에 남긴다.
 - 기준 원칙: `context retention`, `anti-spaghetti`, `gate discipline`, `template/live boundary`, `evidence quality`, `recoverability`를 동시에 본다.
-- 현재 상태: 케이스 정의만 완료됐다. user confirmation 뒤 실제 validation task를 열고 순차 실행한다.
+- `CR-08` change-governance baseline은 별도 standalone case를 만들지 않고, 기존 pressure case에 흡수해 검증한다.
+- 현재 상태: first batch execution task(`VAL-01`, `VAL-03`, `VAL-07`, `VAL-08`)를 열었다. pass/fail evidence는 실행 시 별도 artifact에 남긴다.
 
 ## Validation Axes
 
@@ -41,6 +42,17 @@
 3. `VAL-07`: Windows + Korean artifact 환경에서 실제로 자주 나는 오염 패턴을 검증한다.
 4. `VAL-08`: 지금 current backlog와 가장 직접 맞닿아 있는 rollout defer / dry-run 품질을 검증한다.
 
+## CR-08 Coverage Map
+
+| CR-08 Point | Inject Into | What to verify |
+|---|---|---|
+| Primary change type declaration | `VAL-01`, `VAL-02`, `VAL-03`, `VAL-08`, `VAL-10` | non-trivial change가 dominant type으로 먼저 분류되는지 |
+| Mandatory self-review | `VAL-01`, `VAL-02`, `VAL-05` | changed path, invariant impact, verification result, residual risk가 reviewer 전에 남는지 |
+| `SYSTEM_CONTEXT.md` / `DOMAIN_CONTEXT.md` trigger | `VAL-01`, `VAL-03`, `VAL-05`, `VAL-09` | boundary/domain change가 생겼을 때 support artifact가 current-state truth를 복사하지 않고 갱신되는지 |
+| `DECISION_LOG.md` trigger | `VAL-03`, `VAL-08`, `VAL-10` | architecture-change 또는 qualifying refactor에만 append-only decision rationale이 남는지 |
+| lightweight/full impact tier | `VAL-02`, `VAL-08`, `VAL-10` | high-risk change가 lightweight로 축소되지 않고 compatibility/rollback 기준이 남는지 |
+| support artifact vs truth boundary | `VAL-05`, `VAL-07`, `VAL-09` | `CURRENT_STATE.md` / `TASK_LIST.md` truth와 context/decision artifact support role이 섞이지 않는지 |
+
 ## Case Catalog
 
 ### `VAL-01` Daily English Spark feature expansion under requirement drift
@@ -54,21 +66,27 @@
   - UI가 있는 변경인데 mockup 승인 없이 바로 구현하고 싶은 유혹이 생긴다.
   - native/runtime 변경 여부를 잘못 판단하면 실기기 검증과 배포 일정이 모두 흔들린다.
   - Korean/English copy가 artifact와 앱 UI에 동시에 등장한다.
+  - 겉보기에는 feature처럼 보여도 domain rule이나 shared contract 영향 때문에 full impact contract나 context artifact update가 필요할 수 있다.
 - Template must prove:
   - `requirements_deep_interview`로 승인 범위와 future ideas를 분리하고, 승인 전에는 planning sync를 주장하지 않는다.
   - `UI_DESIGN.md` 승인 뒤에만 implementation을 시작한다.
   - `expo_real_device_test`가 config/plugin/package delta를 기준으로 rebuild 필요 여부를 명확히 판단한다.
   - recording, feedback, streak rescue 로직이 화면/서비스/도메인 경계에 맞게 분리된다.
+  - planning 단계에서 primary change type과 impact tier를 먼저 정하고, non-trivial change의 self-review를 reviewer 전에 남긴다.
+  - domain rule이나 subsystem seam이 바뀌면 `DOMAIN_CONTEXT.md` 또는 `SYSTEM_CONTEXT.md`가 같이 갱신된다.
 - Required evidence:
   - 승인된 requirement delta와 defer된 아이디어 목록
   - UI mockup 승인 기록
   - real-device smoke report, screenshot, 필요 시 `adb logcat`
   - task packet invariant와 do-not-break path
+  - primary change type / impact tier / self-review summary
+  - context artifact diff 또는 explicit N/A reason
 - Failure signals:
   - Planner가 추정으로 requirement 빈칸을 메운다.
   - Developer가 mockup 승인 전에 code path를 만든다.
   - native rebuild 여부가 artifact 어디에도 남지 않는다.
   - audio/streak/business rule이 screen component에 뒤섞인다.
+  - feature scope라는 이유로 self-review나 impact tier가 비어 있다.
 
 ### `VAL-02` Daily English Spark hotfix under release pressure
 - Anchor: Expo preview / publish 흐름, dependency/compliance gate, release-ready vs static approval 분리.
@@ -80,20 +98,24 @@
   - hotfix를 이유로 review, dependency, publish path 판단을 건너뛰기 쉽다.
   - static code상 괜찮아 보여도 release-ready evidence는 부족할 수 있다.
   - preview / production publish skill routing을 잘못 고르면 rollback 비용이 커진다.
+  - hotfix라는 이름으로 trivial exemption을 남용해 self-review나 full impact contract를 생략하기 쉽다.
 - Template must prove:
   - `dependency_audit` 결과가 `REVIEW_REPORT.md` 또는 `DEPLOYMENT_PLAN.md` gate로 연결된다.
   - `code_review_checklist`가 static approval과 release-ready approval을 분리한다.
   - `expo_test_publish` / `expo_production_publish` 또는 fallback publish path를 의도적으로 선택한다.
   - rollback 조건과 다음 reopen 기준이 artifact에 남는다.
+  - hotfix여도 primary change type, impact tier, self-review를 남기고, dependency/runtime/shared contract 영향이 있으면 full impact contract로 상향한다.
 - Required evidence:
   - audit / outdated / license triage 요약
   - physical-device reproduction note
   - hotfix review finding 또는 clear note
   - preview or production go/no-go decision
+  - self-review summary, impact tier, 필요 시 decision log 또는 explicit N/A
 - Failure signals:
   - hotfix라는 이유로 review와 dependency gate가 같이 생략된다.
   - preview와 production path가 문서 없이 뒤섞인다.
   - crash 재현 근거 없이 “아마 해결됨”으로 닫는다.
+  - hotfix label을 근거로 self-review / impact contract가 비어 있다.
 
 ### `VAL-03` Operating project common change uplift and rollout
 - Anchor: Daily English Spark에서 확장된 `expo_real_device_test`를 template source로 역반영했던 실제 흐름.
@@ -105,20 +127,25 @@
   - project-specific 문구와 경로가 canonical source에 섞이기 쉽다.
   - `SKILL.md`만 복사하고 `references/`나 `assets/`를 놓치기 쉽다.
   - live artifact를 template source처럼 잘못 덮어쓰는 사고가 날 수 있다.
+  - shared workflow/skill/validator 변경이 maintenance인지 refactor인지, architecture-change인지 애매해 decision log trigger를 놓치기 쉽다.
 - Template must prove:
   - `operating-common-rollout` 절차대로 change-layer 분류 -> 일반화 -> canonical source 갱신 -> rollout -> validator 순서를 지킨다.
   - root live vs starter/reset source vs downstream live artifact 경계를 끝까지 유지한다.
   - `sync_template_docs.ps1` 사용 전 dry-run과 target diff 확인을 수행한다.
   - local customization 발견 시 stop condition을 건다.
+  - rollout 대상 common change에 대해 primary type, impact tier, decision-log trigger를 먼저 판정한다.
+  - shared contract나 template boundary가 바뀌면 `SYSTEM_CONTEXT.md`와 필요 시 `DECISION_LOG.md`가 같이 갱신된다.
 - Required evidence:
   - layer classification note
   - project-specific 제거 전/후 비교
   - target rollout 결과와 validator or diff evidence
   - skip/stop decision이 난 repo의 이유
+  - primary change type / impact tier / decision-log rationale
 - Failure signals:
   - `Daily English Spark` 이름, 실제 경로, concrete task ID가 template source에 남는다.
   - skill folder 일부만 sync된다.
   - downstream live `.agents/artifacts/*`가 무심코 overwrite된다.
+  - boundary-changing common change인데 decision log나 system context update가 없다.
 
 ### `VAL-04` Browser-facing PMW redesign with approval pressure
 - Anchor: `Project Monitor Web`, `CR-03` / `CR-04` / `CR-06`, browser-based test contract.
@@ -155,20 +182,24 @@
   - active lock과 실제 수정 범위가 어긋나면 충돌이 발생한다.
   - user decision pending을 stale lock으로 오인해 자동 정리하기 쉽다.
   - 문서가 많을수록 다음 Agent가 잘못된 요약만 읽고 들어갈 수 있다.
+  - support artifact를 current-state truth처럼 읽거나, self-review/impact contract를 handoff에서 누락하기 쉽다.
 - Template must prove:
   - `day_start`가 required docs만 읽고도 현재 truth를 복원한다.
   - `conflict_resolver`가 stale / active / ambiguous lock을 구분한다.
   - `CURRENT_STATE.md`와 `TASK_LIST.md`가 서로 모순되지 않게 정리된다.
   - unresolved user decision은 blocker로 남기고 자동 회수하지 않는다.
+  - `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`는 support artifact로만 읽고, lock/status truth는 계속 `CURRENT_STATE.md`, `TASK_LIST.md`가 소유한다.
 - Required evidence:
   - active lock / blocker reconciliation note
   - updated current-state snapshot
   - 필요한 경우 short handoff delta
   - conflict resolution outcome
+  - self-review / impact tier carry-over 또는 reopen note
 - Failure signals:
   - lock이 남아 있는데 다른 Agent가 같은 scope를 수정한다.
   - `CURRENT_STATE.md`와 `TASK_LIST.md`의 focus / blocker / owner가 어긋난다.
   - manual gate pending이 조용히 사라진다.
+  - support artifact가 current-state copy나 lock truth로 변질된다.
 
 ### `VAL-06` Optional enterprise-governed boundary under fixture pressure
 - Anchor: `enterprise_governed` pack, `governance_controls.json`, governed fixture validator, PMW risk signal.
@@ -228,19 +259,23 @@
   - dry-run evidence가 있어도 의사결정 문서화가 약하면 premature rollout이 일어난다.
   - “mutation 없음”과 “안전함”은 같은 말이 아니다.
   - dependency/compliance triage가 아직 안 닫혔을 수 있다.
+  - sync/reset/allowlist contract 변경이 실제로는 architecture-change인데 maintenance처럼 축소될 수 있다.
 - Template must prove:
   - `REL-02` / `REL-03` 기준대로 actual rollout을 defer할 수 있다.
   - evidence 부족을 blocker가 아니라 “작아서 괜찮음”으로 덮지 않는다.
   - follow-up을 backlog 또는 next task로 분리한다.
+  - rollout mechanism 자체가 바뀌는 경우 primary type, full impact contract, decision log를 남기고 rollback 기준을 명시한다.
 - Required evidence:
   - dry-run report
   - target risk explanation
   - defer decision과 reopen 조건
   - no-mutation confirmation
+  - impact tier, compatibility/rollback note, 필요 시 decision log entry
 - Failure signals:
   - dry-run warning이 있는데도 target mutation을 만든다.
   - blocker를 `CURRENT_STATE.md`나 `DEPLOYMENT_PLAN.md`에 남기지 않는다.
   - actual rollout과 validation이 같은 turn에서 섞여 버린다.
+  - high-risk rollout mechanism change가 lightweight check만 남긴 채 통과한다.
 
 ### `VAL-09` Closeout with unresolved blocker and clean reopen
 - Anchor: `version_closeout`, `reset_version_artifacts.ps1`, `PROJECT_HISTORY.md`, open blocker carry-over.
@@ -255,15 +290,18 @@
   - open blocker / defer reason / next first action이 archive와 next-version kickoff 양쪽에서 복원 가능하다.
   - `reset_version_artifacts.ps1`로 clean scaffold를 복원한다.
   - `PROJECT_HISTORY.md`에는 사건 중심 이력만, `CURRENT_STATE.md`에는 최신 snapshot만 남긴다.
+  - version closeout가 current-state artifact만 reset하고 `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md` 같은 long-lived support artifact는 보존한다.
 - Required evidence:
   - archive path와 next-version baseline
   - blocker carry-over note
   - reset script result
   - current-state compactness check
+  - long-lived context/decision artifact preservation 확인
 - Failure signals:
   - closeout 뒤 다음 버전에서 blocker가 사라진다.
   - reset artifact에 concrete baseline이나 실제 handoff가 남는다.
   - closeout 때문에 green level이 과대 표기된다.
+  - reset이 support artifact를 지우거나, 반대로 current-state snapshot을 support artifact에 복사한다.
 
 ### `VAL-10` Discovery-only deep interview trap
 - Anchor: `PM-002`, Bible Spark planning incident, `requirements_deep_interview`.
@@ -274,19 +312,23 @@
 - Stress points:
   - discovery-only turn을 execution-ready draft로 승격시키는 실수가 반복되기 쉽다.
   - shallow interview는 누락을 낳고, 과도한 sync는 거짓 확정감을 만든다.
+  - change type / impact tier / decision log trigger 판단을 승인 전 실행 contract처럼 굳혀 버릴 위험이 있다.
 - Template must prove:
   - `requirements_deep_interview`가 질문 패킷과 interview snapshot까지만 만들고 멈춘다.
   - 승인 전 문서는 `Pending Requirement Approval` 상태를 유지한다.
   - 다음 Agent가 approval status를 오독하지 않게 snapshot과 task status가 정리된다.
+  - change-governance 판단은 discovery note로만 남기고, 승인 전에는 task packet / decision log / full impact contract를 실제 baseline으로 승격하지 않는다.
 - Required evidence:
   - interview-only note
   - approval pending state
   - no-sync assertion across requirements/architecture/plan
   - preventive-memory link
+  - 승인 전 change-governance field가 live task packet에 쓰이지 않았다는 확인
 - Failure signals:
   - user가 승인하지 않았는데 architecture/plan이 `In Sync`가 된다.
   - 질문만 했는데 implementation task가 자동으로 열린다.
   - requirement gap이 추정으로 채워진다.
+  - 승인 전 decision log나 full impact contract가 live baseline으로 기록된다.
 
 ## Execution Rules For The Next Turn
 - actual validation을 시작할 때는 이 문서 자체를 pass/fail 로그처럼 쓰지 않는다. 실행 evidence는 `TASK_LIST.md`, `CURRENT_STATE.md`, `REVIEW_REPORT.md`, `DEPLOYMENT_PLAN.md`에 남긴다.

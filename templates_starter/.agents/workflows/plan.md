@@ -38,6 +38,8 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 - `requirements_deep_interview` skill로 goal, actor, in-scope, out-of-scope, workflow, constraints, evidence, acceptance, open question을 먼저 구조화합니다.
 - deep interview 첫 turn에서는 최소한 goal/actor, scope/preserve, evidence/approval, forbidden shortcut/sensitive path/failure mode를 각각 질문하거나 기존 답으로 닫았는지 확인합니다.
 - UI/operator-facing delta가 있으면 information hierarchy, pain point, must-see signal, test task까지 discovery에 포함합니다.
+- non-trivial change면 planning 단계에서 primary change type을 `feature / bugfix / maintenance / refactor / architecture-change` 중 하나로 먼저 분류합니다.
+- mixed scope면 dominant type과 secondary impact를 기록하거나 task를 분리합니다.
 - 사용자가 `deep interview만` 요청했다면 현재 turn 출력은 질문 패킷과 interview snapshot까지만 허용합니다. 이 경우 `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md`를 수정하지 않습니다.
 - 사용자의 요구사항, 보류 항목, 정책 선택지를 `REQUIREMENTS.md`에 반영합니다.
 - 질문 응답이 모이면 먼저 `Known / Needs User Answer / Do Not Infer` snapshot으로 되돌려 확인하고, 사용자가 draft/update를 명시적으로 요청했을 때만 `REQUIREMENTS.md`를 갱신합니다.
@@ -66,6 +68,8 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 - 구조 영향이 없더라도 `No Architecture Change`로 명시해 최신 요구사항 기준선을 검토했다는 흔적을 남깁니다.
 - 도메인 경계, 계층 책임, 금지된 구조 우회, 승인된 예외를 명확히 적습니다.
 - UI가 있는 프로젝트라면 UI 계층이 구조와 어떻게 연결되는지도 적습니다.
+- system boundary / integration seam / shared contract / hotspot이 바뀌는 change는 `SYSTEM_CONTEXT.md` update trigger를 함께 결정합니다.
+- domain term / lifecycle / invariant / exception rule이 바뀌는 change는 `DOMAIN_CONTEXT.md` update trigger를 함께 결정합니다.
 
 ### Step 4: 구현 계획과 작업 목록 정리
 - `IMPLEMENTATION_PLAN.md`를 작성하고 `Status`를 `Draft / Ready for Execution`으로 관리합니다.
@@ -73,8 +77,11 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 - 현재 iteration, 주요 Task ID, 검증 명령을 채웁니다.
 - 승인된 `FR-*`, `NFR-*` ID가 어떤 Task ID로 구현/검증되는지 `IMPLEMENTATION_PLAN.md > Requirement Trace`에 적습니다.
 - 릴리즈 범위 또는 cross-role handoff가 있는 `DEV-*`, `TST-*`, `REV-*`, `REL-*` task는 `IMPLEMENTATION_PLAN.md > Task Packet Ledger`에 `Objective`, `In Scope / Out of Scope`, `Acceptance Checks`, `Artifacts To Update`, `Escalate When`을 적습니다.
+- non-trivial change task는 `Task Packet Ledger`에 `Primary Change Type`, `Impact Tier`, `Decision Log Entry`를 함께 적습니다.
 - `IMPLEMENTATION_PLAN.md > Current Iteration`에는 `Green level target`, `Branch freshness precheck`, `User-captured manual test expected`를 함께 적습니다.
 - `IMPLEMENTATION_PLAN.md > Requirement Baseline`, `Change Sync Check`, `Requirement Change Impact`에 최신 승인 기준선과 변경 전파 상태를 적습니다.
+- `Impact Tier`는 기본 `lightweight`로 두되, `architecture-change`, qualifying `refactor`, shared contract/API/schema change는 `full`로 올립니다.
+- `architecture-change`와 decision-triggering `refactor`는 `DECISION_LOG.md` entry 계획을 task packet에 연결합니다.
 - 요구사항 변경이 있었다면 `REQUIREMENTS.md`, `ARCHITECTURE_GUIDE.md`, `IMPLEMENTATION_PLAN.md` 3개가 먼저 같은 기준선으로 맞는지 확인한 뒤 `TASK_LIST.md`와 downstream 문서를 갱신합니다.
 - 수동 / 실환경 검증이 release 판단에 중요하면 그 gate를 `IMPLEMENTATION_PLAN.md`, `CURRENT_STATE.md`, `TASK_LIST.md`에 명시합니다.
 - dependency / compliance / audit triage가 closeout 조건이면 그 gate도 미리 적어 둡니다.
@@ -98,6 +105,7 @@ description: 기획/아키텍트(Planner) 에이전트 워크플로우
 - `ARCHITECTURE_GUIDE.md`의 도메인 경계와 승인된 예외가 채워져 있다.
 - `IMPLEMENTATION_PLAN.md`의 현재 iteration, 주요 Task ID, 검증 명령이 채워져 있다.
 - 릴리즈 범위 또는 cross-role handoff가 있는 활성 Task ID는 `Task Packet Ledger`에 실행 계약이 있다.
+- non-trivial change scope면 `Task Packet Ledger`에 `Primary Change Type`, `Impact Tier`, `Decision Log Entry` 판단이 남아 있다.
 - `IMPLEMENTATION_PLAN.md`에 `Green level target`, `Branch freshness precheck`가 적혀 있다.
 - 승인된 `FR-*`, `NFR-*` ID가 `IMPLEMENTATION_PLAN.md > Requirement Trace` 또는 실행 Task에 역추적 가능하다.
 - `TASK_LIST.md`의 활성 개발/테스트/리뷰 태스크마다 `Scope`가 있다.

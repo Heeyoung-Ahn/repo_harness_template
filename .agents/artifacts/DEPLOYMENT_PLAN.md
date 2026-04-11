@@ -48,6 +48,7 @@
 - [2026-04-08] Planner: `PLN-04`를 반영해 completion gate와 post-completion rollout entry criteria를 live deployment 문서로 고정했다.
 - [2026-04-08] Tester: `TST-02` local preview smoke를 수행해 `127.0.0.1:4173` loopback bind, static asset, browser-rendered home/workspace smoke, `/api/projects`, `/api/snapshot`, `/api/file` allow/block, decision packet/history/risk signal 노출을 확인했고 `sync_template_docs.ps1 -WhatIf`로 no-mutation dry-run 경로를 점검했다.
 - [2026-04-08] Day Wrap Up: user 요청에 따라 `TST-02` 최종 closure를 보류하고 PMW browser feedback pending 상태를 manual/environment gate에 남겼다.
+- [2026-04-11] Tester: `VAL-08`을 실행해 current rollout guard를 재검증했다. dry-run warning과 `BACKLOG-01` defer rationale은 계속 유효하고, actual downstream mutation은 열지 않았다.
 
 ## Release Target
 - Version: Hybrid Harness Completion v0.1
@@ -129,6 +130,7 @@ powershell -ExecutionPolicy Bypass -File ".agents\scripts\check_harness_docs.ps1
 - 사용자 수동 테스트 / raw report 처리 상태: current version에서 아직 시작하지 않았다. 필요 시 `TST-02` 결과와 함께 기록한다
 - 운영 직후 확인할 항목: current version에서는 actual rollout이 없으므로 N/A. 대신 dry-run/report output completeness와 defer rationale을 확인한다
 - release-ready 차단 요소: `REV-01`, `REV-02`, `REL-01`, `REL-02`가 아직 open이며 `REL-03` user decision도 남아 있다
+- `VAL-08` validation result: current `sync_template_docs.ps1`는 self-hosting root overwrite를 기본 차단하고 live artifact preserve를 기본값으로 두지만, selective path filter / live artifact allowlist가 아직 없어 actual rollout execution은 계속 `BACKLOG-01`로 defer한다
 
 ## Document / Harness Follow-up
 - Current release blocker 여부: Yes. actual rollout은 completion gate evidence가 닫힐 때까지 의도적으로 block 상태다

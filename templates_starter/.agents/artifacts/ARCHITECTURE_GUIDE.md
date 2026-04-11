@@ -7,9 +7,10 @@
 - 현재 아키텍처 스타일: `[예: layered / modular monolith / service-oriented / client-server]`
 - 현재 반영된 baseline: `[현재 승인된 기준선]`
 - 핵심 도메인 경계: `[도메인 1] / [도메인 2] / [도메인 3]`
-- 이번 문서에서 기본으로 포함되는 것: 도메인 경계, 계층 책임, dependency 규칙, 외부 연동 경계
+- 이번 문서에서 기본으로 포함되는 것: 도메인 경계, 계층 책임, dependency 규칙, 외부 연동 경계, change governance, context knowledge boundary
 - 상태와 데이터의 주인: `[어떤 문서/모듈/저장소가 truth인지]`
 - 다음 역할이 꼭 지켜야 할 구조 규칙: `[지키지 않으면 안 되는 핵심 규칙]`
+- context/decision artifact는 support 문서이고, current-state truth나 release gate를 대체하지 않는다
 - 이번 문서의 리뷰 포인트: `[리뷰에서 집중할 구조 리스크]`
 
 ## Status
@@ -27,10 +28,14 @@
   `[도메인 A]`는 `[책임]`을 담당한다.
   `[도메인 B]`는 `[책임]`을 담당한다.
   `[도메인 C]`는 `[책임]`을 담당한다.
+  `Change Governance`는 non-trivial change taxonomy, self-review, impact tier, decision-log trigger를 담당한다.
+  `Context Knowledge Base`는 `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`를 통해 장기 유지보수 맥락과 결정 이력을 보존한다.
 - 계층 책임 경계:
   `[truth layer 또는 core layer]`가 `[핵심 책임]`을 소유한다.
   `[application/service layer]`가 `[유스케이스]`를 담당한다.
   `[presentation/integration layer]`는 `[표현/연동 책임]`만 가진다.
+  change governance는 change type, self-review, impact tier, decision-log trigger를 소유한다.
+  context knowledge는 stable reference를 소유하지만 current-state truth를 소유하지 않는다.
 - 승인된 예외:
   `[필요 시 허용하는 예외]`
 - 공통 계약 경계:
@@ -60,6 +65,8 @@
   `[원칙 1]`
   `[원칙 2]`
   `[원칙 3]`
+  non-trivial change는 change type, self-review, impact tier를 먼저 정한다.
+  `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`는 support artifact이지 current-state truth가 아니다.
 
 ## Domain Map
 
@@ -67,9 +74,16 @@
 |---|---|---|---|
 | [DomainA] | [책임] | [핵심 엔티티/유스케이스] | [메모] |
 | [DomainB] | [책임] | [핵심 엔티티/유스케이스] | [메모] |
+| Change Governance | non-trivial change 절차 유지 | change taxonomy, self-review, impact tier, decision-log trigger | `feature/bugfix/maintenance/refactor/architecture-change` baseline |
+| Context Knowledge Base | 유지보수용 장기 맥락 보존 | `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`, hotspot, invariant, decision rationale | support artifact, current-state truth 아님 |
 
 ## Folder Structure
 ```text
+.agents/
+  artifacts/
+    SYSTEM_CONTEXT.md
+    DOMAIN_CONTEXT.md
+    DECISION_LOG.md
 src/
   domain/
   application/
@@ -80,6 +94,8 @@ src/
 ## Layer Responsibilities
 - `domain/`: [도메인 규칙]
 - `application/`: [유스케이스]
+- `change-governance/`: non-trivial change taxonomy, self-review, impact tier, decision-log trigger
+- `context-knowledge/`: `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md` 관리와 stable reference 유지
 - `infrastructure/`: [입출력/연동]
 - `presentation/`: [UI/API/CLI 등 표현 계층]
 
@@ -95,6 +111,12 @@ src/
 - 파일/스토리지 경계: `[저장소/파일 경계]`
 - 비동기/배치/관측 경계: `[필요 시 적는다]`
 
+## Operating Context Artifacts
+- `SYSTEM_CONTEXT.md`: subsystem responsibility, integration seam, shared contract, hotspot, do-not-break path를 정리한다.
+- `DOMAIN_CONTEXT.md`: 핵심 용어, lifecycle, invariant, exception rule, domain hotspot을 정리한다.
+- `DECISION_LOG.md`: append-only ADR-lite 문서이며 `architecture-change`와 qualifying `refactor`의 결정 이유를 남긴다.
+- 세 문서는 current-state truth, blocker queue, release gate를 대체하지 않는다.
+
 ## Naming Conventions
 - 폴더: 책임이 드러나는 이름 사용
 - 파일: contract/adapter/handler 등 역할이 드러나는 이름 사용
@@ -106,3 +128,4 @@ src/
 - 사용자 승인 후에만 이 문서를 수정한다.
 - `REQUIREMENTS.md`가 아직 `Draft`, `Needs User Answers`, `Ready for Approval`이면 이 문서는 새 기준선으로 sync하지 않고 `Change Sync Check`를 `Pending Requirement Approval`로 둔다.
 - 승인 후 요구사항이 바뀌면 `REQUIREMENTS.md`와 같은 기준선으로 이 문서를 다시 확인하고, 변경이 없더라도 `Requirement Baseline`과 `Change Sync Check`를 갱신한다.
+- `architecture-change`나 qualifying `refactor`면 `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`, full impact contract update 필요 여부를 함께 확인한다.

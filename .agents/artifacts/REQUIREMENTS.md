@@ -5,25 +5,26 @@
 
 ## Quick Read
 - 이번 문서의 핵심 목표: current `v0.3` contract와 preview evidence를 바탕으로 hybrid harness를 `준운영 수준`의 rollout-ready 완성본까지 self-hosting 템플릿 안에서 마무리한다.
-- 이번 버전의 꼭 필요한 결과: ① root self-hosting hybrid runtime reference / HUD / runbook 정리 ② `enterprise_governed` activation guide + governed fixture + validator regression baseline ③ `Project Monitor Web` hybrid visibility, artifact-aware project overview, rollout readiness summary, multi-project selector 구현 ④ local preview 재검증 + review closure + actual rollout 없는 dry-run/reporting evidence ⑤ starter generic / `.omx` optional / truth boundary 유지 ⑥ mandatory deep-interview requirements discovery + mockup-first PMW intake ⑦ append-only `PROJECT_HISTORY.md` artifact 추가 ⑧ self-hosting convenience shell 관점의 icon / exit affordance 정리 ⑨ `Approval Queue -> 상세 결정 패킷` read-only view 추가
+- 이번 버전의 꼭 필요한 결과: ① root self-hosting hybrid runtime reference / HUD / runbook 정리(`.omx/README.md`, `.omx/RUNTIME_REFERENCE.md`) ② `enterprise_governed` activation guide + governed fixture + validator regression baseline ③ `Project Monitor Web` hybrid visibility, artifact-aware project overview, rollout readiness summary, multi-project selector 구현 ④ local preview 재검증 + review closure + actual rollout 없는 dry-run/reporting evidence ⑤ starter generic / `.omx` optional / truth boundary 유지 ⑥ mandatory deep-interview requirements discovery + mockup-first PMW intake ⑦ append-only `PROJECT_HISTORY.md` artifact 추가 ⑧ self-hosting convenience shell 관점의 icon / exit affordance 정리 ⑨ `Approval Queue -> 상세 결정 패킷` read-only view 추가 ⑩ non-trivial change taxonomy + mandatory self-review + `SYSTEM_CONTEXT.md` / `DOMAIN_CONTEXT.md` / `DECISION_LOG.md` + two-tier impact contract baseline 정립
 - 이번 버전에서 하지 않을 것: operating-project actual rollout, OMX truth 승격, starter 기본 orchestration 의존, write action monitor, default container/read-only sandbox, public exposure 확대, PMW usability delta를 mockup 승인 없이 바로 구현
-- 사용자가 현재 턴에서 확정한 방향: completion 기준은 `local preview 재검증 + review closure + dry-run/reporting evidence`, governed 범위는 `activation guide + fixture + validator regression`, monitor 범위는 `밝은 색감 + 상단 프로젝트 요약 + 프로젝트 선택 + 좌측 메뉴 + 우측 상단 대시보드 + 우측 하단 콘텐츠 영역`을 기본으로 한다. `Project History`는 전용 조회 대상으로 두고, `tools/project-monitor-web` 아래에 launcher icon과 server stop icon을 제공하는 방향으로 승인했다. `Approval Queue -> 상세 결정 패킷`은 승인된 read-only 기준선으로 구현됐고, Planner는 요구사항 작성 전에 internalized deep-interview skill을 반드시 수행한다. 웹앱 또는 브라우저 렌더 결과가 핵심인 범위는 브라우저 기반 테스트를 수동/환경 gate의 기본 증거로 남긴다.
-- 현재 draft 기준선과 변경 요약: `Hybrid Harness Completion v0.1` 유지. `CR-03` 승인 baseline 위에 `CR-04` decision-packet view, `CR-05 Hybrid Harness Reinforcement + Day Wrap Up Recurrence Gate`, `CR-06 Web Browser-Based Test Contract`를 승인했고, 이제 context/invariant/evidence contract, recurrence gate, governance guardrail contract, PMW risk signal, browser-based web test gate 기준선까지 포함한다.
-- 현재 남아 있는 큰 질문: PMW information architecture 기준선은 닫혔고, 열린 requirement question은 없다. 다음 execution focus는 `CR-06` sync를 닫은 뒤 `DEV-01` / `DEV-02` / `TST-01` / `REV-01` / `REV-02` / `REL-01` / `REL-02` evidence path를 이어가는 것이다.
-- 다음 역할이 꼭 읽어야 할 포인트: `.agents/*`와 runtime contract가 계속 truth이며, `.omx/*`는 self-hosting optional sidecar일 뿐이다. PMW는 read-only operator workspace이고 decision packet도 여전히 Codex 밖에서 승인 action을 수행하지 않는다.
+- 사용자가 현재 턴에서 확정한 방향: completion 기준은 `local preview 재검증 + review closure + dry-run/reporting evidence`, governed 범위는 `activation guide + fixture + validator regression`, monitor 범위는 `중간 톤 neutral workspace + compact signal rail + project registry add/delete + source-aware header + local shell start/stop convenience`를 포함한다. `Project History`는 전용 조회 대상으로 두고, `tools/project-monitor-web` 아래 launcher/stop entry를 유지하되, PMW 안에서는 self-hosting local convenience로 `project-registry.json` 갱신과 local server stop request까지만 허용한다. `Approval Queue -> 상세 결정 패킷`은 계속 read-only 기준선으로 유지되고, Planner는 요구사항 작성 전에 internalized deep-interview skill을 반드시 수행한다. 웹앱 또는 브라우저 렌더 결과가 핵심인 범위는 브라우저 기반 테스트를 수동/환경 gate의 기본 증거로 남긴다.
+- 현재 draft 기준선과 변경 요약: `Hybrid Harness Completion v0.1` 유지. `CR-03` 승인 baseline 위에 `CR-04` decision-packet view, `CR-05 Hybrid Harness Reinforcement + Day Wrap Up Recurrence Gate`, `CR-06 Web Browser-Based Test Contract`, `CR-07 PMW Workspace Refinement + Local Project Registry Control`, `CR-08 Operating Capability Baseline`을 승인했고, 이제 compact signal rail, project-wide header description source, one-line status / next action source trace, local registry management, local server lifecycle convenience, non-trivial change taxonomy, mandatory self-review, separate context artifact, conditional decision log, two-tier impact contract 기준선까지 포함한다.
+- 현재 남아 있는 큰 질문: PMW information architecture와 `CR-08` planning question은 닫혔고, `maintenance/debt register`는 `CR-09`로 분리한다. 다음 execution focus는 `DEV-07`에서 change taxonomy / review-refactor procedure / context artifact / decision log / impact contract 구현을 열고, 병렬로 `TST-02` retest와 validation batch confirmation을 정리하는 것이다.
+- 다음 역할이 꼭 읽어야 할 포인트: `.agents/*`와 runtime contract가 계속 truth이며, `.omx/*`는 self-hosting optional sidecar일 뿐이다. PMW는 read-only operator workspace이고 decision packet도 여전히 Codex 밖에서 승인 action을 수행하지 않는다. 새 `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`는 지원용 맥락 문서이지 current-state truth를 대체하지 않는다.
 
 ## Status
 - Document Status: Approved
 - Owner: Planner
 - Current Requirement Baseline: Hybrid Harness Completion v0.1
 - Requirements Sync Status: In Sync
-- Last Requirement Change At: 2026-04-08 13:30
-- Last Updated At: 2026-04-08 13:30
-- Last Approved By: User (`CR-06 web browser-based test contract`)
-- Last Approved At: 2026-04-08 13:30
+- Last Requirement Change At: 2026-04-11 17:56
+- Last Updated At: 2026-04-11 17:56
+- Last Approved By: User (`CR-08 Operating Capability Baseline`)
+- Last Approved At: 2026-04-11 17:56
 
 ## Open Questions
-- 현재 PMW workspace / decision packet IA 기준선에서 열린 질문 없음.
+- 현재 PMW workspace / decision packet IA와 `CR-08` operating capability baseline에서 열린 질문 없음.
+- `maintenance/debt register`는 `CR-09` 후속 change request로 분리한다.
 
 ## Change Control Rules
 - 승인 후에도 범위, 완료 기준, acceptance criteria, out-of-scope 정의가 바뀔 수 있으며, 이 경우 Planner가 먼저 이 문서를 갱신합니다.
@@ -45,7 +46,9 @@
 - [2026-04-08] Planner: user 지시에 따라 `Approval Queue -> 상세 결정 패킷` view를 `CR-04` draft로 열고, monitor 안에서 의사결정 맥락을 먼저 읽는 흐름을 requirements에 추가했다.
 - [2026-04-08] Developer: `CR-04` 승인 반영 후 PMW workspace, decision packet, project selector, history view, launcher/stop assets를 실제 구현에 반영했다.
 - [2026-04-08] Planner / Developer: user 승인에 따라 `CR-05 Hybrid Harness Reinforcement + Day Wrap Up Recurrence Gate`를 requirements baseline에 반영하고, task packet context contract, recurrence review, AI-specific review checklist, governance guardrail extension, PMW risk signal을 같은 턴에 동기화하기로 했다.
+- [2026-04-11] Planner: user 승인에 따라 `CR-08 Operating Capability Baseline`을 requirements baseline에 반영하고, non-trivial change taxonomy, mandatory self-review, `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`, two-tier change impact contract를 core baseline에 추가했다.
 - [2026-04-08] Planner: user 지시에 따라 `CR-06 Web Browser-Based Test Contract`를 승인하고, 웹앱 / browser-facing UI 범위는 브라우저 기반 테스트를 수동 / 실환경 gate의 기본 증거로 반영했다.
+- [2026-04-11] Planner: user feedback에 따라 PMW를 중간 톤 neutral workspace로 다시 다듬고, project registry add/delete, source-aware header, compact signal rail, local server stop convenience를 `CR-07` 기준선으로 반영했다.
 
 ## Product Goal
 - 이 프로젝트가 해결하려는 문제:
@@ -116,7 +119,9 @@
 - `Project Monitor Web` hybrid visibility와 rollout readiness summary 정리
 - `Project Monitor Web` usability feedback intake와 mockup-first design gate 정리
 - `Project Monitor Web`의 artifact-aware project overview, workspace형 정보 구조, 단계별 기본/특성화 summary module 정의
+- self-hosting local `project-registry.json` add/delete와 monitored project validation flow 정의
 - self-hosting local multi-project selector와 app identity / exit affordance 정의
+- PMW header의 project-wide description source, one-line status / next action source trace, compact signal rail 재구성
 - `Approval Queue -> 상세 결정 패킷` read-only projection과 decision context summary 정의
 - append-only `PROJECT_HISTORY.md` artifact 정의
 - self-hosting preview 재검증, review closure, operating-project mutation 없는 rollout-ready dry-run/reporting completion evidence 기준 정의
@@ -125,10 +130,15 @@
 - AI-generated delta에 대한 구조 일관성, duplication/abstraction debt, evidence gap, boundary drift review 기준 강화
 - optional governance layer의 Shadow AI / guardrail 대응 필드와 read-only monitor signal 강화
 - PMW의 `context miss`, `review reopen`, `evidence stale`, `repeat issue`, `guardrail gap` visibility 추가
+- non-trivial change를 `feature` / `bugfix` / `maintenance` / `refactor` / `architecture-change`로 분류하는 baseline
+- 모든 non-trivial change에 mandatory self-review를 연결하는 개발 절차
+- `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md` 분리 artifact 계약
+- `architecture-change` mandatory + qualifying `refactor` conditional `DECISION_LOG.md` contract
+- lightweight / full two-tier change impact contract
 
 ## Out of Scope
 - 실시간 이벤트 스트리밍, WebSocket 기반 live monitor, push 알림
-- artifact에 대한 write action, approval action, lock 수정 action
+- artifact에 대한 write action, approval action, lock 수정 action. 단, self-hosting local convenience인 `tools/project-monitor-web/project-registry.json` 갱신과 PMW local server stop request는 예외다.
 - starter 기본 경로에 멀티 에이전트 orchestration engine이나 agent execution control plane 강제 포함
 - enterprise SSO, 완전한 RBAC, 법무 보존 정책, 외부 ITSM 연동
 - 특정 AI vendor 강제 종속 구조
@@ -140,6 +150,10 @@
 - 긴 세로 스크롤 나열형 화면을 primary information architecture로 고정하는 것
 - monitor 안에서 approval/write action을 직접 수행하게 만드는 것
 - issue 발견 여부와 무관하게 별도 누적 회고 artifact를 새로 만드는 것
+- `maintenance/debt register`와 debt prioritization lane를 이번 change request 안에 함께 넣는 것
+- full incident / hotfix / postmortem lane를 current core baseline에 함께 넣는 것
+- SLO / alerting / canary / environment promotion baseline을 지금 버전에 강제하는 것
+- subsystem ownership / review routing 전체를 이번 change request에 함께 밀어 넣는 것
 
 ## Functional Requirements
 
@@ -158,7 +172,7 @@
 | FR-11 | 고위험 도메인은 `.agents/runtime/governance_controls.json`으로 protected path와 human gate를 선언해야 한다. | High | ① 파일 경로가 `.agents/runtime/governance_controls.json`으로 고정된다. ② `protected_paths`, `human_review_required_scopes`, `validator_profile`, `critical_domains`, `sandbox_policy` 필드가 문서화된다. ③ optional governance 확장 시 `sensitive_paths`, `tool_allowlist`, `tool_denylist`, `exfiltration_sensitive_input_classes`를 같은 계약 안에서 선언할 수 있다. ④ `team`에서는 optional, `large/governed + enterprise_governed`에서는 required다. |
 | FR-12 | OMX 연동은 workflow compatibility로만 허용되어야 한다. | Medium | ① `Discovery -> $deep-interview`, `Planning -> $ralplan`, `parallel implementation -> $team`, `persistent completion/verification -> $ralph` 매핑이 workflow 문서에 반영된다. ② starter 기본 실행은 OMX가 없어도 동일하게 유지된다. ③ `.omx/*`가 truth로 취급되지 않는다. |
 | FR-13 | critical domain에서는 generator와 reviewer/verifier lane이 분리되어야 한다. | High | ① enterprise pack이 활성화된 승인/예산/감사 도메인에서는 skeptical evaluator lane이 필수다. ② mutation/property/edge-case verification gate가 requirement trace와 연결된다. ③ auto-merge보다 HITL escalation이 기본값이다. |
-| FR-14 | hybrid harness completion 버전은 root self-hosting용 runtime reference / HUD / runbook을 제공해야 한다. | High | ① `.omx/*`, runtime contract, local preview/runbook, HUD/visibility surface의 역할이 root self-hosting 기준으로 문서화된다. ② 운영자는 read-only operator surface에서 runtime/HUD summary를 바로 보고 completion 판단에 필요한 현재 상태를 확인할 수 있다. ③ optional sidecar visibility는 허용되지만 truth를 대체하지 않는다. ④ starter 기본 동작은 여전히 unchanged다. |
+| FR-14 | hybrid harness completion 버전은 root self-hosting용 runtime reference / HUD / runbook을 제공해야 한다. | High | ① `.omx/*`, runtime contract, local preview/runbook, HUD/visibility surface의 역할이 root self-hosting 기준으로 문서화된다. 이 reference는 `.omx/README.md`, `.omx/RUNTIME_REFERENCE.md`에서 찾을 수 있어야 한다. ② 운영자는 read-only operator surface에서 runtime/HUD summary를 바로 보고 completion 판단에 필요한 현재 상태를 확인할 수 있다. ③ optional sidecar visibility는 허용되지만 truth를 대체하지 않는다. ④ starter 기본 동작은 여전히 unchanged다. |
 | FR-15 | `enterprise_governed`는 placeholder-only 상태를 넘어 rollout-ready activation guide와 governed fixture baseline을 가져야 한다. | High | ① pack activation prerequisite, `approval_authority`, `governance_controls.json`, human gate 기본값이 문서화된다. ② governed fixture가 validator/테스트에서 재현 가능하다. ③ governed fixture + validator regression이 requirement trace와 연결된다. ④ pack 미활성 상태의 core flow는 그대로 유지된다. |
 | FR-16 | `Project Monitor Web`는 hybrid harness completion 판단에 필요한 read-only visibility를 제공해야 한다. | High | ① active pack, governance controls summary, optional runtime/health signal, rollout readiness summary가 read-only로 표시된다. ② 기존 board/blocker/activity/health/team 패널을 유지하고 `PROJECT_HISTORY.md`를 볼 수 있는 history view를 제공한다. ③ project overview에는 `Product Goal`, `Open Questions`, requirements / architecture / implementation summary, task progress, recent history 같은 artifact-derived summary가 포함된다. ④ write action이나 orchestration control은 추가하지 않는다. |
 | FR-17 | operating-project rollout은 completion gate와 dry-run/reporting evidence가 닫히기 전까지 실행되면 안 된다. | High | ① completion gate는 `local preview 재검증 + review closure + dry-run/reporting evidence`로 정의된다. ② `IMPLEMENTATION_PLAN.md`와 `DEPLOYMENT_PLAN.md`에 gate open/closed 상태와 actual rollout defer 상태가 같은 문장으로 기록된다. ③ current version에서는 downstream mutation 없이 evidence만 남긴다. ④ rollout decision은 `REL-01`, `REV-01` / `REV-02`, `REL-02`가 모두 닫힌 뒤 `REL-03`에서 별도 결정으로만 열린다. |
@@ -175,6 +189,14 @@
 | FR-28 | shared review 기준은 AI-generated delta에 특화된 구조 리스크를 기본 점검해야 한다. | High | ① `code_review_checklist`는 전역 구조 일관성 파괴, 중복 코드와 불필요한 추상화, 국소 수정의 비관련 회귀 위험, evidence 없는 승인과 verification debt, read-only/write boundary drift를 기본 항목으로 가진다. ② review 결과는 단순 코드 결함과 운영 gate 리스크를 구분해 기록한다. ③ release-ready 승인 전에 evidence gap이 남으면 blocker 또는 제한 승인으로 남긴다. |
 | FR-29 | `Project Monitor Web`는 recurrence와 guardrail 상태를 read-only risk signal로 보여줘야 한다. | High | ① document health 또는 first-view summary에 `context miss`, `review reopen`, `evidence stale`, `repeat issue`, `guardrail gap`이 표시된다. ② decision packet은 관련 signal과 affected evidence/context를 함께 보여준다. ③ signal은 artifact와 runtime contract에서 파생되며 write/control plane을 추가하지 않는다. |
 | FR-30 | 웹앱 또는 브라우저 렌더링 결과가 사용자 가치에 직접 연결되는 범위는 테스트 시 브라우저 기반 검증을 거쳐야 한다. | High | ① 해당 scope의 `TST-*`, `REL-*`, `WALKTHROUGH.md` 또는 동등 artifact에는 browser-rendered smoke, user browser raw report, 또는 동등한 브라우저 기반 증거가 남는다. ② API-only / unit-only / static file check만으로는 manual/environment gate를 닫지 않는다. ③ Agent가 브라우저를 직접 구동하지 못하면 local preview를 열고 사용자 브라우저 확인 결과를 raw report로 연결한다. ④ backend-only 또는 브라우저 UI가 없는 scope는 이 요구를 적용하지 않는다. |
+| FR-31 | `Project Monitor Web`는 self-hosting local convenience 범위에서 조회 대상 프로젝트를 추가/삭제할 수 있어야 한다. | High | ① 변경 범위는 `tools/project-monitor-web/project-registry.json` 한 파일로 제한된다. ② project 추가 시 mandatory artifact 파일이 모두 있는 repo만 등록한다. ③ current workspace entry는 삭제하지 않는다. ④ selector와 snapshot은 변경된 registry를 즉시 반영한다. |
+| FR-32 | PMW header와 shell affordance는 source-aware하고 compact해야 한다. | High | ① 프로젝트 설명은 project-wide 설명 source를 우선 사용하고, source trace를 보여준다. ② `One-line status`, `Next action`은 현재 사용 중인 source field를 UI에서 드러낸다. ③ local launch/stop command는 명시적으로 노출되며, in-app stop은 local server lifecycle convenience로만 동작한다. ④ 이 경로는 artifact/governance mutation control로 확장되지 않는다. |
+| FR-33 | 모든 non-trivial change는 구현 전에 `feature`, `bugfix`, `maintenance`, `refactor`, `architecture-change` 중 primary change type을 선언해야 한다. | High | ① `PLN-*` 또는 동등 planning step에서 primary type이 기록된다. ② 둘 이상이 섞이면 dominant type과 secondary impact가 기록되거나 task가 분리된다. ③ reviewer/tester가 task packet과 requirement trace에서 change type을 다시 확인할 수 있다. |
+| FR-34 | 모든 non-trivial change는 reviewer gate 전에 self-review를 남겨야 한다. | High | ① self-review는 changed path, invariant/contract impact, verification result, 남은 리스크를 포함한다. ② `trivial mechanical edit`만 예외이며 이유가 기록된다. ③ reviewer는 self-review 없이 release-scope approval을 닫지 않는다. |
+| FR-35 | 템플릿은 `SYSTEM_CONTEXT.md`를 통해 시스템 책임 경계와 유지보수 hotspot을 보존해야 한다. | High | ① 문서는 subsystem responsibility, integration seam, shared contract, hotspot, do-not-break path를 담는다. ② current-state snapshot이나 handoff raw log를 복사하지 않는다. ③ 구조 변경이나 maintenance로 system boundary가 바뀌면 함께 갱신한다. |
+| FR-36 | 템플릿은 `DOMAIN_CONTEXT.md`를 통해 도메인 개념과 invariant를 보존해야 한다. | High | ① 문서는 핵심 용어, entity/value concept, lifecycle, invariant, exception rule, domain hotspot을 담는다. ② feature/bugfix/refactor가 도메인 규칙을 바꾸면 관련 항목을 갱신한다. ③ current task status나 release gate를 대신 기록하지 않는다. |
+| FR-37 | 템플릿은 `DECISION_LOG.md`를 append-only 결정 이력으로 유지해야 한다. | High | ① 모든 `architecture-change`는 log entry를 남긴다. ② `refactor`도 shared contract/API/schema, cross-module invariant, ownership boundary, migration/deprecation을 건드리면 entry가 필수다. ③ 각 entry는 문제, 고려한 대안, 선택 이유, 영향, rollback/retire 조건을 남긴다. |
+| FR-38 | 템플릿은 change impact를 lightweight/full 두 단계로 평가해야 한다. | High | ① 모든 non-trivial change는 lightweight impact check를 남긴다. ② `architecture-change`, qualifying `refactor`, shared contract/API/schema change는 full impact contract를 남긴다. ③ full contract는 compatibility, migration, deprecation, consumer impact, rollback plan을 포함한다. |
 
 ## Non-Functional Requirements
 
@@ -198,17 +220,22 @@
 | NFR-16 | context/invariant 계약은 같은 요구를 다른 phrasing으로 받아도 전역 설계 의도를 안정적으로 보존해야 한다. | High | ① task packet과 discovery contract는 요청 표현이 달라도 같은 architecture invariant와 do-not-break path를 유지한다. ② local implementation delta가 전역 설계 의도를 잃지 않도록 close evidence 조건이 함께 전달된다. |
 | NFR-17 | recurrence review는 재발 방지에는 충분히 강해야 하지만 artifact noise는 최소화해야 한다. | High | ① `없음` 판정은 매일 수행하되 artifact에는 문제나 조치가 있을 때만 기록한다. ② repeat issue가 아니고 예방 조치가 없으면 새 문서를 만들지 않는다. ③ 같은 release에서 반복된 이슈는 follow-up task와 rule/skill/checklist update target 없이 닫히지 않는다. |
 | NFR-18 | governance extension과 PMW signal 강화는 optional/local-first 성질을 깨지 않아야 한다. | High | ① extra governance field는 optional governance layer에서만 강하게 요구된다. ② core/starter default는 계속 generic하고, read-only monitor signal이 control plane으로 확장되지 않는다. ③ 네트워크나 외부 telemetry 없이도 signal derivation과 validator regression을 재현할 수 있다. |
+| NFR-19 | PMW visual system은 과도하게 밝거나 문서형으로 기울지 않고, compact operator workspace 톤을 유지해야 한다. | High | ① 기본 시각 언어는 neutral mid-tone + 제한된 accent color로 유지된다. ② headline과 주요 UI는 sans-serif 계열을 사용한다. ③ 상단 signal rail은 compact filter 역할을 하고 tall fixed card를 강제하지 않는다. ④ 카드와 콘텐츠 영역은 내용 길이에 맞춰 자연스럽게 늘어난다. |
+| NFR-20 | operating capability baseline은 core/starter default를 과도하게 무겁게 만들면 안 된다. | High | ① mandatory 절차는 non-trivial change 중심으로 제한된다. ② full impact contract와 decision log는 조건부로만 강제된다. ③ solo/starter default는 incident/SLO class 운영 문서까지 기본값으로 강제하지 않는다. |
+| NFR-21 | context/change-governance artifacts는 current-state truth를 중복하거나 오염시키면 안 된다. | High | ① `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`는 stable reference 또는 append-only history로만 사용된다. ② 현재 상태, blocker, handoff, release gate는 계속 기존 truth artifact가 소유한다. ③ 같은 내용을 여러 artifact에 중복 복사하지 않는다. |
 
 ## Constraints
 - 기술 제약: source of truth는 markdown artifact와 runtime contract이며, starter/reset source split과 validator 규칙을 깨지 않아야 한다.
 - 운영 제약: 기본 템플릿에 watcher / scheduler / registry를 내장하지 않고, state-changing runtime은 명시적 분류 후에만 추가한다.
-- 설계 제약: `Project Monitor Web`은 artifact와 runtime contract에 대해 read-only다. 정보 수정은 항상 기존 artifact 편집 경로에서 수행한다.
+- 설계 제약: `Project Monitor Web`은 artifact와 runtime contract에 대해 read-only다. 예외는 self-hosting local convenience 범위의 `project-registry.json` 갱신과 PMW local server stop request뿐이며, 정보 수정은 계속 기존 artifact 편집 경로에서 수행한다.
 - shell 제약: project selector, icon, exit 같은 local shell affordance는 허용하되, artifact/governance mutation control로 확장하지 않는다.
 - decision 제약: decision packet은 read-only context surface이며 approval submit, lock mutation, direct artifact edit를 포함하지 않는다.
 - 회고 제약: recurrence review는 `CURRENT_STATE.md`, `TASK_LIST.md`, follow-up task, relevant rule/skill/checklist에 흡수되며 별도 top-level retrospective truth를 만들지 않는다.
 - 설계 원칙: 단기 편의보다 장기 운영 비용 절감을 우선하며, 나중에 바꾸기 비싼 계약은 지금 더 명시적으로 고정한다.
 - 일정 제약: Phase 1은 정적 모니터 MVP와 pack/runtime contract까지이며, container/read-only sandbox 실험과 이벤트 기반 확장은 Phase 2 이후로 미룬다.
 - 릴리즈 제약: actual operating-project rollout은 local preview 재검증, review closure, self-hosting revalidation, dry-run/reporting gate가 모두 닫힐 때까지 미룬다.
+- 프로세스 제약: 모든 non-trivial change는 change type, self-review, impact tier를 먼저 결정하고, qualifying `refactor` / `architecture-change`는 decision log까지 남긴다.
+- 정보 소유권 제약: `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`는 support/reference artifact이며 `CURRENT_STATE.md`, `TASK_LIST.md`, release gate artifact를 대체하지 않는다.
 - 프로세스 제약: PMW 같은 UI delta는 mockup 승인 전에 DEV implementation으로 직행하지 않는다.
 - 정보구조 제약: PMW는 주요 결정을 위해 필요한 first-view 정보를 상단 요약/대시보드에 우선 배치하고, 상세는 선택형 콘텐츠 영역이나 drawer로 보낸다.
 - 법무/보안/플랫폼 제약: 전자결재/회계/예산관리 같은 도메인으로 확장하더라도 audit trail, human approval trace, requirement trace를 손상시키면 안 된다.
@@ -242,6 +269,9 @@
 | CR-03 | 2026-04-08 00:32 | hybrid harness completion의 approved PMW workspace baseline을 확정. `Project History` 전용 조회, project selector, launcher/stop icon, top-bar `Exit`, mockup-first gate를 승인 | FR-14~FR-23, NFR-10~NFR-14 | Architecture / Plan / Task / UI Design / Current State / History | In Sync |
 | CR-04 | 2026-04-08 01:24 | `Approval Queue -> 상세 결정 패킷` read-only view를 승인하고, PMW가 recommendation / impact / source link / recent context를 content pane first 구조로 제공하도록 구현 기준선과 live code를 동기화 | FR-24, NFR-15 | Architecture / Plan / Task / UI Design / Current State / History / PMW | In Sync |
 | CR-05 | 2026-04-08 09:47 | AI 코딩 비판에서 드러난 구조 표류, 중복/추상화 부채, 검증/보안 가드레일 부재를 줄이기 위해 task packet context contract, deep-interview 확장, day-wrap recurrence gate, AI-specific review checklist, optional governance guardrail fields, PMW risk signal을 공통 기준선에 추가 | FR-11, FR-19, FR-25~FR-29, NFR-16~NFR-18 | Architecture / Plan / Task / Current State / History / Shared Skills / Starter / Runtime / PMW | In Sync |
+| CR-06 | 2026-04-08 13:30 | 웹앱 / browser-facing UI scope는 API-only evidence로 manual gate를 닫지 않고 browser-rendered smoke 또는 user browser raw report를 남기도록 승인 | FR-30 | Architecture / Plan / Task / Current State / Deploy / Starter / Reset / Workflow | In Sync |
+| CR-07 | 2026-04-11 00:19 | PMW user feedback에 따라 project registry add/delete, source-aware header, compact signal rail, neutral mid-tone redesign, local server stop convenience를 승인 | FR-31, FR-32, NFR-19 | Architecture / Plan / UI Design / Task / Current State / PMW | In Sync |
+| CR-08 | 2026-04-11 17:56 | 대규모 운영 baseline 강화를 위해 non-trivial change taxonomy, mandatory self-review, `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`, two-tier change impact contract를 core baseline으로 승인 | FR-33~FR-38, NFR-20~NFR-21 | Architecture / Plan / Task / Current State / Starter | In Sync |
 
 ## Pending Change Requests
 현재 열려 있는 change request 없음.
@@ -258,3 +288,4 @@
 - 2026-04-08 01:24 User: `CR-04` 승인 이후 바로 진행하라고 했고, 이에 따라 PMW workspace / decision packet / history / launcher-stop 자산 구현을 진행했다
 - 2026-04-08 09:35 User: AI 코딩 한계 비판을 하이브리드 하네스에 흡수하는 `Hybrid Harness Reinforcement From AI-Coding Critique` 계획과 `Day Wrap Up` recurrence gate 방향을 함께 승인했다
 - 2026-04-08 09:47 User: `CR-05 Hybrid Harness Reinforcement + Day Wrap Up Recurrence Gate` 구현을 지시했고, 공통 기본값과 starter mirror까지 같은 턴에 반영하기로 했다
+- 2026-04-11 17:56 User: `CR-08 Operating Capability Baseline` 방향을 승인했고, `SYSTEM_CONTEXT.md` / `DOMAIN_CONTEXT.md` 분리, conditional `DECISION_LOG.md`, two-tier change impact contract, debt register `CR-09` 분리를 확정했다

@@ -32,6 +32,7 @@ description: self-hosting template repo용 개발자(Developer) 에이전트 워
 - `CURRENT_STATE.md`
 - `REQUIREMENTS.md > Quick Read`
 - `ARCHITECTURE_GUIDE.md > Quick Read`
+- `IMPLEMENTATION_PLAN.md > 본인 Task Packet Ledger row`
 - `TASK_LIST.md`의 본인 Task ID / Scope / `## Active Locks`
 - UI 범위면 `UI_DESIGN.md`
 
@@ -47,6 +48,8 @@ description: self-hosting template repo용 개발자(Developer) 에이전트 워
 ### Step 3: 구현
 - `ARCHITECTURE_GUIDE.md`의 승인된 경계 안에서만 코드를 수정합니다.
 - UI 작업이면 `UI_DESIGN.md`의 핵심 interaction과 상태 규칙을 지킵니다.
+- non-trivial change면 구현 전에 `Primary Change Type`, `Impact Tier`, `Decision Log Entry` trigger를 task packet에서 다시 확인합니다.
+- system boundary / integration seam / shared contract / hotspot이 바뀌면 `SYSTEM_CONTEXT.md`를, domain term / lifecycle / invariant / exception rule이 바뀌면 `DOMAIN_CONTEXT.md`를 같은 턴에 갱신합니다.
 - 코드 변경으로 문서의 사실관계가 바뀌면 관련 아티팩트와 `CURRENT_STATE.md`를 함께 갱신합니다.
 - 민감 정보 하드코딩과 민감 로그 출력은 금지합니다.
 - low-risk harness maintenance와 read-only verification은 사용자 승인 없이 바로 적용하고 결과만 요약합니다.
@@ -56,6 +59,8 @@ description: self-hosting template repo용 개발자(Developer) 에이전트 워
 ### Step 4: 자체 검증
 - `IMPLEMENTATION_PLAN.md > Validation Commands` 또는 프로젝트 스크립트의 검증 명령을 실행합니다.
 - 현재 Scope에 맞는 린트, 테스트, 빌드, 타입체크 중 적절한 검증을 수행합니다.
+- 모든 non-trivial change는 reviewer handoff 전에 `Self-Review Summary`를 남깁니다. 최소 내용은 changed path, invariant/contract impact, verification result, residual risk입니다.
+- `architecture-change`와 qualifying `refactor`는 `DECISION_LOG.md` entry와 full impact contract를 남기고, 나머지 non-trivial change는 lightweight impact check를 남깁니다.
 - 실패 원인을 해결하거나, 해결 불가 시 `Notes`에 남길 근거를 준비합니다.
 
 ### Step 5: Handoff

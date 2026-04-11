@@ -3,6 +3,11 @@ export const HEALTH_SNAPSHOT_PATH = ".agents/runtime/health_snapshot.json";
 export const GOVERNANCE_CONTROLS_PATH = ".agents/runtime/governance_controls.json";
 export const PROJECT_HISTORY_PATH = ".agents/artifacts/PROJECT_HISTORY.md";
 export const UI_DESIGN_PATH = ".agents/artifacts/UI_DESIGN.md";
+export const PROJECT_REGISTRY_PATH = "tools/project-monitor-web/project-registry.json";
+export const PMW_LAUNCH_SCRIPT_PATH =
+  "tools/project-monitor-web/launch-project-monitor-web.ps1";
+export const PMW_STOP_SCRIPT_PATH =
+  "tools/project-monitor-web/stop-project-monitor-web.ps1";
 
 export const MANDATORY_SOURCE_PATHS = [
   ".agents/artifacts/CURRENT_STATE.md",
@@ -24,7 +29,10 @@ export const ALLOWED_SOURCE_PATHS = [
   ...OPTIONAL_SOURCE_PATHS,
   TEAM_REGISTRY_PATH,
   HEALTH_SNAPSHOT_PATH,
-  GOVERNANCE_CONTROLS_PATH
+  GOVERNANCE_CONTROLS_PATH,
+  PROJECT_REGISTRY_PATH,
+  PMW_LAUNCH_SCRIPT_PATH,
+  PMW_STOP_SCRIPT_PATH
 ];
 
 export const TEAM_MEMBER_REQUIRED_FIELDS = [

@@ -31,9 +31,11 @@ description: 리뷰어 및 보안 검증(Reviewer) 에이전트 워크플로우
 - `CURRENT_STATE.md`
 - `ARCHITECTURE_GUIDE.md > Quick Read`
 - `REQUIREMENTS.md > Quick Read`
+- `IMPLEMENTATION_PLAN.md > Requirement Trace + Task Packet Ledger`
 - 필요 시 `REQUIREMENTS.md > Status`, `Approved Change Log`
 - `WALKTHROUGH.md > Latest Result`, `Branch Freshness`, `User-Captured Manual Test Report`
 - `TASK_LIST.md`의 리뷰 대상 Scope
+- boundary나 domain rule이 바뀐 scope면 `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`
 - UI 범위면 `UI_DESIGN.md`
 
 정보가 부족할 때만 각 문서의 상세 섹션을 펼칩니다.
@@ -46,6 +48,9 @@ description: 리뷰어 및 보안 검증(Reviewer) 에이전트 워크플로우
 - branch freshness가 `Behind / Diverged`면 reviewer finding과 stale branch 리스크를 분리해서 기록합니다.
 - 사용자 실기기 raw report가 있으면 원문 자체가 아니라 Tester가 정리한 `User Report Alignment`, `Manual Test Checklist`, `User-Captured Manual Test Report`를 기준으로 판정합니다.
 - 요구사항 문서가 stale이거나 sync 상태가 `In Sync`가 아니면 `Requirements Sync Check`를 `Planner Update Needed` 또는 `Fail`로 기록하고, 제품 결함 finding과 분리해서 남깁니다.
+- non-trivial change면 `Primary Change Type`, `Self-Review Summary`, `Impact Tier`가 task packet에 있는지 확인하고, self-review가 없으면 release-scope approval을 닫지 않습니다.
+- `architecture-change` 또는 qualifying `refactor`인데 `DECISION_LOG.md` entry나 full impact contract가 없으면 finding으로 남깁니다.
+- boundary 또는 domain rule이 바뀌었는데 `SYSTEM_CONTEXT.md` / `DOMAIN_CONTEXT.md`가 갱신되지 않았으면 문서 sync finding으로 분리합니다.
 - reviewed scope 자체는 승인 가능하지만, 수동 / runtime / dependency gate 때문에 release-ready는 차단될 수 있음을 분리해서 기록합니다.
 - 아키텍처 계약 자체 수정이 필요하면 Planner 재개입을 명시합니다.
 

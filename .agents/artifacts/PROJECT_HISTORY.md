@@ -116,3 +116,25 @@
 - Why: current script가 `templates_starter/*` 전체를 복사해 unrelated dirty source를 함께 전파할 수 있고, preserve mode에서는 대상 live `.agents/artifacts/PREVENTIVE_MEMORY.md`를 생성하지 못하기 때문이다.
 - Impact: 운영 repo rollout은 `sync_template_docs.ps1` selective path filter / live artifact allowlist 정리가 끝난 뒤 재개한다. main hybrid harness path의 다음 첫 작업은 계속 `TST-02` user PMW feedback이다.
 - Related: `BACKLOG-01`, `PM-001`, `TST-02`
+
+### 2026-04-11
+
+#### HIST-20260411-01 Implementation
+- Summary: `CR-08` approved baseline에 따라 change taxonomy, mandatory self-review, `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`, workflow/skill wiring, validator contract를 actual live/starter source에 구현했다.
+- Why: 대규모 운영에서 current-state truth만으로는 유지보수 context와 refactor/architecture-change decision rationale 복원이 부족했고, release-stage review만으로는 일상 개발 루프의 change-governance 누락을 막기 어려웠기 때문이다.
+- Impact: `DEV-07` / `TST-04`가 닫혔고, root/starter validator와 Korean mojibake guard가 pass했다. long-lived context artifact는 live/starter source에만 남기고 version reset source는 그대로 유지한다.
+- Related: `CR-08`, `DEV-07`, `TST-04`, `FR-33`~`FR-38`, `NFR-20`, `NFR-21`
+
+### 2026-04-12
+
+#### HIST-20260412-01 Maintenance
+- Summary: whole-repo markdown inventory를 스캔해 `MARKDOWN_DOCUMENT_CATALOG.md`를 생성했고, 9개 delete-review 후보를 분리했다.
+- Why: live/starter/reset/archive/readme/backup 문서가 늘어나면서 현재 문서 표면을 한 번에 파악하고 일회성 파일을 안전하게 정리할 기준이 필요했기 때문이다.
+- Impact: 루트 카탈로그가 markdown truth map으로 추가됐고, backup/temp/license residue와 one-off summary는 user approval 뒤 `DOC-05`로만 삭제하도록 정리했다.
+- Related: `DOC-04`, `DOC-05`, `MARKDOWN_DOCUMENT_CATALOG.md`
+
+#### HIST-20260412-02 Decision
+- Summary: user review 결과 markdown cleanup 후보는 모두 유지하기로 했고 `DOC-05`는 삭제 없이 닫았다.
+- Why: 후보 문서들이 non-canonical 또는 임시 성격이더라도 현재는 보관 가치가 더 크다고 판단했기 때문이다.
+- Impact: 문서 inventory cleanup lane은 닫혔고, 루트 카탈로그는 pending delete 목록 대신 reviewed-retained 상태를 기록하도록 갱신한다.
+- Related: `DOC-05`, `MARKDOWN_DOCUMENT_CATALOG.md`

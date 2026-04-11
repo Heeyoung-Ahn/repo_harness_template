@@ -6,7 +6,7 @@
 ## Quick Read
 - 이번 범위의 UI 목표: 분산 artifact를 머릿속에서 조합하지 않고도 프로젝트 현재 상태와 승인 결정 맥락을 한 화면에서 판단할 수 있는 `Project Monitor Web`을 설계한다.
 - 현재 설계 대상 화면: project selector가 있는 operator workspace + decision packet content pane + task/detail drawer
-- current `CR-04` delta는 `Approval Queue -> 상세 결정 패킷`을 PMW 안에서 먼저 읽게 하는 방향으로 승인됐고, live PMW code에 반영됐다.
+- current `CR-07` delta는 `Approval Queue -> 상세 결정 패킷` read-only baseline을 유지한 채, project registry add/delete, compact signal rail, source-aware header, neutral mid-tone redesign, local server stop convenience를 PMW 안에 반영하는 방향으로 승인됐다.
 - 이번 문서에서 꼭 지켜야 할 흐름: 사용자는 먼저 상단 요약과 주요 카드에서 현재 결정을 파악하고, `Approval Queue`에서 선택한 항목의 decision packet을 우측 콘텐츠 영역에서 읽은 뒤 필요할 때만 drawer와 source link로 내려간다.
 - 금지된 UI 해석 또는 생략: 실시간처럼 보이는 가짜 애니메이션, inline edit, write action, raw log stream, decorative chart 추가
 - 테스트 때 놓치면 안 되는 포인트: 수동 새로고침 semantics, project selector context 분리, blocker/gate 구분, source artifact 링크, team/solo/large 필터 동작, decision packet 정보 압축 품질, launcher/stop affordance 경계
@@ -15,7 +15,7 @@
 ## Applicability
 - Status: Required
 - Reason: self-hosting 전용 별도 웹앱인 `Project Monitor Web` Phase 1을 구현하기 위한 UI artifact가 필요하다.
-- Last Updated At: 2026-04-08 01:24
+- Last Updated At: 2026-04-11 00:19
 
 ## Current UI Scope
 - Current screen / route: `/` `Project Monitor Workspace`, `Task Detail Drawer`
@@ -36,6 +36,7 @@
 - [2026-04-08] Planner: user 승인에 따라 `Project History` 전용 조회, top-bar `Exit`, launcher icon, stop icon을 approved PMW baseline에 추가했다.
 - [2026-04-08] Planner: `CR-04` draft로 `Approval Queue -> 상세 결정 패킷` view를 추가하고, monitor에서 decision context를 먼저 읽는 흐름을 wireframe에 반영했다.
 - [2026-04-08] Developer: approved wireframe을 기준으로 lighter workspace, project selector, overview/history/health/team views, decision packet content pane, local launcher/stop assets를 구현했다.
+- [2026-04-11] Planner / Developer: user feedback에 따라 PMW를 neutral mid-tone workspace로 재구성하고, compact signal rail, project registry panel, source-aware header, in-app local server stop convenience를 `CR-07` baseline에 반영했다.
 
 ## UX Goal
 - 사용자는 첫 화면 30초 안에 현재 iteration, active task, blocker, 문서 건강, 팀 책임 구조를 파악한다.
@@ -68,10 +69,15 @@ flowchart TD
 - Top header:
   `Project Selector`
   `Project Name`
-  `Goal Summary`
+  `Project-Wide Description`
+  `Description Source Trace`
   `Current One-Line Status`
+  `One-Line Status Source Trace`
   `Next Action`
+  `Next Action Source Trace`
+  `Project Registry`
   `Refresh Snapshot`
+  `Stop Server`
   `Exit`
 - Left navigation:
   `Project Overview`
@@ -80,10 +86,11 @@ flowchart TD
   `Task Detail`
   `Blocker / Approval Queue`
   `Recent Activity`
+  `Project Registry`
   `Project History`
   `Document Health`
   `Team Registry`
-- Right top dashboard cards:
+- Right top signal rail:
   `Current Stage`
   `Open Tasks`
   `Attention Queue`
@@ -105,9 +112,10 @@ flowchart TD
   PMW launcher icon
   launcher entry that starts local server and opens PMW
   stop icon / stop entry for closing the local server process
+  in-app local server stop request
 - Shell boundary:
   launcher/stop entry는 self-hosting local convenience다.
-  artifact/governance write action과 섞지 않는다.
+  `project-registry.json` 갱신과 local server lifecycle request만 예외적으로 허용하고, artifact/governance write action과 섞지 않는다.
   in-app top-bar `Exit`는 우선 app view close 의미로 해석하고, server stop은 별도 shell entry로 분리한다.
 
 ## Artifact Summary Sources
@@ -169,12 +177,15 @@ flowchart TD
 - Key components:
   `Project Selector`
   `Header Summary`
+  `Header Source Trace`
   `Left Navigation`
-  `Dashboard Cards`
+  `Compact Signal Rail`
   `Content Pane`
   `Decision Packet Panel`
   `Refresh Button`
+  `Stop Server Button`
   `Exit Button`
+  `Project Registry Panel`
   `Project Board`
   `Blocker / Approval Queue`
   `Recent Activity`
@@ -200,6 +211,8 @@ flowchart TD
   `Document Health` 패널은 Phase 1에서 validator를 직접 실행하지 않는다
   `Team Directory` 패널은 `solo`에서 registry가 없을 수 있음을 허용한다
   project selector는 현재 project context를 항상 명시한다
+  project registry add/delete는 self-hosting local `project-registry.json`에만 영향을 준다
+  header description은 project-wide summary source를 우선 사용하고, source trace를 노출한다
   `Exit`는 artifact 편집 action과 시각적으로 분리된다
   launcher / stop icon은 top-bar `Exit`와 역할이 다르다는 점이 명확해야 한다
   decision packet은 read-only이며 승인 action button을 포함하지 않는다
@@ -245,17 +258,18 @@ ProjectMonitorWorkspace
 ## Design Tokens
 - Colors:
   `ink` soft slate
-  `paper` warm white
-  `mist` pale blue-gray
+  `paper` neutral warm gray
+  `mist` pale slate-blue
+  `accent-olive` muted emphasis
   `signal-green` completed / healthy
   `signal-amber` warning / pending
   `signal-red` blocked / failed
   `signal-blue` active / selected
 - Typography:
-  `IBM Plex Sans` for UI text
+  `Aptos` or `Segoe UI Variable` class sans-serif for UI text
   `IBM Plex Mono` for task IDs, paths, timestamps
 - Spacing:
-  dense dashboard spacing with clear card boundaries
+  compact signal rail + auto-height content cards with clear boundaries
   desktop first but tablet width까지 collapse 가능한 grid
 - Feedback / status styles:
   status pill은 텍스트와 색을 함께 사용

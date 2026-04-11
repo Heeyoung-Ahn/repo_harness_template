@@ -7,8 +7,11 @@ import {
   HEALTH_SNAPSHOT_PATH,
   MANDATORY_SOURCE_PATHS,
   OPTIONAL_SOURCE_PATHS,
+  PMW_LAUNCH_SCRIPT_PATH,
+  PMW_STOP_SCRIPT_PATH,
   PROFILE_REQUIREMENTS,
   PROJECT_HISTORY_PATH,
+  PROJECT_REGISTRY_PATH,
   PROMOTION_BOUNDARY,
   RESERVED_EVENT_HOOKS,
   UI_DESIGN_PATH
@@ -455,6 +458,48 @@ function buildActivity(taskList, historyEntries) {
     .slice(0, 8);
 }
 
+function buildProjectDescription(requirements, currentState) {
+  const descriptiveGoalLines = requirements.productGoal
+    .map((item) => item.value?.trim())
+    .filter(Boolean)
+    .filter(
+      (value) =>
+        !value.endsWith(":") &&
+        !value.startsWith("최종 사용자") &&
+        !value.startsWith("성공 기준")
+    );
+
+  if (descriptiveGoalLines.length > 0) {
+    return {
+      value: descriptiveGoalLines.slice(0, 3).join(" "),
+      sourcePath: ".agents/artifacts/REQUIREMENTS.md",
+      sourceLabel: "Product Goal > Problem Statement"
+    };
+  }
+
+  if (requirements.quickRead[0]?.value) {
+    return {
+      value: requirements.quickRead[0].value,
+      sourcePath: ".agents/artifacts/REQUIREMENTS.md",
+      sourceLabel: "Quick Read > 1"
+    };
+  }
+
+  if (currentState.snapshot.current_release_goal) {
+    return {
+      value: currentState.snapshot.current_release_goal,
+      sourcePath: ".agents/artifacts/CURRENT_STATE.md",
+      sourceLabel: "Snapshot > Current Release Goal"
+    };
+  }
+
+  return {
+    value: "프로젝트 설명이 아직 준비되지 않았습니다.",
+    sourcePath: "",
+    sourceLabel: ""
+  };
+}
+
 function findPrimaryTask(boardTasks, activeLocks) {
   if (activeLocks.length) {
     const taskId = activeLocks[0].taskId;
@@ -479,6 +524,7 @@ function buildOverview({
   implementationPlan,
   uiDesign,
   currentState,
+  projectDescription,
   summary,
   blockers,
   historyEntries,
@@ -494,10 +540,8 @@ function buildOverview({
 
   return {
     projectName: projectContext.label,
-    goalSummary:
-      requirements.quickRead[0]?.value ||
-      currentState.snapshot.current_release_goal ||
-      "프로젝트 목표 요약이 아직 없습니다.",
+    goalSummary: projectDescription.value,
+    goalSummarySource: projectDescription,
     productGoal: requirements.productGoal.map((item) => item.value),
     openQuestions: requirements.openQuestions.map((item) => item.value),
     requirementsSummary: requirements.quickRead.map(renderBulletSummary),
@@ -755,6 +799,7 @@ function buildHistoryView(entries) {
 
 function buildCurrentStatus({
   currentState,
+  projectDescription,
   primaryTask,
   activeLocks,
   summary,
@@ -767,21 +812,57 @@ function buildCurrentStatus({
     nextAgent.recommended_role ||
     nextAgent.recommended_agent ||
     "unassigned";
+  const oneLineStatus =
+    currentState.snapshot.current_focus ||
+    latestHandoff.completed ||
+    "현재 상태 요약이 아직 없습니다.";
+  const oneLineStatusSource = currentState.snapshot.current_focus
+    ? {
+        path: ".agents/artifacts/CURRENT_STATE.md",
+        label: "Snapshot > Current Focus"
+      }
+    : latestHandoff.completed
+      ? {
+          path: ".agents/artifacts/CURRENT_STATE.md",
+          label: "Latest Handoff Summary > Completed"
+        }
+      : null;
+  const nextAction =
+    latestHandoff.first_next_action ||
+    nextAgent.trigger_to_switch ||
+    currentState.snapshot.document_health ||
+    "";
+  const nextActionSource = latestHandoff.first_next_action
+    ? {
+        path: ".agents/artifacts/CURRENT_STATE.md",
+        label: "Latest Handoff Summary > First Next Action"
+      }
+    : nextAgent.trigger_to_switch
+      ? {
+          path: ".agents/artifacts/CURRENT_STATE.md",
+          label: "Next Recommended Agent > Trigger To Switch"
+        }
+      : currentState.snapshot.document_health
+        ? {
+            path: ".agents/artifacts/CURRENT_STATE.md",
+            label: "Snapshot > Document Health"
+          }
+        : null;
 
   return {
-    oneLineStatus:
-      currentState.snapshot.current_focus ||
-      latestHandoff.completed ||
-      "현재 상태 요약이 아직 없습니다.",
+    projectDescription: projectDescription.value,
+    projectDescriptionSource: {
+      path: projectDescription.sourcePath,
+      label: projectDescription.sourceLabel
+    },
+    oneLineStatus,
+    oneLineStatusSource,
     currentStage: currentState.snapshot.current_stage || "",
     currentFocus: currentState.snapshot.current_focus || "",
     currentReleaseGoal: currentState.snapshot.current_release_goal || "",
     currentGreenLevel: currentState.snapshot.current_green_level || "",
-    nextAction:
-      latestHandoff.first_next_action ||
-      nextAgent.trigger_to_switch ||
-      currentState.snapshot.document_health ||
-      "",
+    nextAction,
+    nextActionSource,
     currentAgent,
     currentTask: primaryTask
       ? {
@@ -794,6 +875,20 @@ function buildCurrentStatus({
     nextRecommendedAgent: nextAgent,
     openTaskCount: summary.openTasks,
     attentionCount: blockers.length
+  };
+}
+
+function buildLocalShell(workspaceRepoRoot) {
+  const launchScriptAbsolute = path.join(workspaceRepoRoot, PMW_LAUNCH_SCRIPT_PATH);
+  const stopScriptAbsolute = path.join(workspaceRepoRoot, PMW_STOP_SCRIPT_PATH);
+
+  return {
+    launchScriptPath: PMW_LAUNCH_SCRIPT_PATH,
+    stopScriptPath: PMW_STOP_SCRIPT_PATH,
+    launchCommand: `powershell -ExecutionPolicy Bypass -File "${launchScriptAbsolute}"`,
+    stopCommand: `powershell -ExecutionPolicy Bypass -File "${stopScriptAbsolute}"`,
+    launchCommandLabel: "PowerShell launch command",
+    stopCommandLabel: "PowerShell stop command"
   };
 }
 
@@ -868,6 +963,7 @@ export async function buildDashboardSnapshot(repoRoot, options = {}) {
   const historyEntries = buildHistoryView(history.entries).sort((left, right) =>
     String(right.date).localeCompare(String(left.date))
   );
+  const projectDescription = buildProjectDescription(requirements, currentState);
   const riskSignals = buildRiskSignals({
     currentState,
     taskList,
@@ -907,9 +1003,16 @@ export async function buildDashboardSnapshot(repoRoot, options = {}) {
     projects: registry.projects.map((project) => ({
       id: project.id,
       label: project.label,
+      repoRoot: project.repoRoot,
       isDefault: project.id === registry.defaultProjectId,
-      isCurrent: project.id === projectContext.id
+      isCurrent: project.id === projectContext.id,
+      isWorkspace: project.isWorkspace,
+      canDelete: project.canDelete
     })),
+    projectRegistry: {
+      path: PROJECT_REGISTRY_PATH,
+      defaultProjectId: registry.defaultProjectId
+    },
     projectContext: {
       id: projectContext.id,
       label: projectContext.label,
@@ -927,6 +1030,7 @@ export async function buildDashboardSnapshot(repoRoot, options = {}) {
     },
     header: buildCurrentStatus({
       currentState,
+      projectDescription,
       primaryTask,
       activeLocks: ownershipProjection.activeLocks,
       summary,
@@ -939,6 +1043,7 @@ export async function buildDashboardSnapshot(repoRoot, options = {}) {
       implementationPlan,
       uiDesign,
       currentState,
+      projectDescription,
       summary,
       blockers,
       historyEntries,
@@ -995,6 +1100,7 @@ export async function buildDashboardSnapshot(repoRoot, options = {}) {
       architectureHookContract: architecture.futureHookContract,
       architecturePromotionBoundary: architecture.promotionBoundary
     },
+    localShell: buildLocalShell(repoRoot),
     optionalSources,
     sourceFiles: ALLOWED_SOURCE_PATHS,
     warnings

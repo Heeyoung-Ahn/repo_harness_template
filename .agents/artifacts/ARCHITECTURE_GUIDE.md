@@ -5,42 +5,48 @@
 
 ## Quick Read
 - 현재 아키텍처 스타일: document-centric governance core + optional enterprise-governed pack + separate `Project Monitor Web` + optional OMX sidecar compatibility
-- 현재 반영된 Requirement Baseline / 변경 영향: `CR-03` approved baseline 위에 `CR-04` decision packet view, `CR-05` reinforcement contract, `CR-06` browser-based web test contract까지 승인/구현 반영 중이다. root self-hosting runtime reference / HUD / runbook, governed fixture + validator baseline, monitor hybrid visibility, decision-context packet, context/invariant/evidence task contract, recurrence gate, browser-based web test gate, `preview revalidation + review closure + dry-run/reporting` completion evidence를 같은 scope에 둔다.
-- 핵심 도메인 경계: Governance Core / Profile Contract / Enterprise Governance Pack / Planner Discovery Skill / Hybrid Runtime Reference / Parser & Projection / Project Monitor Web / Integration Adapters
-- 이번 범위에서 건드리는 폴더/모듈: `.agents/artifacts/*`, `.agents/rules/*`, `.agents/runtime/{team.json,governance_controls.json}`, `.agents/skills/requirements_deep_interview/*`, `.omx/*`, `tools/project-monitor-web/*`, starter/reset governed source, rollout dry-run/reporting path
+- 현재 반영된 Requirement Baseline / 변경 영향: `CR-03` approved baseline 위에 `CR-04` decision packet view, `CR-05` reinforcement contract, `CR-06` browser-based web test contract, `CR-07` PMW workspace refinement + local project registry control, `CR-08` operating capability baseline까지 승인/구현 반영 중이다. root self-hosting runtime reference / HUD / runbook, governed fixture + validator baseline, monitor hybrid visibility, decision-context packet, context/invariant/evidence task contract, recurrence gate, browser-based web test gate, local project registry convenience, `preview revalidation + review closure + dry-run/reporting` completion evidence에 더해 non-trivial change taxonomy, mandatory self-review, `SYSTEM_CONTEXT.md` / `DOMAIN_CONTEXT.md`, conditional `DECISION_LOG.md`, two-tier change impact contract를 같은 scope에 둔다.
+- 핵심 도메인 경계: Governance Core / Change Governance / Context Knowledge Base / Profile Contract / Enterprise Governance Pack / Planner Discovery Skill / Hybrid Runtime Reference / Parser & Projection / Project Monitor Web / Integration Adapters
+- 이번 범위에서 건드리는 폴더/모듈: `.agents/artifacts/*`, `.agents/rules/*`, `.agents/runtime/{team.json,governance_controls.json}`, `.agents/workflows/*.md`, `.agents/skills/*`, `.omx/*`, `tools/project-monitor-web/*`, starter/reset source, rollout dry-run/reporting path
 - 상태와 데이터의 주인: artifact와 runtime contract가 truth를 유지하고, monitor와 `.omx/*`는 파생 projection 또는 보조 상태만 가진다.
-- 다음 역할이 꼭 지켜야 할 구조 규칙: starter는 OMX나 sandbox runtime에 의존하지 않으며, actual rollout은 completion gate가 닫히기 전까지 실행하지 않는다. Planner discovery skill은 shared process이지만 truth가 아니고, PMW delta는 승인 전 implementation으로 직행하지 않는다.
-- 이번 문서의 리뷰 포인트: runtime reference/HUD boundary, pack activation rule, governed fixture + validator path, planner discovery boundary, `.omx` truth boundary, monitor hybrid visibility, decision packet read-only boundary, recurrence gate routing, governance guardrail contract, browser-based web test gate, completion evidence contract, rollout defer gate
+- 다음 역할이 꼭 지켜야 할 구조 규칙: starter는 OMX나 sandbox runtime에 의존하지 않으며, actual rollout은 completion gate가 닫히기 전까지 실행하지 않는다. Planner discovery skill과 context/decision artifact는 shared process/support doc이지 truth가 아니고, full impact contract는 `architecture-change` 또는 qualifying `refactor`에만 강하게 걸린다.
+- 이번 문서의 리뷰 포인트: runtime reference/HUD boundary, pack activation rule, governed fixture + validator path, planner discovery boundary, `.omx` truth boundary, monitor hybrid visibility, decision packet read-only boundary, recurrence gate routing, governance guardrail contract, browser-based web test gate, change taxonomy, mandatory self-review, context knowledge artifact, decision log trigger, impact contract, completion evidence contract, rollout defer gate
 
 ## Status
-- Document Status: Approved (`CR-06` synced)
+- Document Status: Approved (`CR-08` synced)
 - Owner: Planner
 - Requirement Baseline: Hybrid Harness Completion v0.1
 - Change Sync Check: Synced
-- Last Requirement Sync At: 2026-04-08 13:30
-- Last Updated At: 2026-04-08 13:30
-- Last Approved By: User (`CR-06 web browser-based test contract`)
-- Last Approved At: 2026-04-08 13:30
+- Last Requirement Sync At: 2026-04-11 17:56
+- Last Updated At: 2026-04-11 17:56
+- Last Approved By: User (`CR-08 Operating Capability Baseline`)
+- Last Approved At: 2026-04-11 17:56
 
 ## Approved Boundaries
 - 도메인 경계:
   Governance Core는 artifact truth와 운영 규칙을 담당한다.
   Governance Core는 `Task Packet` context/invariant/evidence contract와 recurrence follow-up routing도 함께 담당한다.
+  Change Governance는 non-trivial change taxonomy, mandatory self-review, lightweight/full impact tier, decision-log trigger를 담당한다.
+  Context Knowledge Base는 `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`를 통해 장기 유지보수 맥락과 구조 결정 이력을 보존한다.
   Profile Contract는 `solo`, `team`, `large/governed` required field와 `team.json` contract를 담당한다.
   Enterprise Governance Pack은 `enterprise_governed` overlay, protected path/HITL/critical-domain 문서와 optional guardrail field를 담당한다.
   Hybrid Runtime Reference는 root self-hosting runtime/HUD/runbook과 preview revalidation / rollout defer evidence 기준을 담당한다.
   Parser & Projection은 artifact와 runtime contract를 읽어 read model을 만들고, recurrence/guardrail/evidence risk signal을 파생 계산한다.
-  Project Monitor Web은 parser/projection 결과와 runtime/HUD readiness summary를 운영자에게 read-only로 보여주는 self-hosting only 도구다. 상단 요약, 프로젝트 selector, 좌측 메뉴, 우측 카드/콘텐츠 workspace를 통해 artifact-aware summary를 제공한다. `Approval Queue`에서는 decision packet projection을 통해 결정 맥락을 압축해 보여줄 수 있고, document health와 overview에서 `context miss`, `review reopen`, `evidence stale`, `repeat issue`, `guardrail gap`을 read-only로 보여준다.
-  Local Monitor Shell은 `tools/project-monitor-web` 아래 launcher icon, stop icon, local open/close entry를 제공한다.
+  Project Monitor Web은 parser/projection 결과와 runtime/HUD readiness summary를 운영자에게 보여주는 self-hosting only 도구다. artifact/runtime truth는 계속 read-only로 유지하고, 예외적으로 self-hosting local convenience 범위의 `project-registry.json` 갱신과 local server stop request만 허용한다. 상단 요약, 프로젝트 selector, 좌측 메뉴, compact signal rail, 우측 콘텐츠 workspace를 통해 artifact-aware summary를 제공한다. `Approval Queue`에서는 decision packet projection을 통해 결정 맥락을 압축해 보여줄 수 있고, document health와 overview에서 `context miss`, `review reopen`, `evidence stale`, `repeat issue`, `guardrail gap`을 read-only로 보여준다.
+  Local Monitor Shell은 `tools/project-monitor-web` 아래 launcher icon, stop icon, local open/close entry와 project registry bootstrap convenience를 제공한다.
   Integration Adapters는 future Git/PR/CI/health snapshot/event hook/OMX sidecar를 optional로 연결한다.
 - 계층 책임 경계:
   Governance Core가 task/lock/gate/handoff truth를 소유한다.
-  `IMPLEMENTATION_PLAN.md > Task Packet Ledger`는 `Required Context Inputs`, `Architecture Invariants`, `Known Traps`, `Do-Not-Break Paths`, `Evidence Required Before Close`를 통해 실행 계약을 소유한다.
+  `IMPLEMENTATION_PLAN.md > Task Packet Ledger`는 `Required Context Inputs`, `Architecture Invariants`, `Known Traps`, `Do-Not-Break Paths`, `Evidence Required Before Close`, `Primary Change Type`, `Self-Review Summary`, `Impact Tier`, `Decision Log Entry`를 통해 실행 계약을 소유한다.
+  Change Governance는 change type, self-review, impact tier, decision-log trigger를 소유한다.
+  `SYSTEM_CONTEXT.md`는 subsystem boundary, integration seam, shared contract, hotspot reference를 소유하지만 current-state truth는 소유하지 않는다.
+  `DOMAIN_CONTEXT.md`는 domain term/invariant/lifecycle/hotspot reference를 소유하지만 current-state truth는 소유하지 않는다.
+  `DECISION_LOG.md`는 architecture-change와 qualifying refactor decision rationale의 append-only history를 소유한다.
   `team.json`은 profile/pack activation truth를 소유한다.
   `governance_controls.json`은 protected path, human gate, critical domain 선언 truth와 optional `sensitive_paths`, `tool_allowlist`, `tool_denylist`, `exfiltration_sensitive_input_classes` guardrail truth를 소유한다.
   Hybrid Runtime Reference는 root self-hosting operator visibility surface를 제공할 수 있지만 truth를 소유하지 않는다.
   Parser & Projection은 truth를 읽어 파생 state만 계산한다.
-  Project Monitor Web과 `.omx/*`는 read-only projection 또는 보조 상태만 가진다.
+  Project Monitor Web과 `.omx/*`는 projection 또는 보조 상태만 가진다. PMW는 self-hosting local convenience 범위의 `project-registry.json`과 local server lifecycle request만 예외적으로 다룬다.
 - 승인된 예외:
   `Project Monitor Web`은 root self-hosting 전용으로 둘 수 있다.
   starter/downstream에는 팀 구성 계약, governance controls, parser-friendly schema, dormant enterprise pack placeholder만 승격할 수 있다.
@@ -51,7 +57,7 @@
 - 승인 없이 추가하면 안 되는 폴더/레이어:
   starter 기본 source에 `Project Monitor Web`, watcher, scheduler, registry, container sandbox, agent control plane을 추가하지 않는다.
 - 금지된 직접 참조:
-  web UI가 artifact truth를 직접 수정하는 write path
+  web UI가 artifact truth를 직접 수정하는 write path. 단, self-hosting local `project-registry.json` 관리와 local server lifecycle request는 예외다
   `.omx/*`를 기준으로 task/gate truth를 복원하는 경로
   Phase 1 web app이 validator를 직접 실행하고 그 결과를 truth처럼 저장하는 경로
   profile-specific field를 core schema와 별도 비공식 파일에 분산 저장하는 구조
@@ -77,6 +83,8 @@
 - [2026-04-08] Developer: PMW snapshot/application/presentation layer와 local shell assets에 approved `CR-04` baseline을 구현했다.
 - [2026-04-08] Planner / Developer: `CR-05` 승인에 따라 task packet context contract, recurrence gate routing, governance guardrail field, PMW risk signal을 architecture baseline과 live code path에 추가한다.
 - [2026-04-08] Planner: `CR-06` 승인에 따라 browser-facing web scope는 API-only evidence로 manual gate를 닫지 않고 browser-rendered evidence를 남기도록 validation contract를 architecture baseline에 추가했다.
+- [2026-04-11] Planner: `CR-07` 승인에 따라 PMW에 local project registry management, source-aware header, compact signal rail, neutral mid-tone redesign, in-app local server stop convenience를 architecture boundary 안에 추가했다.
+- [2026-04-11] Planner: `CR-08` 승인에 따라 change taxonomy, mandatory self-review, `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, conditional `DECISION_LOG.md`, two-tier change impact contract를 architecture baseline에 추가했다.
 
 ## Requirement Change Sync
 
@@ -88,18 +96,22 @@
 | CR-04 | Approved | Quick Read / Approved Boundaries / Domain Map / Layer Responsibilities / Integration Boundaries | In Sync | `Approval Queue -> 상세 결정 패킷` read-only projection과 multi-project workspace 구현을 live PMW code에 반영했다 |
 | CR-05 | Approved | Quick Read / Approved Boundaries / Layer Responsibilities / Enterprise Governance Pack Contract / Optional Runtime Contract / Integration Boundaries | In Sync | task packet context contract, recurrence routing, optional guardrail field, PMW risk signal을 read-only truth/projection 경계 안에서 추가했다 |
 | CR-06 | Approved | Quick Read / Approved Boundaries / Integration Boundaries | In Sync | 웹앱 / browser-facing scope는 browser-rendered evidence를 manual/environment gate의 기본 입력으로 사용하고 API-only evidence로는 gate를 닫지 않는다 |
+| CR-07 | Approved | Quick Read / Approved Boundaries / Forbidden Changes / Layer Responsibilities / Integration Boundaries | In Sync | PMW는 artifact/runtime truth를 계속 보존하면서 self-hosting local project registry management와 local server stop convenience만 예외적으로 허용한다 |
+| CR-08 | Approved | Quick Read / Approved Boundaries / Layer Responsibilities / Domain Map / Folder Structure / Operating Context Artifacts | In Sync | change taxonomy, mandatory self-review, context/decision artifact, two-tier impact contract를 support artifact boundary 안에서 추가한다 |
 
 ## Architecture Summary
 - 아키텍처 스타일: truth layer와 projection/orchestration layer를 분리한 local-first layered architecture
-- 주요 도메인: Governance Core, Profile Contract, Enterprise Governance Pack, Hybrid Runtime Reference, Parser & Projection, Project Monitor Web, Integration Adapters
+- 주요 도메인: Governance Core, Change Governance, Context Knowledge Base, Profile Contract, Enterprise Governance Pack, Hybrid Runtime Reference, Parser & Projection, Project Monitor Web, Integration Adapters
 - 핵심 설계 원칙:
   source of truth는 artifact와 runtime contract가 유지한다.
   enterprise burden은 optional pack으로만 올린다.
   `.omx/*`는 optional sidecar이지 truth가 아니다.
   monitor는 read-only 정적 뷰어로 시작한다.
   task packet은 로컬 구현 명령이 아니라 전역 맥락 계약까지 포함해야 한다.
+  non-trivial change는 change type, self-review, impact tier를 먼저 정한다.
   root self-hosting HUD/readiness surface는 operator visibility용이며 control plane이 아니다.
   Planner discovery skill은 requirements 작성 전 mandatory process aid이지만 truth를 소유하지 않는다.
+  `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`는 support artifact이지 current-state truth가 아니다.
   recurrence review는 새 truth artifact를 만들지 않고 existing handoff/rule/skill/checklist로 preventive action을 되돌린다.
   `PROJECT_HISTORY.md`는 long-term timeline이지 current-state truth가 아니다.
   human approval과 manual gate는 agent activity와 동등한 운영 개념이다.
@@ -112,10 +124,12 @@
 | Domain | Responsibility | Key Entities / Use Cases | Notes |
 |---|---|---|---|
 | Governance Core | 문서 기반 운영 truth 유지 | Task, Lock, Handoff, Gate, Requirement Baseline, Stage, Recurrence Follow-up | `.agents/artifacts/*`, `.agents/rules/*` 중심 |
+| Change Governance | non-trivial change 절차 유지 | change taxonomy, self-review, impact tier, decision-log trigger | `feature/bugfix/maintenance/refactor/architecture-change` baseline |
+| Context Knowledge Base | 유지보수용 장기 맥락 보존 | `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md`, hotspot, invariant, decision rationale | support artifact, current-state truth 아님 |
 | Profile Contract | 프로필별 의무 필드와 팀 계약 유지 | Solo profile, Team profile, Large/Governed profile, Team Registry, Pack Activation | `team.json`과 profile required field를 고정 |
 | Enterprise Governance Pack | 고위험 도메인 통제 규칙 유지 | Governance controls, Protected path, Sensitive path, Tool allow/deny list, HITL escalation, Critical domain docs | `enterprise_governed` overlay only |
 | Planner Discovery Skill | requirements 작성 전 구조화된 사용자 인터뷰 수행 | `requirements_deep_interview`, scope clarification, architecture invariant, failure mode, acceptance shaping | shared skill, artifact truth 아님 |
-| Hybrid Runtime Reference | root self-hosting completion 기준 유지 | `.omx` guide, runtime/HUD visibility, local runbook, preview revalidation, rollout defer contract | root only, truth 아님 |
+| Hybrid Runtime Reference | root self-hosting completion 기준 유지 | `.omx/README.md`, `.omx/RUNTIME_REFERENCE.md`, runtime/HUD visibility, local runbook, preview revalidation, rollout defer contract | root only, truth 아님 |
 | Parser & Projection | mandatory source를 읽어 read model 생성 | Task projection, Blocker queue, Decision packet projection, Recent activity, Health projection, Team directory projection, Recurrence / Guardrail signal | UI와 분리된 shared library |
 | Project Monitor Web | read-only 웹 UI 제공 | Project selector, project overview summary, current-state cards, left navigation, dashboard cards, decision packet view, manual refresh, history view, detail drill-down, top-bar `Exit` | `tools/project-monitor-web/*` |
 | Local Monitor Shell | self-hosting convenience affordance 제공 | project registry selection, launcher icon, stop icon, local open/close action | self-hosting only, artifact truth 아님 |
@@ -126,6 +140,9 @@
 .agents/
   artifacts/
     PROJECT_HISTORY.md
+    SYSTEM_CONTEXT.md
+    DOMAIN_CONTEXT.md
+    DECISION_LOG.md
   rules/
   skills/
     requirements_deep_interview/
@@ -144,6 +161,9 @@ templates_starter/
   .agents/
     artifacts/
       PROJECT_HISTORY.md
+      SYSTEM_CONTEXT.md
+      DOMAIN_CONTEXT.md
+      DECISION_LOG.md
       enterprise_governed/
     skills/
       requirements_deep_interview/
@@ -161,10 +181,12 @@ templates_starter/
 
 ## Layer Responsibilities
 - `domain/`: `task`, `lock`, `handoff`, `gate`, `profile`, `pack`, `team member`, `governance control`, `health snapshot`, `risk signal` 개념과 불변식
-- `application/`: artifact parsing, projection assembly, decision context synthesis, profile validation, pack activation validation, health aggregation, recurrence/guardrail signal derivation, manual refresh orchestration
+- `application/`: artifact parsing, projection assembly, decision context synthesis, profile validation, pack activation validation, health aggregation, recurrence/guardrail signal derivation, manual refresh orchestration, local project registry validation/update
 - `planner-skill/`: structured requirements interview, change-request discovery, architecture invariant / failure-mode capture, UI intake, mockup brief synthesis
-- `infrastructure/`: file system read, JSON parse, optional health snapshot read, local HTTP server, optional `.omx` sidecar read
-- `presentation/`: workspace UI shell, project selector, left navigation, summary cards, content pane, decision packet panel, detail drawer, history view, artifact link-out, top-bar exit affordance, recurrence/guardrail signal display
+- `change-governance/`: non-trivial change taxonomy, self-review, lightweight/full impact check, decision-log trigger
+- `context-knowledge/`: `SYSTEM_CONTEXT.md`, `DOMAIN_CONTEXT.md`, `DECISION_LOG.md` 관리와 stable reference 유지
+- `infrastructure/`: file system read, JSON parse, optional health snapshot read, local HTTP server, local project registry file update, optional `.omx` sidecar read
+- `presentation/`: workspace UI shell, project selector, left navigation, compact signal rail, content pane, decision packet panel, detail drawer, history view, artifact link-out, top-bar exit affordance, source-aware header, recurrence/guardrail signal display
 - `shell/`: launcher icon, stop icon, local open/close command entry, project preset bootstrapping
 - `release-readiness`: dry-run/reporting evidence와 rollout defer state를 artifact로 정리한다
 - `closeout-recurrence`: day wrap up에서 repeat issue를 existing artifact/rule/skill/checklist follow-up으로 라우팅한다
@@ -175,6 +197,7 @@ templates_starter/
 - infrastructure는 파일 읽기, JSON 읽기, 로컬 HTTP 제공, optional sidecar read를 구현한다.
 - presentation은 application이 만든 projection을 렌더링하고 직접 비즈니스 규칙을 가지지 않는다.
 - Governance Core와 runtime contract truth는 parser/projection보다 상위다.
+- change-governance와 context-knowledge는 truth artifact를 참조하지만 current-state truth를 대체하지 않는다.
 - Planner workflow는 `requirements_deep_interview` skill을 먼저 수행하고 그 결과를 artifact schema에 맞춰 동기화한다.
 - UI layer는 parser contract를 우회해서 직접 markdown을 해석하지 않는다.
 - optional orchestration mapping은 workflow layer에만 존재하고 truth layer를 바꾸지 않는다.
@@ -190,6 +213,12 @@ templates_starter/
 | `IMPLEMENTATION_PLAN.md` | Mandatory | `Status`, `Current Iteration`, `Requirement Trace`, `Task Packet Ledger`, `Iteration Plan`, `Validation Gates` | execution context source |
 | `REVIEW_REPORT.md` | Optional | review gate summary | release-stage optional source |
 | `DEPLOYMENT_PLAN.md` | Optional | deployment gate summary | release-stage optional source |
+
+## Operating Context Artifacts
+- `SYSTEM_CONTEXT.md`: subsystem responsibility, integration seam, shared contract, hotspot, do-not-break path를 정리하는 stable reference다. system boundary가 바뀌면 함께 갱신한다.
+- `DOMAIN_CONTEXT.md`: 핵심 용어, entity/value concept, lifecycle, invariant, exception rule, maintenance hotspot을 정리하는 stable reference다. domain rule이 바뀌면 함께 갱신한다.
+- `DECISION_LOG.md`: append-only ADR-lite 문서다. `architecture-change`에는 mandatory이고, qualifying `refactor`에서는 shared contract/API/schema, cross-module invariant, ownership boundary, migration/deprecation change가 있으면 mandatory다.
+- 세 문서 모두 current-state truth, blocker queue, release gate, handoff raw log를 대체하지 않는다.
 
 ## Team Registry Contract
 
@@ -274,9 +303,9 @@ templates_starter/
 ## Integration Boundaries
 - 외부 API/서비스: 선택적 GitHub/CI/PM adapter, future enterprise system adapter
 - 인증 경계: Phase 1은 로컬 self-hosting 사용을 전제로 하며 특정 auth provider를 강제하지 않는다.
-- 파일/스토리지 경계: Phase 1 web app은 artifact와 runtime contract, optional `.omx/*`, optional `health_snapshot.json`을 읽을 수 있지만 validator나 write action은 실행하지 않는다.
+- 파일/스토리지 경계: Phase 1 web app은 artifact와 runtime contract, optional `.omx/*`, optional `health_snapshot.json`을 읽을 수 있고, self-hosting local convenience 범위에서 `tools/project-monitor-web/project-registry.json`만 갱신할 수 있다. validator나 artifact truth write action은 실행하지 않는다.
 - optional observability / monitor contract: `.omx/*`와 health snapshot은 read-only auxiliary input이며 release/review truth를 대체하지 않는다.
-- local shell contract: project selector와 exit affordance는 self-hosting local UX에 한정되며 artifact/governance write path로 확장하지 않는다. launcher/stop icon은 local process convenience일 뿐 approval mutation control이 아니다.
+- local shell contract: project selector와 exit affordance는 self-hosting local UX에 한정되며 artifact/governance write path로 확장하지 않는다. launcher/stop entry와 in-app stop request는 local process convenience일 뿐 approval mutation control이 아니다.
 - decision packet contract: packet은 artifact truth를 읽어 압축 요약만 제공하며, 승인 submit이나 direct mutation control을 포함하지 않는다. recurrence/guardrail/evidence signal은 read-only context로만 첨부한다.
 - browser validation contract: 웹앱 또는 브라우저 렌더 결과가 사용자 가치에 직접 연결되는 scope는 browser-rendered smoke나 user browser raw report를 남겨야 하며, API-only / unit-only evidence만으로 manual/environment gate를 닫지 않는다. backend-only scope는 예외다.
 - planning discovery contract: deep-interview skill output은 planner의 구조화 입력일 뿐이며 승인/정본은 항상 artifact에 남긴다.
@@ -294,3 +323,9 @@ templates_starter/
 - 구조 변경이 필요하면 Planner가 이유와 영향 범위를 기록한다.
 - 사용자 승인 후에만 이 문서를 수정한다.
 - 승인 후 요구사항이 바뀌면 `REQUIREMENTS.md`와 같은 기준선으로 이 문서를 다시 확인하고, 변경이 없더라도 `Requirement Baseline`과 `Change Sync Check`를 갱신한다.
+.omx/
+  README.md
+  RUNTIME_REFERENCE.md
+  state/*
+  logs/*
+  project-memory.json
